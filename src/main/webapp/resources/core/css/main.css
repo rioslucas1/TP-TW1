@@ -27,14 +27,14 @@ body {
     margin: 0 0.5rem;
 }
 
-.btn-signup {
+.btn-registro {
     background-color: #0098c7;
     color: white;
     border-radius: 20px;
     padding: 5px 20px;
 }
 
-.btn-signin {
+.btn-iniciosesion {
     background-color: white;
     color: #0098c7;
     border: 1px solid #0098c7;
