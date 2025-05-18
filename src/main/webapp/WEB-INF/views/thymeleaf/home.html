@@ -19,7 +19,7 @@
 <main role="main" class="container"></main>
 <nav class="navbar navbar-expand-lg navbar-light">
   <div class="container">
-    <a class="navbar-brand" href="#">Clases<span>Ya</span></a>
+    <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -28,7 +28,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="#">Inicio</a>
+          <a class="nav-link" th:href="@{/home}">Inicio</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Nuestros tutores</a>
@@ -39,8 +39,8 @@
       </ul>
 
       <div class="d-flex">
-        <a href="#" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
-        <a href="#" class="btn btn-registro">Registrarse</a>
+        <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
+        <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
       </div>
     </div>
   </div>
@@ -53,24 +53,25 @@
       <div class="col-lg-7 main-contenedor">
         <h1 class="main-title">Bienvenido a<br>Clases-Ya</h1>
         <p class="main-subtitle">Conectando los mejores tutores con estudiantes de todos los ambitos.</p>
-        <a href="#" class="btn btn-inicio">Empezar<i class="fas fa-chevron-right"></i></a>
+        <a th:href="@{/login}" class="btn btn-inicio">Empezar<i class="fas fa-chevron-right"></i></a>
       </div>
-    </div>
-  </div>
 
-
-
-  <div class="contenedor-grid d-none d-lg-grid">
-    <div class="item-grid">  <img th:src="@{/resources/core/img/imagenMenu1.jpg}" alt="imagen-1">
-    </div>
-    <div class="item-grid">
-      <img src="/resources/core/img/imagenMenu2.jpg" alt="imagen-2">
-    </div>
-    <div class="item-grid">
-      <img src="/resources/core/img/imagenMenu3.jpg" alt="imagen-3">
-    </div>
-    <div class="item-grid">
-      <img src="/resources/core/img/imagenMenu4.jpg" alt="imagen-4">
+      <div class="col-lg-5">
+        <div class="contenedor-grid d-none d-lg-grid">
+          <div class="item-grid">
+            <img th:src="@{/img/imagenMenu1.jpg}" alt="imagen-1">
+          </div>
+          <div class="item-grid">
+            <img th:src="@{/img/imagenMenu2.jpg}" alt="imagen-2">
+          </div>
+          <div class="item-grid">
+            <img th:src="@{/img/imagenMenu3.jpg}" alt="imagen-3">
+          </div>
+          <div class="item-grid">
+            <img th:src="@{/img/imagenMenu4.jpg}" alt="imagen-4">
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
