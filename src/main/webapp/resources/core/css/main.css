@@ -256,6 +256,134 @@ body {
     transition: transform 0.3s ease;
 }
 
+/*usuario logeado
+
+*/
+.main-section.logged-in {
+    background-color: #fff;
+    color: #333;
+    padding: 3rem 0;
+}
+
+/* Encabezado de bienvenida */
+.header-inicio {
+    margin-bottom: 2rem;
+    border-left: 4px solid #0098c7;
+    padding-left: 1rem;
+}
+
+.header-inicio h2 {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.header-inicio h2 span {
+    color: #0098c7;
+}
+
+.header-inicio p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.dashboard-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card .card-title {
+    color: #0098c7;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-item {
+    padding: 0.6rem;
+    margin-bottom: 0.8rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.dashboard-item:hover {
+    background-color: #eaf6fa;
+}
+
+
+.profesores-section {
+    margin-top: 3rem;
+    color: white;
+}
+
+.profesores-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.profesores-header h4 {
+    color: #0098c7;
+    font-weight: 600;
+}
+
+.btn-ver-todos {
+    color: #0098c7;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.btn-ver-todos:hover {
+    text-decoration: underline;
+}
+
+
+.profesor-card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.profesor-card:hover {
+    transform: translateY(-4px);
+}
+
+.profesor-avatar {
+    background-color: #0098c7;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.rating {
+    margin: 0.5rem 0;
+}
+
+.badge-tema {
+    display: inline-block;
+    background-color: #0098c7;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin: 0.2rem;
+}
+
 @media (max-width: 992px) {
     .main-title {
         font-size: 2.5rem;
