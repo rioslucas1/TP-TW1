@@ -388,4 +388,12 @@ body {
     .main-title {
         font-size: 2.5rem;
     }
+
+    /*BUSQUEDA DE VER TUTORES*/
+    .search-section {
+        background-color: #0098c7;
+        color: white;
+        padding: 10px;
+    }
+
 }

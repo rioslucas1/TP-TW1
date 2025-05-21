@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="fontAwesome/css/fontawesome.css">
+    <link href="fontAwesome/css/brands.css" rel="stylesheet">
+    <link href="fontAwesome/css/solid.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <title>Ver tutores</title>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Nuestros tutores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Convertirse un tutor</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex">
+                    <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
+                    <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
+                </div>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/verTutores}" >Ver tutores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Mi perfil</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center">
+                    <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
+                    <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+<!-- Main -->
+<main class="container">
+    <!-- Sección Superior -->
+    <section class="search-section container-fluid mx-0 p-4">
+        <div class="row">
+            <div class="col dropdown">
+                <select id="categoria" class="form-control rounded-0">
+                    <option value="todos">Categoría</option>
+                    <option value="todos">Todos</option>
+                    <option value="informatica">Informática</option>
+                    <option value="idiomas">Idiomas</option>
+                    <option value="espiritual">Espiritual</option>
+                    <option value="negocios">Negocios</option>
+                </select>
+            </div>
+
+            <div class="col dropdown">
+                <select id="modalidad" class="form-control rounded-0">
+                    <option value="todos">Modalidad</option>
+                    <option value="todos">Todos</option>
+                    <option value="virtual">Virtual</option>
+                    <option value="san-justo">Presencial - San Justo</option>
+                    <option value="congreso">Presencial - Congreso</option>
+                </select>
+            </div>
+
+            <div class="col dropdown">
+                <select id="Duracion" class="form-control rounded-0">
+                    <option value="todos">Duración</option>
+                    <option value="todos">Todos</option>
+                    <option value="3-meses">Hasta 3 Meses</option>
+                    <option value="6-mese">Hasta 6 meses</option>
+                    <option value="1-año">Hasta 1 año</option>
+                </select>
+            </div>
+
+            <div class="col-md-8">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text border-0 bg-white"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control rounded-0 border-0 pl-0" placeholder="Buscar...">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Título y Cursos Disponibles -->
+    <section class="available-courses">
+        <h2 class="my-4 text-center">TUTORES DISPONIBLES</h2>
+
+        <!-- Tutor 1 -->
+        <div class="course mx-3 my-5 px-3 py-5 border-top border-bottom border-grey">
+            <div class="row mx-n1">
+                <div class="col-md-3">
+                    <a href="./Detalle-Tutor.html"><img src="imagenes/profesor_python.jpg" alt="Tutor 1" class="course-image"> </a>
+                </div>
+                <div class="col-md-7">
+                    <div class="course-details">
+                        <a href="./Detalle-Tutor.html" class="titulo-curso"><h3 class="mb-4">Juan Pérez</h3></a>
+                        <h5 class="mb-4">Especialista en programación Python con más de 7 años de experiencia. Combina teoría sólida con proyectos reales en áreas como análisis de datos e inteligencia artificial.</h5>
+                        <h5><b>Especialidades:</b> Python, SQL, Machine Learning</h5>
+                        <h5><b>Modalidad:</b> Virtual y presencial</h5>
+                        <h3><b>$2.500 por clase</b></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutor 2 -->
+        <div class="course mx-3 my-5 px-3 py-5 border-top border-bottom border-grey">
+            <div class="row mx-n1">
+                <div class="col-md-3">
+                    <img src="imagenes/profesor_ingles.jpg" alt="Tutor 2" class="course-image">
+                </div>
+                <div class="col-md-7">
+                    <div class="course-details">
+                        <h3 class="mb-4">Laura Martínez</h3>
+                        <h5 class="mb-4">Profesora de inglés con enfoque comunicativo. Experiencia en preparación para exámenes internacionales y clases personalizadas para todos los niveles.</h5>
+                        <h5><b>Especialidades:</b> Inglés general, conversación, exámenes Cambridge</h5>
+                        <h5><b>Modalidad:</b> Solo virtual</h5>
+                        <h3><b>$2.000 por clase</b></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutor 3 -->
+        <div class="course mx-3 my-5 px-3 py-5 border-top border-bottom border-grey">
+            <div class="row mx-n1">
+                <div class="col-md-3">
+                    <img src="imagenes/profesor_excel.jpg" alt="Tutor 3" class="course-image">
+                </div>
+                <div class="col-md-7">
+                    <div class="course-details">
+                        <h3 class="mb-4">Carlos Fernández</h3>
+                        <h5 class="mb-4">Capacitado en herramientas ofimáticas, con más de 5 años enseñando Excel a profesionales y estudiantes. Clases prácticas enfocadas en mejorar la productividad laboral.</h5>
+                        <h5><b>Especialidades:</b> Excel básico, intermedio y avanzado</h5>
+                        <h5><b>Modalidad:</b> Presencial</h5>
+                        <h3><b>$1.500 por clase</b></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
