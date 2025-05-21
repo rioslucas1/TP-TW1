@@ -173,6 +173,10 @@ public class ControladorLogin {
         request.getSession().invalidate();
         return new ModelAndView("redirect:/home");
     }
+    @RequestMapping("/verPerfil")
+    public String verPerfil() {
+        return "verPerfil";
+    }
 
     private String validarEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
