@@ -85,9 +85,9 @@ public class ControladorLogin {
         return new ModelAndView("redirect:/login");
     }
 
-    @RequestMapping("/verTutores")
-    public String verTutores() {
-        return "verTutores";
+    @RequestMapping("/verPerfil")
+    public String verPerfil() {
+        return "verPerfil";
     }
 }
 

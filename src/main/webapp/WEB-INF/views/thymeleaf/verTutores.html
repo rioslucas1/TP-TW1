@@ -121,11 +121,12 @@
         <div class="course mx-3 my-5 px-3 py-5 border-top border-bottom border-grey">
             <div class="row mx-n1">
                 <div class="col-md-3">
-                    <a href="./Detalle-Tutor.html"><img src="imagenes/profesor_python.jpg" alt="Tutor 1" class="course-image"> </a>
+                    <a th:href="@{detallesTutores}"><img th:src="@{img/iconoUsuario.png}" alt="Tutor 1" class="course-image"> </a>
+
                 </div>
                 <div class="col-md-7">
                     <div class="course-details">
-                        <a href="./Detalle-Tutor.html" class="titulo-curso"><h3 class="mb-4">Juan Pérez</h3></a>
+                        <a th:href="@{detallesTutores}" class="titulo-curso"><h3 class="mb-4">Juan Pérez</h3></a>
                         <h5 class="mb-4">Especialista en programación Python con más de 7 años de experiencia. Combina teoría sólida con proyectos reales en áreas como análisis de datos e inteligencia artificial.</h5>
                         <h5><b>Especialidades:</b> Python, SQL, Machine Learning</h5>
                         <h5><b>Modalidad:</b> Virtual y presencial</h5>
@@ -139,7 +140,7 @@
         <div class="course mx-3 my-5 px-3 py-5 border-top border-bottom border-grey">
             <div class="row mx-n1">
                 <div class="col-md-3">
-                    <img src="imagenes/profesor_ingles.jpg" alt="Tutor 2" class="course-image">
+                    <img th:src="@{img/iconoUsuario.png}" alt="Tutor 1" class="course-image">
                 </div>
                 <div class="col-md-7">
                     <div class="course-details">
@@ -157,7 +158,7 @@
         <div class="course mx-3 my-5 px-3 py-5 border-top border-bottom border-grey">
             <div class="row mx-n1">
                 <div class="col-md-3">
-                    <img src="imagenes/profesor_excel.jpg" alt="Tutor 3" class="course-image">
+                    <img th:src="@{img/iconoUsuario.png}" alt="Tutor 1" class="course-image">
                 </div>
                 <div class="col-md-7">
                     <div class="course-details">
