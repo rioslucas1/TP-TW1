@@ -9,14 +9,12 @@ import java.util.List;
 
 @Service("servicioMapa")
 @Transactional
-
-public class ServicioMapaImpl implements ServicioMapa{
+public class ServicioMapaImpl implements ServicioMapa {
  @Autowired
  private RepositorioProfesor repositorioProfesor;
 
  @Override
- public List<String> obtenerProfesores() {
-  List<String> profesores = this.repositorioProfesor.obtenerTodos();
- return profesores;
+ public List<Profesor> obtenerProfesores() {
+  return repositorioProfesor.obtenerTodos();
  }
 }

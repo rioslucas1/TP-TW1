@@ -1,21 +1,21 @@
 package com.tallerwebi.infraestructura;
 
+import com.tallerwebi.dominio.Profesor;
 import com.tallerwebi.dominio.RepositorioProfesor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
 public class RepositorioProfesorImpl implements RepositorioProfesor {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
-    public List<String> obtenerTodos() {
-        List<String> profesores = new ArrayList<String>();
-        String string1 = "profesro1";
-        String string2 = "profesor2";
-        profesores.add(string1);
-        profesores.add(string2);
-        return profesores;
+    public List<Profesor> obtenerTodos() {
+        return entityManager.createQuery("FROM Profesor", Profesor.class).getResultList();
     }
 }
