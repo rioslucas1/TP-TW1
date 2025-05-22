@@ -1,8 +1,5 @@
 package com.tallerwebi.dominio;
-
-import com.tallerwebi.dominio.RepositorioUsuario;
-import com.tallerwebi.dominio.ServicioLogin;
-import com.tallerwebi.dominio.Usuario;
+import java.util.List;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +29,11 @@ public class ServicioLoginImpl implements ServicioLogin {
             throw new UsuarioExistente();
         }
         repositorioUsuario.guardar(usuario);
+    }
+
+    @Override
+    public List<Usuario> obtenerProfesores() {
+        return repositorioUsuario.buscarPorRol("profesor");
     }
 
 }

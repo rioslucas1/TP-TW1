@@ -46,16 +46,16 @@ public class VistaLoginE2E {
     @Test
     void deberiaDecirUNLAMEnElNavbar() {
         String texto = vistaLogin.obtenerTextoDeLaBarraDeNavegacion();
-        assertThat("UNLAM", equalToIgnoringCase(texto));
+        assertThat("ClasesYa", equalToIgnoringCase(texto));
     }
 
     @Test
     void deberiaDarUnErrorAlNoCompletarElLoginYTocarElBoton() {
-        vistaLogin.escribirEMAIL("damian@unlam.edu.ar");
+        vistaLogin.escribirEMAIL("profetest@unlam.edu.ar");
         vistaLogin.escribirClave("unlam");
         vistaLogin.darClickEnIniciarSesion();
         String texto = vistaLogin.obtenerMensajeDeError();
-        assertThat("Error Usuario o clave incorrecta", equalToIgnoringCase(texto));
+        assertThat("Usuario o clave incorrecta", equalToIgnoringCase(texto));
     }
 
     @Test
