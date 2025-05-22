@@ -14,8 +14,12 @@ import java.util.stream.Collectors;
 @Controller
 public class ControladorMapa {
 
-    @Autowired
     private ServicioMapa servicioMapa;
+
+    @Autowired
+    public ControladorMapa(ServicioMapa servicioMapa) {
+        this.servicioMapa = servicioMapa;
+    }
 
     @RequestMapping("/mapa")
     public ModelAndView irVerMapa() {
