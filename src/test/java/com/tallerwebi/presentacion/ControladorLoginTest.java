@@ -71,36 +71,41 @@ public class ControladorLoginTest {
 	@Test
 	public void registrameSiUsuarioNoExisteDeberiaCrearUsuarioYVolverAlLogin() throws UsuarioExistente {
 
-		// ejecucion
-		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock);
+		when(usuarioMock.getNombre()).thenReturn("Damian");
+		when(usuarioMock.getEmail()).thenReturn("dami@unlam.com");
+		when(usuarioMock.getPassword()).thenReturn("123456");
 
-		// validacion
+
+		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
 		verify(servicioLoginMock, times(1)).registrar(usuarioMock);
 	}
 
+
 	@Test
 	public void registrarmeSiUsuarioExisteDeberiaVolverAFormularioYMostrarError() throws UsuarioExistente {
-		// preparacion
+		when(usuarioMock.getNombre()).thenReturn("Damian");
+		when(usuarioMock.getEmail()).thenReturn("dami@unlam.com");
+		when(usuarioMock.getPassword()).thenReturn("123456");
+
 		doThrow(UsuarioExistente.class).when(servicioLoginMock).registrar(usuarioMock);
 
-		// ejecucion
 		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock);
 
-		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El usuario ya existe"));
 	}
 
 	@Test
 	public void errorEnRegistrarmeDeberiaVolverAFormularioYMostrarError() throws UsuarioExistente {
-		// preparacion
+		when(usuarioMock.getNombre()).thenReturn("Damian");
+		when(usuarioMock.getEmail()).thenReturn("dami@unlam.com");
+		when(usuarioMock.getPassword()).thenReturn("123456");
+
 		doThrow(RuntimeException.class).when(servicioLoginMock).registrar(usuarioMock);
 
-		// ejecucion
 		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock);
 
-		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Error al registrar el nuevo usuario"));
 	}

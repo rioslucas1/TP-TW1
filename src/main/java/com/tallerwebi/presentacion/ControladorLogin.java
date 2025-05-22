@@ -38,7 +38,6 @@ public class ControladorLogin {
     @RequestMapping(path = "/validar-login", method = RequestMethod.POST)
     public ModelAndView validarLogin(@ModelAttribute("datosLogin") DatosLogin datosLogin, HttpServletRequest request) {
         ModelMap model = new ModelMap();
-
         String errorEmail = validarEmail(datosLogin.getEmail());
         if (errorEmail != null) {
             model.put("error", errorEmail);
@@ -51,16 +50,16 @@ public class ControladorLogin {
             return new ModelAndView("login", model);
         }
 
-
         Usuario usuarioBuscado = servicioLogin.consultarUsuario(datosLogin.getEmail(), datosLogin.getPassword());
+
         if (usuarioBuscado != null) {
             request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
             request.getSession().setAttribute("USUARIO", usuarioBuscado);
             return new ModelAndView("redirect:/home");
         } else {
             model.put("error", "Usuario o clave incorrecta");
+            return new ModelAndView("login", model);
         }
-        return new ModelAndView("login", model);
     }
 
     @RequestMapping(path = "/registrarme", method = RequestMethod.POST)
