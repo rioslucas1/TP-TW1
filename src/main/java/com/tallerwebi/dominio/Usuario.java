@@ -1,5 +1,5 @@
 package com.tallerwebi.dominio;
-
+import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,6 +17,12 @@ public class Usuario {
     private String password;
     private String rol;
     private Boolean activo = false;
+
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tema_id")
+    private Tema tema;
 
     public Long getId() {
         return id;
@@ -57,5 +63,12 @@ public class Usuario {
     }
     public void activar() {
         activo = true;
+    }
+    public Tema getTema() {
+        return tema;
+    }
+
+    public void setTema(Tema tema) {
+        this.tema = tema;
     }
 }
