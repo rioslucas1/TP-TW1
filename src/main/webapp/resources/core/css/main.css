@@ -35,7 +35,10 @@ body {
     padding: 5px 20px;
 }
 
-.btn-iniciosesion {
+
+
+.btn-inicio {
+
     background-color: white;
     color: #0098c7;
     border: 1px solid #0098c7;
@@ -375,18 +378,23 @@ body {
     margin: 0.2rem;
 }
 
-@media (max-width: 992px) {
-    .main-title {
-        font-size: 2.5rem;
-    }
+/*BUSQUEDA DE VER TUTORES*/
+.search-section {
+    background-color: #0098c7;
+    color: white;
+    padding: 10px;
 }
 
-@media (max-width: 576px) {
-    .navbar {
-        padding: 0.5rem 1rem;
-    }
+.course-image {
+    width: 14em;
+    height: 11.75em;
+    object-fit: cover;
+}
 
-    .navbar-brand {
+<<<<<<< HEAD
+=======
+
+.navbar-brand {
         font-size: 1.2rem;
     }
 
@@ -395,7 +403,28 @@ body {
         font-size: 0.8rem;
         padding: 4px 10px;
     }
+
+
+>>>>>>> 5e802eea187ad1df69378233fa1fe5582aef273c
+@media (max-width: 992px) {
+    .main-title {
+        font-size: 2.5rem;
+    }
+<<<<<<< HEAD
+
+
+
+=======
 }
+
+
+@media (max-width: 576px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+
+}
+    
 
 @media (min-width: 1400px) {
     .loginbox {
@@ -425,4 +454,5 @@ body {
         height: 70px;
         margin: -50px auto 15px;
     }
+>>>>>>> 5e802eea187ad1df69378233fa1fe5582aef273c
 }

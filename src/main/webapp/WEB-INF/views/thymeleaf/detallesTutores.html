@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="fontAwesome/css/fontawesome.css">
+    <link href="fontAwesome/css/brands.css" rel="stylesheet">
+    <link href="fontAwesome/css/solid.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <title>Ver tutores</title>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Nuestros tutores</a>
+                    </li>
+                    <li class="nav-item">
+
+                        <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
+
+                    </li>
+                </ul>
+
+                <div class="d-flex">
+                    <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
+                    <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
+                </div>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/verTutores}" >Ver tutores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Mi perfil</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center">
+                    <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
+                    <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Contenido del Detalle del Profesor -->
+<main class="container" style="min-height: 84vh;">
+
+    <!-- Info del Profesor -->
+    <div class="row p-3 mt-4">
+        <div class="col-md-4">
+            <img th:src="@{img/iconoUsuario.png}" alt="Profesor Miguel Ocampo" class="img-fluid rounded">
+        </div>
+        <div class="col-md-8">
+            <h2>Miguel Ocampo</h2>
+            <p class="mb-4">Especialista en programación con más de 10 años de experiencia en tecnologías como Python, JavaScript y desarrollo web. Ha dictado cursos en modalidad virtual y presencial en la UNLaM y otras instituciones reconocidas.</p>
+            <p class="mb-2"><i class="fa-solid fa-envelope"></i> <strong>Email:</strong> miguel.ocampo@unlam.edu.ar</p>
+            <p class="mb-2"><i class="fa-solid fa-graduation-cap"></i> <strong>Títulos:</strong> Licenciado en Sistemas, Especialista en Educación Virtual</p>
+            <p class="mb-2"><i class="fa-solid fa-book-open-reader"></i> <strong>Cursos que dicta:</strong> Introducción a Python, Desarrollo Web, Programación Orientada a Objetos</p>
+            <p class="mb-4"><i class="fa-solid fa-location-dot"></i> <strong>Modalidad:</strong> Virtual y Presencial (San Justo)</p>
+            <a href="Busqueda.html" class="btn btn-primary">Ver Cursos del Profesor</a>
+        </div>
+    </div>
+
+
+    <div class="recursos-container mt-5">
+        <h3>Recursos y Publicaciones</h3>
+        <ul class="recursos-list">
+            <li class="recursos-item">
+                <strong>Artículo destacado:</strong>
+                <a href="#" class="recursos-link" target="_blank">"Nuevas metodologías para enseñar programación"</a>
+            </li>
+            <li class="recursos-item">
+                <strong>Web personal:</strong>
+                <a href="#" class="recursos-link" target="_blank">miguelocampo.dev</a>
+            </li>
+            <li class="recursos-item">
+                <strong>LinkedIn:</strong>
+                <a href="#" class="recursos-link" target="_blank">linkedin.com/in/miguelocampo</a>
+            </li>
+        </ul>
+    </div>
+
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="js/home.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

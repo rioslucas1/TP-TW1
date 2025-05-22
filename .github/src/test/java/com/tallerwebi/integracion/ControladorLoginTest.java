@@ -41,7 +41,7 @@ public class ControladorLoginTest {
 	@BeforeEach
 	public void init(){
 		usuarioMock = mock(Usuario.class);
-		when(usuarioMock.getEmail()).thenReturn("test@unlam.com");
+		when(usuarioMock.getEmail()).thenReturn("dami@unlam.com");
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 

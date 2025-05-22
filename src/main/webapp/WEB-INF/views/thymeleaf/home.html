@@ -36,9 +36,13 @@
         <li class="nav-item">
           <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
+        </li>
       </ul>
 
       <div class="d-flex">
+
         <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
         <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
       </div>
@@ -50,151 +54,154 @@
           <a class="nav-link" th:href="@{/home}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Ver tutores</a>
+          <a class="nav-link" th:href="@{/verTutores}" >Ver tutores</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Mi perfil</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
+        </li>
       </ul>
 
-    <div class="d-flex align-items-center">
-      <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
-      <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
-    </div>
+      <div class="d-flex align-items-center">
+        <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
+        <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+      </div>
 
     </div>
   </div>
 </nav>
 
 
-  <section class="main-section" th:if="${nombreUsuario} == null">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-7 main-contenedor">
-          <h1 class="main-title">Bienvenido a<br>Clases-Ya</h1>
-          <p class="main-subtitle">Conectando los mejores tutores con estudiantes de todos los ambitos.</p>
-          <a th:href="@{/login}" class="btn btn-inicio">Empezar<i class="fas fa-chevron-right"></i></a>
-        </div>
+<section class="main-section" th:if="${nombreUsuario} == null">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-7 main-contenedor">
+        <h1 class="main-title">Bienvenido a<br>Clases-Ya</h1>
+        <p class="main-subtitle">Conectando los mejores tutores con estudiantes de todos los ambitos.</p>
+        <a th:href="@{/login}" class="btn btn-inicio">Empezar<i class="fas fa-chevron-right"></i></a>
+      </div>
 
-        <div class="col-lg-5">
-          <div class="contenedor-grid d-none d-lg-grid">
-            <div class="item-grid">
-              <img th:src="@{/img/imagenMenu1.jpg}" alt="imagen-1">
-            </div>
-            <div class="item-grid">
-              <img th:src="@{/img/imagenMenu2.jpg}" alt="imagen-2">
-            </div>
-            <div class="item-grid">
-              <img th:src="@{/img/imagenMenu3.jpg}" alt="imagen-3">
-            </div>
-            <div class="item-grid">
-              <img th:src="@{/img/imagenMenu4.jpg}" alt="imagen-4">
-            </div>
+      <div class="col-lg-5">
+        <div class="contenedor-grid d-none d-lg-grid">
+          <div class="item-grid">
+            <img th:src="@{/img/imagenMenu1.jpg}" alt="imagen-1">
+          </div>
+          <div class="item-grid">
+            <img th:src="@{/img/imagenMenu2.jpg}" alt="imagen-2">
+          </div>
+          <div class="item-grid">
+            <img th:src="@{/img/imagenMenu3.jpg}" alt="imagen-3">
+          </div>
+          <div class="item-grid">
+            <img th:src="@{/img/imagenMenu4.jpg}" alt="imagen-4">
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="main-section logged-in" th:if="${nombreUsuario} != null">
-    <div class="container">
-      <div class="header-inicio">
-        <h2>Bienvenido, <span class="text-white" th:text="${nombreUsuario}">Estudiante</span></h2>
-        <p class="text-white">Gestiona tus clases y encuentra nuevos profesores.</p>
+<section class="main-section logged-in" th:if="${nombreUsuario} != null">
+  <div class="container">
+    <div class="header-inicio">
+      <h2>Bienvenido, <span class="text-white" th:text="${nombreUsuario}">Estudiante</span></h2>
+      <p class="text-white">Gestiona tus clases y encuentra nuevos profesores.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 dashboard-card">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-calendar3"></i> Próximas Clases</h5>
+            <div class="dashboard-item">
+              <div><strong>Programación</strong></div>
+              <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 1</small>
+              <small class="d-block"><i class="bi bi-clock"></i> Hoy, 15:00 - 16:30</small>
+            </div>
+            <div class="dashboard-item">
+              <div><strong>Diseño de Interfaces</strong></div>
+              <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 2</small>
+              <small class="d-block"><i class="bi bi-clock"></i> Mañana, 10:00 - 11:30</small>
+            </div>
+            <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 dashboard-card">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-file-earmark-text"></i> Material de Estudio</h5>
+            <div class="dashboard-item">
+              <div><strong>Ejercicios de Programación</strong></div>
+              <small class="d-block"><i class="bi bi-file-pdf"></i> PDF - Hace 2 días</small>
+              <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 1</small>
+            </div>
+            <div class="dashboard-item">
+              <div><strong>Apuntes de Diseño</strong></div>
+              <small class="d-block"><i class="bi bi-file-word"></i> DOCX - Hace 5 días</small>
+              <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 2</small>
+            </div>
+            <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todos los materiales</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 dashboard-card">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-chat-dots"></i> Mensajes Recientes</h5>
+            <div class="dashboard-item">
+              <div><strong>Prof. Prueba 1</strong></div>
+              <small class="d-block">Mensaje de prueba 1</small>
+              <small class="d-block text-muted"><i class="bi bi-clock"></i> Hace 3 horas</small>
+            </div>
+            <div class="dashboard-item">
+              <div><strong>Prof. Prueba 2</strong></div>
+              <small class="d-block">Mensaje de prueba 2...</small>
+              <small class="d-block text-muted"><i class="bi bi-clock"></i> Ayer</small>
+            </div>
+            <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todos los mensajes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profesores-section">
+      <div class="profesores-header">
+        <h4><i class="bi bi-search-text-white"></i> Encontrar Profesores</h4>
+        <a href="#" class="btn-ver-todos">Ver todos <i class="bi bi-arrow-right"></i></a>
       </div>
 
       <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-calendar3"></i> Próximas Clases</h5>
-              <div class="dashboard-item">
-                <div><strong>Programación</strong></div>
-                <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 1</small>
-                <small class="d-block"><i class="bi bi-clock"></i> Hoy, 15:00 - 16:30</small>
-              </div>
-              <div class="dashboard-item">
-                <div><strong>Diseño de Interfaces</strong></div>
-                <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 2</small>
-                <small class="d-block"><i class="bi bi-clock"></i> Mañana, 10:00 - 11:30</small>
-              </div>
-              <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
+        <div class="col-md-3" th:each="profesor : ${listaProfesores}">
+          <div class="card text-center p-3 h-100 profesor-card">
+            <div class="profesor-avatar rounded-circle mx-auto">
+              <i class="bi bi-person"></i>
             </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-file-earmark-text"></i> Material de Estudio</h5>
-              <div class="dashboard-item">
-                <div><strong>Ejercicios de Programación</strong></div>
-                <small class="d-block"><i class="bi bi-file-pdf"></i> PDF - Hace 2 días</small>
-                <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 1</small>
-              </div>
-              <div class="dashboard-item">
-                <div><strong>Apuntes de Diseño</strong></div>
-                <small class="d-block"><i class="bi bi-file-word"></i> DOCX - Hace 5 días</small>
-                <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 2</small>
-              </div>
-              <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todos los materiales</a>
+            <h6 th:text="${profesor.nombre}">Profesor 1</h6>
+            <div class="rating">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star"></i>
             </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-chat-dots"></i> Mensajes Recientes</h5>
-              <div class="dashboard-item">
-                <div><strong>Prof. Prueba 1</strong></div>
-                <small class="d-block">Mensaje de prueba 1</small>
-                <small class="d-block text-muted"><i class="bi bi-clock"></i> Hace 3 horas</small>
-              </div>
-              <div class="dashboard-item">
-                <div><strong>Prof. Prueba 2</strong></div>
-                <small class="d-block">Mensaje de prueba 2...</small>
-                <small class="d-block text-muted"><i class="bi bi-clock"></i> Ayer</small>
-              </div>
-              <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todos los mensajes</a>
+            <div>
+              <span class="badge-tema" th:if="${profesor.tema != null}" th:text="${profesor.tema.nombre}">Tema</span>
+              <span class="badge-tema" th:if="${profesor.tema == null}">Sin tema asignado</span>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="profesores-section">
-        <div class="profesores-header">
-          <h4><i class="bi bi-search-text-white"></i> Encontrar Profesores</h4>
-          <a href="#" class="btn-ver-todos">Ver todos <i class="bi bi-arrow-right"></i></a>
-        </div>
-
-        <div class="row g-4">
-          <div class="col-md-3" th:each="profesor : ${listaProfesores}">
-            <div class="card text-center p-3 h-100 profesor-card">
-              <div class="profesor-avatar rounded-circle mx-auto">
-                <i class="bi bi-person"></i>
-              </div>
-              <h6 th:text="${profesor.nombre}">Profesor 1</h6>
-              <div class="rating">
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star"></i>
-              </div>
-              <div>
-                <span class="badge-tema" th:if="${profesor.tema != null}" th:text="${profesor.tema.nombre}">Tema</span>
-                <span class="badge-tema" th:if="${profesor.tema == null}">Sin tema asignado</span>
-              </div>
 
 
 
-            </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 </main>
 <!-- /.container -->
 

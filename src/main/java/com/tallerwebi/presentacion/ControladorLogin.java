@@ -114,7 +114,7 @@ public class ControladorLogin {
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public ModelAndView inicio() {
-        return new ModelAndView("redirect:/home");
+        return new ModelAndView("redirect:/login");
     }
 
 
@@ -171,6 +171,10 @@ public class ControladorLogin {
     public ModelAndView cerrarSesion(HttpServletRequest request) {
         request.getSession().invalidate();
         return new ModelAndView("redirect:/home");
+    }
+    @RequestMapping("/verPerfil")
+    public String verPerfil() {
+        return "verPerfil";
     }
 
     private String validarEmail(String email) {

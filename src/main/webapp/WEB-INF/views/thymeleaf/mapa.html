@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mapa de Profesores</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+    <link rel="stylesheet" th:href="@{/css/profesores.css}"/>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Ubicación de Profesores</h1>
+        <p>Sistema de localización de profesores por materia</p>
+    </header>
+
+    <div class="profesores-cards" th:if="${not #lists.isEmpty(datosProfesores)}">
+        <div class="profesor-card" th:each="profesor : ${datosProfesores}">
+            <div class="profesor-nombre" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre Profesor</div>
+            <div class="profesor-info">
+                <span>Materia:</span> <span th:text="${profesor.materia}">Materia</span>
+            </div>
+            <div class="profesor-info">
+                <span>Ubicación:</span>
+                <span th:text="${#numbers.formatDecimal(profesor.latitud, 1, 6) + ', ' + #numbers.formatDecimal(profesor.longitud, 1, 6)}">
+                        Coordenadas
+                    </span>
+            </div>
+            <button class="btn-ver-mapa" th:onclick="'centrarMapa(' + ${profesor.latitud} + ',' + ${profesor.longitud} + ')'">
+                Ver en mapa
+            </button>
+        </div>
+    </div>
+
+    <div class="no-profesores" th:if="${#lists.isEmpty(datosProfesores)}">
+        <p>No se han encontrado profesores en el sistema.</p>
+    </div>
+
+    <!-- Contenedor del mapa -->
+    <div class="map-container">
+        <h2 class="map-title">Mapa de Ubicaciones</h2>
+        <div id="map"></div>
+    </div>
+
+    <footer>
+        &copy; 2025 Sistema de Localización de Profesores
+    </footer>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Obtener datos de profesores desde el backend
+    const profesores = [[${datosProfesores}]];
+    console.log("Profesores recibidos del backend:", profesores);
+
+    // Inicializar el mapa
+    const map = L.map('map').setView([-34.6037, -58.3816], 12);
+    let markers = [];
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Esta funcion es para traer al profe al mapa, se puede modificar para que sea fijo
+    function centrarMapa(lat, lng) {
+        map.setView([lat, lng], 15);
+        // Resaltar el marcador correspondiente
+        markers.forEach(marker => {
+            const markerLatLng = marker.getLatLng();
+            if (markerLatLng.lat === lat && markerLatLng.lng === lng) {
+                marker.openPopup();
+            }
+        });
+    }
+
+    // Agrego los marcadores para los profesores, leo el array y los agrego
+    if (profesores && profesores.length > 0) {
+
+        let sumLat = 0;
+        let sumLng = 0;
+
+        profesores.forEach(function(profesor) {
+            console.log(`Marcador: ${profesor.nombre} en [${profesor.latitud}, ${profesor.longitud}]`);
+            const customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="background-color: #FF8C00; width: 12px; height: 12px; border-radius: 50%; border: 3px solid #87CEEB;"></div>`,
+                iconSize: [18, 18],
+                iconAnchor: [9, 9]
+            });
+
+            const marker = L.marker([profesor.latitud, profesor.longitud], { icon: customIcon })
+                .addTo(map)
+                .bindPopup(`
+                        <div style="text-align: center;">
+                            <strong style="color: #FF8C00;">${profesor.nombre} ${profesor.apellido}</strong>
+                            <br>
+                            <span style="color: #5CACEE;">${profesor.materia}</span>
+                        </div>
+                    `);
+
+            markers.push(marker);
+
+            sumLat += profesor.latitud;
+            sumLng += profesor.longitud;
+        });
+
+        if (profesores.length > 0) {
+            const centerLat = sumLat / profesores.length;
+            const centerLng = sumLng / profesores.length;
+            map.setView([centerLat, centerLng], 12);
+        }
+    } else {
+        const messageControl = L.control({ position: 'center' });
+        messageControl.onAdd = function() {
+            const div = L.DomUtil.create('div', 'no-profesores-map');
+            div.innerHTML = '<p>No hay profesores para mostrar en el mapa</p>';
+            return div;
+        };
+        messageControl.addTo(map);
+    }
+    /*]]>*/
+</script>
+</body>
+</html>
