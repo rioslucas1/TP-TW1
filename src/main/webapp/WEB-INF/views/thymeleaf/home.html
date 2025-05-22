@@ -34,7 +34,7 @@
           <a class="nav-link" href="#">Nuestros tutores</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Convertirse un tutor</a>
+          <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
         </li>
       </ul>
 
@@ -181,12 +181,14 @@
                 <i class="bi bi-star-fill"></i>
                 <i class="bi bi-star-fill"></i>
                 <i class="bi bi-star"></i>
-                <small class="text-muted">(24)</small>
               </div>
               <div>
-                <span class="badge-tema">Programación</span>
-                <span class="badge-tema">Diseño</span>
+                <span class="badge-tema" th:if="${profesor.tema != null}" th:text="${profesor.tema.nombre}">Tema</span>
+                <span class="badge-tema" th:if="${profesor.tema == null}">Sin tema asignado</span>
               </div>
+
+
+
             </div>
           </div>
         </div>

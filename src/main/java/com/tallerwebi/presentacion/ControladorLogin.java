@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.ServicioLogin;
-import com.tallerwebi.dominio.Usuario;
+
+import com.tallerwebi.dominio.*;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +9,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +19,12 @@ public class ControladorLogin {
 
     private ServicioLogin servicioLogin;
 
+    private ServicioTema servicioTema;
+
     @Autowired
-    public ControladorLogin(ServicioLogin servicioLogin){
+    public ControladorLogin(ServicioLogin servicioLogin, ServicioTema servicioTema){
         this.servicioLogin = servicioLogin;
+        this.servicioTema = servicioTema;
     }
 
     @RequestMapping("/login")
@@ -34,6 +38,19 @@ public class ControladorLogin {
     @RequestMapping(path = "/validar-login", method = RequestMethod.POST)
     public ModelAndView validarLogin(@ModelAttribute("datosLogin") DatosLogin datosLogin, HttpServletRequest request) {
         ModelMap model = new ModelMap();
+
+        String errorEmail = validarEmail(datosLogin.getEmail());
+        if (errorEmail != null) {
+            model.put("error", errorEmail);
+            return new ModelAndView("login", model);
+        }
+
+        if (datosLogin.getEmail() == null || datosLogin.getEmail().trim().isEmpty() ||
+                datosLogin.getPassword() == null || datosLogin.getPassword().trim().isEmpty()) {
+            model.put("error", "El email y la contraseña son obligatorios");
+            return new ModelAndView("login", model);
+        }
+
 
         Usuario usuarioBuscado = servicioLogin.consultarUsuario(datosLogin.getEmail(), datosLogin.getPassword());
         if (usuarioBuscado != null) {
@@ -49,6 +66,20 @@ public class ControladorLogin {
     @RequestMapping(path = "/registrarme", method = RequestMethod.POST)
     public ModelAndView registrarme(@ModelAttribute("usuario") Usuario usuario) {
         ModelMap model = new ModelMap();
+
+        if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty() ||
+                usuario.getEmail() == null || usuario.getEmail().trim().isEmpty() ||
+                usuario.getPassword() == null || usuario.getPassword().trim().isEmpty()) {
+            model.put("error", "Todos los campos son obligatorios");
+            return new ModelAndView("nuevo-usuario", model);
+        }
+
+        String errorEmail = validarEmail(usuario.getEmail());
+        if (errorEmail != null) {
+            model.put("error", errorEmail);
+            return new ModelAndView("nuevo-usuario", model);
+        }
+
         try{
             servicioLogin.registrar(usuario);
         } catch (UsuarioExistente e){
@@ -75,6 +106,8 @@ public class ControladorLogin {
 
         if (usuario != null) {
             modelo.put("nombreUsuario", usuario.getNombre());
+
+            modelo.put("listaProfesores", servicioLogin.obtenerProfesores());
         }
 
         return new ModelAndView("home", modelo);
@@ -82,7 +115,77 @@ public class ControladorLogin {
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public ModelAndView inicio() {
+        return new ModelAndView("redirect:/home");
+    }
+
+
+    @RequestMapping("/registrarprofesor")
+    public ModelAndView mostrarFormularioProfesor() {
+        ModelMap model = new ModelMap();
+        model.put("usuario", new Usuario());
+        model.put("temas", servicioTema.obtenerTodos());
+        return new ModelAndView("registrar-profesor", model);
+    }
+
+    @RequestMapping(path = "/registrarprofesor", method = RequestMethod.POST)
+    public ModelAndView procesarRegistroProfesor(@ModelAttribute("usuario") Usuario usuario, @RequestParam("temaId") Long temaId) {
+        ModelMap model = new ModelMap();
+
+        usuario.setRol("profesor");
+        usuario.setActivo(true);
+        usuario.setTema(servicioTema.obtenerPorId(temaId));
+
+        if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty() ||
+                usuario.getEmail() == null || usuario.getEmail().trim().isEmpty() ||
+                usuario.getPassword() == null || usuario.getPassword().trim().isEmpty() ||
+                temaId == null) {
+            model.put("error", "Todos los campos son obligatorios");
+            model.put("temas", servicioTema.obtenerTodos());
+            return new ModelAndView("registrar-profesor", model);
+        }
+
+        // Validación del email
+        String errorEmail = validarEmail(usuario.getEmail());
+        if (errorEmail != null) {
+            model.put("error", errorEmail);
+            model.put("temas", servicioTema.obtenerTodos());
+            return new ModelAndView("registrar-profesor", model);
+        }
+
+        try {
+            servicioLogin.registrar(usuario);
+        } catch (UsuarioExistente e) {
+            model.put("error", "El correo ya está registrado");
+            model.put("temas", servicioTema.obtenerTodos());
+            return new ModelAndView("registrar-profesor", model);
+        } catch (Exception e) {
+            model.put("error", "Error inesperado");
+            model.put("temas", servicioTema.obtenerTodos());
+            return new ModelAndView("registrar-profesor", model);
+        }
+
         return new ModelAndView("redirect:/login");
     }
+
+
+    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+    public ModelAndView cerrarSesion(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return new ModelAndView("redirect:/home");
+    }
+
+    private String validarEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return "El email es obligatorio";
+        }
+        if (!email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            return "El formato del email es inválido";
+        }
+        return null;
+    }
+
 }
+
+
+
 
