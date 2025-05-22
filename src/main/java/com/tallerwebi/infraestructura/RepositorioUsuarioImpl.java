@@ -47,6 +47,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         sessionFactory.getCurrentSession().update(usuario);
     }
 
+
     @Override
     @SuppressWarnings("unchecked")
     public List<Usuario> buscarPorRol(String rol) {
