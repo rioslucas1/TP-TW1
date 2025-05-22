@@ -14,29 +14,99 @@
 
 </head>
 
-<body>
+<body class="login-body">
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">UNLAM</a>
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/home}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Nuestros tutores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
+                </li>
+            </ul>
+
+            <div class="d-flex">
+                <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
+                <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
+            </div>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/home}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Ver tutores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Mi perfil</a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
+                <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+            </div>
+
+        </div>
+    </div>
 </nav>
 
 <main role="main" class="container">
-
-    <div class = "container">
-        <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+    <div class="login-container">
+        <div id="loginbox" class="loginbox">
+            <div class="user-icon">
+                <img th:src="@{/img/iconoUsuario.png}" alt="iconousuario">
+            </div>
+            <h3 class="login-title">Iniciar sesión</h3>
             <form action="#" th:action="@{/validar-login}" method="POST" th:object="${datosLogin}">
-                <h3 class="form-signin-heading">Taller Web I</h3>
-                <hr class="colorgraph"><br>
+                <div class="form-contenedor mb-3">
+                    <label for="email">EMAIL</label>
+                    <div class="input-contenedor">
+                        <span class="input-contenedor-text"><i class="fas fa-envelope"></i></span>
+                        <input th:field="*{email}" id="email" type="email" class="form-control" placeholder="Correo electronico" required/>
+                    </div>
+                </div>
 
-                <input th:field="*{email}" id="email" type="email" class="form-control" required/>
-                <input th:field="*{password}" type="password" id="password" class="form-control" required/>
+                <div class="form-contenedor mb-4">
+                    <label for="password">CONTRASEÑA</label>
+                    <div class="input-contenedor">
+                        <span class="input-contenedor-text"><i class="fas fa-lock"></i></span>
+                        <input th:field="*{password}" type="password" id="password" class="form-control" placeholder="Contraseña" required/>
+                    </div>
+                </div>
 
-                <button id="btn-login" class="btn btn-lg btn-primary btn-block" Type="Submit">Login</button>
+                <div class="d-grid gap-2">
+                    <button id="btn-login" class="btn btn-login" type="submit">Iniciar sesión</button>
+                </div>
 
-                <p th:if="${error != null}" class="alert alert-danger" th:text="'Error ' + ${error}">
+                <div class="login-footer mt-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="remember-me">
+                        <label class="form-check-label" for="remember-me">Recordarme</label>
+                    </div>
+                    <a href="#" class="olvido-contrasena">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="${error}">
                 </p>
             </form>
-            <a id="ir-a-registrarme" href="nuevo-usuario">Registrarme</a>
+            <div class="registro-link mt-3">
+                <p>¿No tenes una cuenta? <a id="ir-a-registrarme" th:href="@{/nuevo-usuario}">Registrarme</a></p>
+            </div>
         </div>
     </div>
 </main>
