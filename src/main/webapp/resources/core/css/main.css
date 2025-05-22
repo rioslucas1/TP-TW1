@@ -35,7 +35,11 @@ body {
     padding: 5px 20px;
 }
 
+<<<<<<< Updated upstream
 .btn-iniciosesion {
+=======
+.btn-inicio {
+>>>>>>> Stashed changes
     background-color: white;
     color: #0098c7;
     border: 1px solid #0098c7;
