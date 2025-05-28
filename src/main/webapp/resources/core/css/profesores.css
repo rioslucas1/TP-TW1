@@ -1,0 +1,164 @@
+:root {
+    --color-primary: #FF8C00; /* Orange */
+    --color-secondary: #87CEEB; /* Light blue (celeste) */
+    --color-primary-dark: #E67E00;
+    --color-secondary-dark: #5CACEE;
+    --color-white: #FFFFFF;
+    --color-gray: #F5F5F5;
+    --color-text: #333333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-text);
+    background-color: var(--color-gray);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: var(--color-white);
+    padding: 20px 0;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.profesores-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.profesor-card {
+    background-color: var(--color-white);
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-top: 4px solid var(--color-secondary);
+    transition: transform 0.3s ease;
+}
+
+.profesor-card:hover {
+    transform: translateY(-5px);
+}
+
+.profesor-nombre {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--color-secondary);
+    padding-bottom: 5px;
+}
+
+.profesor-info {
+    margin-bottom: 5px;
+}
+
+.profesor-info span {
+    font-weight: 500;
+}
+
+.map-container {
+    background-color: var(--color-white);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 8px;
+    border: 3px solid var(--color-secondary);
+}
+
+.map-title {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--color-primary-dark);
+    font-size: 1.5rem;
+}
+
+.no-profesores {
+    text-align: center;
+    font-style: italic;
+    padding: 20px;
+    background-color: var(--color-white);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-ver-mapa {
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-ver-mapa:hover {
+    background-color: var(--color-secondary-dark);
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-radius: 0 0 10px 10px;
+}
+/* Responsive */
+@media (max-width: 768px) {
+    .profesor-card {
+        width: 100%;
+    }
+
+    #map {
+        height: 400px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+}
+
+.custom-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.leaflet-popup-content {
+    padding: 5px;
+    text-align: center;
+}

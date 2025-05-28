@@ -3,6 +3,7 @@ package com.tallerwebi.presentacion;
 import com.tallerwebi.dominio.ServicioTema;
 import com.tallerwebi.dominio.ServicioLogin;
 import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.Tema;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class ControladorLoginTest {
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Usuario o clave incorrecta"));
 		verify(sessionMock, times(0)).setAttribute("ROL", "ADMIN");
 	}
-	
+
 	@Test
 	public void loginConUsuarioYPasswordCorrectosDeberiaLLevarAHome(){
 		// preparacion
@@ -59,10 +60,10 @@ public class ControladorLoginTest {
 
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(usuarioEncontradoMock);
-		
+
 		// ejecucion
 		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
-		
+
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
 		verify(sessionMock, times(1)).setAttribute("ROL", usuarioEncontradoMock.getRol());
@@ -109,4 +110,74 @@ public class ControladorLoginTest {
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Error al registrar el nuevo usuario"));
 	}
+
+	@Test
+	public void loginConEmailVacioDeberiaMostrarError() {
+		datosLoginMock = new DatosLogin("", "123");
+
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El email es obligatorio"));
+	}
+
+	@Test
+	public void loginConExpresionesComunesInvalidasDebeDarError() {
+		datosLoginMock = new DatosLogin("correo-invalido", "123");
+
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El formato del email es inválido"));
+	}
+
+	@Test
+	public void verPerfilDeberiaDevolverVistaVerPerfil() {
+		String vista = controladorLogin.verPerfil();
+		assertThat(vista, equalToIgnoringCase("verPerfil"));
+	}
+
+	@Test
+	public void nuevoUsuarioDeberiaRetornarFormularioConModelo() {
+		ModelAndView modelAndView = controladorLogin.nuevoUsuario();
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
+		assertThat(modelAndView.getModel().get("usuario"), org.hamcrest.Matchers.notNullValue());
+	}
+
+	@Test
+	public void loginConPasswordVaciaDeberiaMostrarError() {
+		datosLoginMock = new DatosLogin("correo@valido.com", "");
+
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El email y la contraseña son obligatorios"));
+	}
+
+	@Test
+	public void cerrarSesionDeberiaInvalidarLaSesionYRedirigirAHome() {
+		when(requestMock.getSession()).thenReturn(sessionMock);
+
+		ModelAndView modelAndView = controladorLogin.cerrarSesion(requestMock);
+
+		verify(sessionMock, times(1)).invalidate();
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
