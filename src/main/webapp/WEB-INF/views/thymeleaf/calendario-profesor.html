@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Taller Web I</title>
+
+  <!-- Boostrap core css -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+  <!-- custom style -->
+  <link rel="stylesheet" th:href="@{/css/calendario.css}"/>
+  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+</head>
+
+<body class="login-body">
+
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container">
+    <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/home}">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Nuestros tutores</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
+        </li>
+      </ul>
+
+      <div class="d-flex">
+        <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
+        <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
+      </div>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/home}">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Ver tutores</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Mi perfil</a>
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center">
+        <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
+        <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+
+
+<div class="container my-5">
+  <h2 class="text-center mb-4">Disponibilidad Semanal</h2>
+  <div class="table-wrapper">
+    <table class="table calendar-table table-bordered">
+      <tbody>
+
+      <tr>
+        <td class="hour-label"></td>
+        <td class="day-header">Lunes</td>
+        <td class="day-header">Martes</td>
+        <td class="day-header">Miércoles</td>
+        <td class="day-header">Jueves</td>
+        <td class="day-header">Viernes</td>
+        <td class="day-header">Sábado</td>
+        <td class="day-header">Domingo</td>
+      </tr>
+
+      <tr>
+        <td class="hour-label">06:00</td>
+        <td><button class="time-button"></button></td>
+        <td><button class="time-button"></button></td>
+        <td><button class="time-button"></button></td>
+        <td><button class="time-button"></button></td>
+        <td><button class="time-button"></button></td>
+        <td><button class="time-button"></button></td>
+        <td><button class="time-button"></button></td>
+      </tr>
+
+      <tr><td class="hour-label">07:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">08:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">09:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">10:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">11:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">12:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">13:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">14:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">15:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">16:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">17:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">18:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">19:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">20:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">21:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">22:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+      <tr><td class="hour-label">23:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
+
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- /.container -->
+
+<!-- Boostrap core js -->
+<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+</body>
+</html>

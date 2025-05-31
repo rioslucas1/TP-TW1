@@ -1,0 +1,29 @@
+.calendar-table td {
+    border: 1px solid #dee2e6;
+    padding: 0;
+}
+
+.hour-label {
+    background-color: #f1f1f1;
+    font-weight: bold;
+    text-align: center;
+    width: 80px;
+}
+
+.day-header {
+    background-color: #0098c7;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.time-button {
+    width: 100%;
+    height: 50px;
+    border: none;
+    background-color: white;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}

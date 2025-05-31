@@ -35,6 +35,9 @@ public class ControladorLogin {
         return new ModelAndView("login", modelo);
     }
 
+
+
+
     @RequestMapping(path = "/validar-login", method = RequestMethod.POST)
     public ModelAndView validarLogin(@ModelAttribute("datosLogin") DatosLogin datosLogin, HttpServletRequest request) {
         ModelMap model = new ModelMap();
@@ -110,6 +113,14 @@ public class ControladorLogin {
         }
 
         return new ModelAndView("home", modelo);
+    }
+
+
+    @RequestMapping("/calendario-profesor")
+    public ModelAndView irACalendarioProfesor() {
+
+        ModelMap modelo = new ModelMap();
+        return new ModelAndView("calendario-profesor", modelo);
     }
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
