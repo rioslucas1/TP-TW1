@@ -38,19 +38,35 @@ public class ControladorLogin {
     @RequestMapping(path = "/validar-login", method = RequestMethod.POST)
     public ModelAndView validarLogin(@ModelAttribute("datosLogin") DatosLogin datosLogin, HttpServletRequest request) {
         ModelMap model = new ModelMap();
-        String errorEmail = validarEmail(datosLogin.getEmail());
+
+        String email = datosLogin.getEmail();
+        String password = datosLogin.getPassword();
+
+        boolean emailVacio = (email == null || email.trim().isEmpty());
+        boolean passwordVacio = (password == null || password.trim().isEmpty());
+
+        if (emailVacio && passwordVacio) {
+            model.put("error", "El email y la contraseña son obligatorios");
+            return new ModelAndView("login", model);
+        }
+
+        if (emailVacio) {
+            model.put("error", "El email es obligatorio");
+            return new ModelAndView("login", model);
+        }
+
+        if (passwordVacio) {
+            model.put("error", "La contraseña es obligatoria");
+            return new ModelAndView("login", model);
+        }
+
+        String errorEmail = validarEmail(email);
         if (errorEmail != null) {
             model.put("error", errorEmail);
             return new ModelAndView("login", model);
         }
 
-        if (datosLogin.getEmail() == null || datosLogin.getEmail().trim().isEmpty() ||
-                datosLogin.getPassword() == null || datosLogin.getPassword().trim().isEmpty()) {
-            model.put("error", "El email y la contraseña son obligatorios");
-            return new ModelAndView("login", model);
-        }
-
-        Usuario usuarioBuscado = servicioLogin.consultarUsuario(datosLogin.getEmail(), datosLogin.getPassword());
+        Usuario usuarioBuscado = servicioLogin.consultarUsuario(email, password);
 
         if (usuarioBuscado != null) {
             request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
@@ -66,6 +82,11 @@ public class ControladorLogin {
     public ModelAndView registrarme(@ModelAttribute("usuario") Usuario usuario) {
         ModelMap model = new ModelMap();
 
+        if (usuario == null) {
+            model.put("error", "Error al registrar el nuevo usuario");
+            return new ModelAndView("nuevo-usuario", model);
+        }
+
         if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty() ||
                 usuario.getEmail() == null || usuario.getEmail().trim().isEmpty() ||
                 usuario.getPassword() == null || usuario.getPassword().trim().isEmpty()) {
@@ -79,12 +100,12 @@ public class ControladorLogin {
             return new ModelAndView("nuevo-usuario", model);
         }
 
-        try{
+        try {
             servicioLogin.registrar(usuario);
-        } catch (UsuarioExistente e){
+        } catch (UsuarioExistente e) {
             model.put("error", "El usuario ya existe");
             return new ModelAndView("nuevo-usuario", model);
-        } catch (Exception e){
+        } catch (Exception e) {
             model.put("error", "Error al registrar el nuevo usuario");
             return new ModelAndView("nuevo-usuario", model);
         }
