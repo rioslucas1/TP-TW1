@@ -54,6 +54,23 @@ body {
     padding: 5rem 0;
     position: relative;
 }
+.features-section {
+    background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+    padding: 60px 0;
+}
+
+.section-title {
+    font-weight: bold;
+    color: #333;
+}
+
+.feature-card h4 {
+    font-weight: bold;
+}
+
+.review-card {
+    border-left: 5px solid #2ea9d3;
+}
 
 .main-contenedor {
     position: relative;
@@ -94,7 +111,7 @@ body {
 
 .login-body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #7367F0, #CE9FFC);
+    background: linear-gradient(135deg, #0098c7, #0098c7);
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -125,7 +142,7 @@ body {
 .user-icon {
     width: 60px;
     height: 60px;
-    background-color: #7367F0;
+    background-color: #0098c7;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -158,7 +175,7 @@ body {
     transform: translateX(-50%);
     height: 3px;
     width: 50px;
-    background-color: #7367F0;
+    background-color: #0098c7;
 }
 
 .form-contenedor label {
@@ -174,7 +191,7 @@ body {
 }
 
 .btn-login {
-    background-color: #7367F0;
+    background-color: #0098c7;
     border: none;
     padding: 0.75rem;
     font-size: 1.1rem;
@@ -183,7 +200,7 @@ body {
 }
 
 .btn-login:hover {
-    background-color: #6355e8;
+    background-color: #0098c7;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(115, 103, 240, 0.4);
 }
@@ -196,7 +213,7 @@ body {
 }
 
 .olvido-contrasena {
-    color: #7367F0;
+    color: #0098c7;
     text-decoration: none;
 }
 
@@ -211,7 +228,7 @@ body {
 }
 
 .registro-link a {
-    color: #7367F0;
+    color: #0098c7;
     text-decoration: none;
     font-weight: 500;
 }
@@ -378,6 +395,7 @@ body {
     margin: 0.2rem;
 }
 
+
 /*BUSQUEDA DE VER TUTORES*/
 .search-section {
     background-color: #0098c7;
@@ -391,8 +409,7 @@ body {
     object-fit: cover;
 }
 
-<<<<<<< HEAD
-=======
+
 
 .navbar-brand {
         font-size: 1.2rem;
@@ -405,16 +422,11 @@ body {
     }
 
 
->>>>>>> 5e802eea187ad1df69378233fa1fe5582aef273c
 @media (max-width: 992px) {
     .main-title {
         font-size: 2.5rem;
     }
-<<<<<<< HEAD
 
-
-
-=======
 }
 
 
@@ -454,5 +466,5 @@ body {
         height: 70px;
         margin: -50px auto 15px;
     }
->>>>>>> 5e802eea187ad1df69378233fa1fe5582aef273c
+
 }

@@ -200,6 +200,7 @@ public class ControladorLoginTest {
 
 	@Test
 	public void registrarmeConUsuarioNullDeberiaRetornarError() {
+
 		ModelAndView modelAndView = controladorLogin.registrarme(null);
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
