@@ -3,16 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
   <title>Taller Web I</title>
-
-  <!-- Boostrap core css -->
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-
-  <!-- custom style -->
   <link rel="stylesheet" th:href="@{/css/calendario.css}"/>
   <link rel="stylesheet" th:href="@{/css/main.css}"/>
-
 </head>
 
 <body class="login-body">
@@ -61,84 +55,122 @@
         <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
         <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
       </div>
-
     </div>
   </div>
 </nav>
 
-
-
 <div class="container my-5">
   <h2 class="text-center mb-4">Disponibilidad Semanal</h2>
+  <p class="text-center mb-4">Hace clic en los horarios donde estés disponible para dar clases</p>
+
   <div class="table-wrapper">
-    <table class="table calendar-table table-bordered">
+    <table class="table tabla-calendario table-bordered">
       <tbody>
 
       <tr>
-        <td class="hour-label"></td>
-        <td class="day-header">Lunes</td>
-        <td class="day-header">Martes</td>
-        <td class="day-header">Miércoles</td>
-        <td class="day-header">Jueves</td>
-        <td class="day-header">Viernes</td>
-        <td class="day-header">Sábado</td>
-        <td class="day-header">Domingo</td>
+        <td class="horas-calendario"></td>
+        <td class="dia-calendario">Lunes</td>
+        <td class="dia-calendario">Martes</td>
+        <td class="dia-calendario">Miércoles</td>
+        <td class="dia-calendario">Jueves</td>
+        <td class="dia-calendario">Viernes</td>
+        <td class="dia-calendario">Sábado</td>
+        <td class="dia-calendario">Domingo</td>
       </tr>
 
-      <tr>
-        <td class="hour-label">06:00</td>
-        <td><button class="time-button"></button></td>
-        <td><button class="time-button"></button></td>
-        <td><button class="time-button"></button></td>
-        <td><button class="time-button"></button></td>
-        <td><button class="time-button"></button></td>
-        <td><button class="time-button"></button></td>
-        <td><button class="time-button"></button></td>
+
+      <tr th:each="hora : ${'06:00,07:00,08:00,09:00,10:00,11:00,12:00,13:00,14:00,15:00,16:00,17:00,18:00,19:00,20:00,21:00,22:00,23:00'.split(',')}">
+        <td class="hour-label" th:text="${hora}"></td>
+
+
+        <td>
+          <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8"  style="display: inline;">
+            <input type="hidden" name="diaSemana" value="Lunes"/>
+            <input type="hidden" name="hora" th:value="${hora}"/>
+            <button type="submit"
+                    th:class="${disponibilidadesKeys.contains('Lunes-' + hora)} ? 'boton-disponible btn btn-success btn-sm' : 'boton-libre btn btn-outline-primary btn-sm'"
+                    th:text="${disponibilidadesKeys.contains('Lunes-' + hora)} ? 'Disponible' : 'Marcar'">
+            </button>
+          </form>
+        </td>
+
+
+        <td>
+          <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8"  style="display: inline;">
+            <input type="hidden" name="diaSemana" value="Martes"/>
+            <input type="hidden" name="hora" th:value="${hora}"/>
+            <button type="submit"
+                    th:class="${disponibilidadesKeys.contains('Martes-' + hora)} ? 'boton-disponible btn btn-success btn-sm' : 'boton-libre btn btn-outline-primary btn-sm'"
+                    th:text="${disponibilidadesKeys.contains('Martes-' + hora)} ? 'Disponible' : 'Marcar'">
+            </button>
+          </form>
+        </td>
+
+        <td>
+          <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
+            <input type="hidden" name="diaSemana" value="Miércoles"/>
+            <input type="hidden" name="hora" th:value="${hora}"/>
+            <button type="submit"
+                    th:class="${disponibilidadesKeys.contains('Miércoles-' + hora)} ? 'boton-disponible btn btn-success btn-sm' : 'boton-libre btn btn-outline-primary btn-sm'"
+                    th:text="${disponibilidadesKeys.contains('Miércoles-' + hora)} ? 'Disponible' : 'Marcar'">
+            </button>
+          </form>
+        </td>
+
+
+        <td>
+          <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
+            <input type="hidden" name="diaSemana" value="Jueves"/>
+            <input type="hidden" name="hora" th:value="${hora}"/>
+            <button type="submit"
+                    th:class="${disponibilidadesKeys.contains('Jueves-' + hora)} ? 'boton-disponible btn btn-success btn-sm' : 'boton-libre btn btn-outline-primary btn-sm'"
+                    th:text="${disponibilidadesKeys.contains('Jueves-' + hora)} ? 'Disponible' : 'Marcar'">
+            </button>
+          </form>
+        </td>
+
+
+        <td>
+          <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8"  style="display: inline;">
+            <input type="hidden" name="diaSemana" value="Viernes"/>
+            <input type="hidden" name="hora" th:value="${hora}"/>
+            <button type="submit"
+                    th:class="${disponibilidadesKeys.contains('Viernes-' + hora)} ? 'boton-disponible btn btn-success btn-sm' : 'boton-libre btn btn-outline-primary btn-sm'"
+                    th:text="${disponibilidadesKeys.contains('Viernes-' + hora)} ? 'Disponible' : 'Marcar'">
+            </button>
+          </form>
+        </td>
+
+
+        <td>
+          <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8"  style="display: inline;">
+            <input type="hidden" name="diaSemana" value="Sábado"/>
+            <input type="hidden" name="hora" th:value="${hora}"/>
+            <button type="submit"
+                    th:class="${disponibilidadesKeys.contains('Sábado-' + hora)} ? 'boton-disponible btn btn-success btn-sm' : 'boton-libre btn btn-outline-primary btn-sm'"
+                    th:text="${disponibilidadesKeys.contains('Sábado-' + hora)} ? 'Disponible' : 'Marcar'">
+            </button>
+          </form>
+        </td>
+
+
+        <td>
+          <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8"  style="display: inline;">
+            <input type="hidden" name="diaSemana" value="Domingo"/>
+            <input type="hidden" name="hora" th:value="${hora}"/>
+            <button type="submit"
+                    th:class="${disponibilidadesKeys.contains('Domingo-' + hora)} ? 'boton-disponible btn btn-success btn-sm' : 'boton-libre btn btn-outline-primary btn-sm'"
+                    th:text="${disponibilidadesKeys.contains('Domingo-' + hora)} ? 'Disponible' : 'Marcar'">
+            </button>
+          </form>
+        </td>
       </tr>
-
-      <tr><td class="hour-label">07:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">08:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">09:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">10:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">11:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">12:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">13:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">14:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">15:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">16:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">17:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">18:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">19:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">20:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">21:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">22:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
-      <tr><td class="hour-label">23:00</td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td><td><button class="time-button"></button></td></tr>
-
 
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- /.container -->
-
-<!-- Boostrap core js -->
 <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>

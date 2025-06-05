@@ -115,14 +115,6 @@ public class ControladorLogin {
         return new ModelAndView("home", modelo);
     }
 
-
-    @RequestMapping("/calendario-profesor")
-    public ModelAndView irACalendarioProfesor() {
-
-        ModelMap modelo = new ModelMap();
-        return new ModelAndView("calendario-profesor", modelo);
-    }
-
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public ModelAndView inicio() {
         return new ModelAndView("redirect:/login");
