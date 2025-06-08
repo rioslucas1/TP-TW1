@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion;
 
-
+import com.tallerwebi.dominio.entidades.EstadoDisponibilidad;
+import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import com.tallerwebi.dominio.ServicioDisponibilidadProfesor;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import com.tallerwebi.dominio.ServicioLogin;
@@ -16,7 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
@@ -35,6 +36,7 @@ public class ControladorDisponibilidadTest {
 	private HttpSession sessionMock;
 	private ServicioLogin servicioLoginMock;
 	private ServicioTema servicioTemaMock;
+	private EstadoDisponibilidad estadoDisponibilidad;
 
 	@BeforeEach
 	public void init(){
@@ -344,18 +346,251 @@ public class ControladorDisponibilidadTest {
 				.toggleDisponibilidad(eq("profesor@test.com"), anyString(), anyString());
 	}
 
+
 	@Test
-	public void deberiaFuncionarConParametrosExactosDelHTML() {
+	public void deberiaManejorParametrosNulosEnReservar() {
+
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-		String[] diasExactos = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
-		String[] horasExactas = {"06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00",
-				"13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00",
-				"20:00", "21:00", "22:00", "23:00"};
 
 
-		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad("Miércoles", "15:00", requestMock);
-		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidad("profesor@test.com", "Miércoles", "15:00");
+		ModelAndView modelAndView = controladorDisponibilidad.reservarHorario(null, "09:00", requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
 	}
+
+	@Test
+	public void deberiaManejorParametrosNulosEnDesagendar() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.desagendarHorario("Lunes", null, requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(anyString(), anyString(), anyString());
+	}
+
+	@Test
+	public void deberiaManejorParametrosVaciosEnReservar() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.reservarHorario("", "09:00", requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
+	}
+
+	@Test
+	public void deberiaManejorParametrosVaciosEnDesagendar() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.desagendarHorario("Lunes", "", requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(anyString(), anyString(), anyString());
+	}
+
+	@Test
+	public void deberiaManejorParametrosConEspaciosEnReservar() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.reservarHorario(" Miércoles ", " 14:00 ", requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, times(1))
+				.reservarHorario("profesor@test.com", "Miércoles", "14:00");
+	}
+
+	@Test
+	public void deberiaManejorParametrosConEspaciosEnDesagendar() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.desagendarHorario(" Jueves ", " 16:00 ", requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, times(1))
+				.desagendarHorario("profesor@test.com", "Jueves", "16:00");
+	}
+
+	@Test
+	public void deberiaValidarDiasInvalidosEnReservar() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.reservarHorario("Lunnes", "09:00", requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
+	}
+
+	@Test
+	public void deberiaValidarHorasInvalidasEnReservar() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.reservarHorario("Lunes", "25:00", requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
+	}
+
+	@Test
+	public void deberiaValidarFormatoHoraIncorrectoEnDesagendar() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.desagendarHorario("Lunes", "9:0", requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(anyString(), anyString(), anyString());
+	}
+
+	@Test
+	public void deberiaManejarExcepcionesEnReservarHorario() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+		doThrow(new RuntimeException("Error en base de datos"))
+				.when(servicioDisponibilidadProfesorMock)
+				.reservarHorario("profesor@test.com", "Lunes", "09:00");
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.reservarHorario("Lunes", "09:00", requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, times(1))
+				.reservarHorario("profesor@test.com", "Lunes", "09:00");
+	}
+
+	@Test
+	public void deberiaManejarExcepcionesEnDesagendarHorario() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+		doThrow(new RuntimeException("Error en base de datos"))
+				.when(servicioDisponibilidadProfesorMock)
+				.desagendarHorario("profesor@test.com", "Lunes", "09:00");
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.desagendarHorario("Lunes", "09:00", requestMock);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock, times(1))
+				.desagendarHorario("profesor@test.com", "Lunes", "09:00");
+	}
+
+	@Test
+	public void deberiaCargarEstadosMapCorrectamenteEnCalendario() {
+
+		List<disponibilidadProfesor> disponibilidades = Arrays.asList(
+				new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", EstadoDisponibilidad.DISPONIBLE),
+				new disponibilidadProfesor("profesor@test.com", "Martes", "10:00", EstadoDisponibilidad.OCUPADO),
+				new disponibilidadProfesor("profesor@test.com", "Miércoles", "11:00", EstadoDisponibilidad.RESERVADO)
+		);
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor("profesor@test.com"))
+				.thenReturn(disponibilidades);
+		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(requestMock);
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-profesor"));
+
+		@SuppressWarnings("unchecked")
+		Map<String, String> estadosMap = (Map<String, String>) modelAndView.getModel().get("estadosMap");
+
+		assertThat(estadosMap.get("Lunes-09:00"), equalToIgnoringCase("DISPONIBLE"));
+		assertThat(estadosMap.get("Martes-10:00"), equalToIgnoringCase("OCUPADO"));
+		assertThat(estadosMap.get("Miércoles-11:00"), equalToIgnoringCase("RESERVADO"));
+	}
+
+	@Test
+	public void deberiaFuncionarConTodosLosEstados() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		EstadoDisponibilidad[] estados = {EstadoDisponibilidad.DISPONIBLE, EstadoDisponibilidad.OCUPADO, EstadoDisponibilidad.RESERVADO};
+
+		for (EstadoDisponibilidad estado : estados) {
+			List<disponibilidadProfesor> disponibilidades = Arrays.asList(
+					new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", estado)
+			);
+
+			when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor("profesor@test.com"))
+					.thenReturn(disponibilidades);
+
+
+			ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(requestMock);
+
+
+			@SuppressWarnings("unchecked")
+			Map<String, String> estadosMap = (Map<String, String>) modelAndView.getModel().get("estadosMap");
+			assertThat("Falló para el estado: " + estado,
+					estadosMap.get("Lunes-09:00"), equalToIgnoringCase(estado.toString()));
+		}
+	}
+
+	@Test
+	public void deberiaManejarSesionNulaEnObtenerUsuario() {
+
+		when(requestMock.getSession()).thenReturn(null);
+
+
+		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
+		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(anyString());
+	}
+
+	@Test
+	public void deberiaManejarRequestNuloEnObtenerUsuario() {
+
+		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null);
+
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
+		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(anyString());
+	}
+
+
+	@Test
+	public void deberiaRechazarHorasInvalidasFueraDeLimites() {
+
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+
+		ModelAndView modelAndView1 = controladorDisponibilidad.toggleDisponibilidad("Lunes", "24:00", requestMock);
+		ModelAndView modelAndView2 = controladorDisponibilidad.reservarHorario("Martes", "25:30", requestMock);
+		ModelAndView modelAndView3 = controladorDisponibilidad.desagendarHorario("Miércoles", "12:60", requestMock);
+
+
+		assertThat(modelAndView1.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		assertThat(modelAndView2.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		assertThat(modelAndView3.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+
+		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(anyString(), anyString(), anyString());
+	}
+
+
+
 }

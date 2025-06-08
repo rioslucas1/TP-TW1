@@ -81,7 +81,7 @@
           <div th:with="estado=${estadosMap.get(dia + '-' + hora)}" th:switch="${estado}">
 
             <div th:case="'DISPONIBLE'">
-              <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
+              <form th:action="@{/}" method="post" accept-charset="UTF-8" style="display: inline;">
                 <input type="hidden" name="diaSemana" th:value="${dia}"/>
                 <input type="hidden" name="hora" th:value="${hora}"/>
                 <button type="submit" class="boton-disponible btn btn-success btn-sm">Disponible</button>
@@ -90,7 +90,7 @@
 
 
             <div th:case="'OCUPADO'">
-              <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
+              <form th:action="@{/}" method="post" accept-charset="UTF-8" style="display: inline;">
                 <input type="hidden" name="diaSemana" th:value="${dia}"/>
                 <input type="hidden" name="hora" th:value="${hora}"/>
                 <button type="submit" class="boton-libre btn btn-outline-primary btn-sm" >Ocupado</button>

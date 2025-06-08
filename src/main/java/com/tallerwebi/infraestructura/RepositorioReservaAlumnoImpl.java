@@ -1,6 +1,6 @@
 package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.RepositorioDisponibilidadProfesor;
+import com.tallerwebi.dominio.RepositorioReservaAlumno;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,24 +10,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("repositorioDisponibilidadProfesor")
-public class RepositorioDisponibilidadProfesorImpl implements RepositorioDisponibilidadProfesor {
+@Repository("repositorioReservaAlumno")
+public class RepositorioReservaAlumnoImpl implements RepositorioReservaAlumno {
 
     private SessionFactory sessionFactory;
 
     @Autowired
-    public RepositorioDisponibilidadProfesorImpl(SessionFactory sessionFactory) {
+    public RepositorioReservaAlumnoImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-    }
-
-    @Override
-    public void guardar(disponibilidadProfesor disponibilidad) {
-        sessionFactory.getCurrentSession().saveOrUpdate(disponibilidad);
-    }
-
-    @Override
-    public void eliminar(disponibilidadProfesor disponibilidad) {
-        sessionFactory.getCurrentSession().delete(disponibilidad);
     }
 
     @Override
@@ -47,4 +37,10 @@ public class RepositorioDisponibilidadProfesorImpl implements RepositorioDisponi
                 .add(Restrictions.eq("hora", hora))
                 .uniqueResult();
     }
+
+    @Override
+    public void guardar(disponibilidadProfesor disponibilidad) {
+        sessionFactory.getCurrentSession().saveOrUpdate(disponibilidad);
+    }
+
 }

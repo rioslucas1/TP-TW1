@@ -11,6 +11,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class ControladorDisponibilidad {
@@ -27,6 +29,7 @@ public class ControladorDisponibilidad {
             ModelMap modelo = new ModelMap();
             List<String> disponibilidadesKeys = new ArrayList<>();
             Usuario usuario = obtenerUsuarioDeSesion(request);
+            Map<String, String> estadosMap = new HashMap<>();
 
             if (usuario == null) {
                 return new ModelAndView("redirect:/login");
@@ -39,12 +42,15 @@ public class ControladorDisponibilidad {
                             servicioDisponibilidadProfesor.obtenerDisponibilidadProfesor(usuario.getEmail());
 
                     for (disponibilidadProfesor disp : disponibilidades) {
-                        disponibilidadesKeys.add(disp.getDiaSemana() + "-" + disp.getHora());
+                        String key = disp.getDiaSemana() + "-" + disp.getHora();
+                        disponibilidadesKeys.add(key);
+                        estadosMap.put(key, disp.getEstado().toString());
                     }
 
                     modelo.put("disponibilidades", disponibilidades);
                     modelo.put("emailProfesor", usuario.getEmail());
                     modelo.put("nombreUsuario", usuario.getNombre());
+                   modelo.put("estadosMap", estadosMap);
                 } catch (Exception e) {
                 System.err.println("Error al cargar calendario: " + e.getMessage());
             }
@@ -123,4 +129,62 @@ public class ControladorDisponibilidad {
 
         return new ModelAndView("redirect:/calendario-profesor");
 }
+
+        @PostMapping("/reservar-horario")
+        public ModelAndView reservarHorario(@RequestParam("diaSemana") String diaSemana,
+                                            @RequestParam("hora") String hora,
+                                            HttpServletRequest request) {
+            Usuario usuario = (Usuario) request.getSession().getAttribute("USUARIO");
+            if (usuario == null) {
+                return new ModelAndView("redirect:/login");
+            }
+
+            if (!esProfesor(usuario)) {
+                return new ModelAndView("redirect:/home");
+            }
+
+            String diaLimpio = diaSemana != null ? diaSemana.trim() : "";
+            String horaLimpia = hora != null ? hora.trim() : "";
+
+            if (!sonParametrosValidos(diaLimpio, horaLimpia)) {
+                return new ModelAndView("redirect:/calendario-profesor");
+            }
+
+            try {
+                servicioDisponibilidadProfesor.reservarHorario(usuario.getEmail(), diaLimpio, horaLimpia);
+            } catch (Exception e) {
+                System.err.println("Error al reservar horario: " + e.getMessage());
+            }
+
+            return new ModelAndView("redirect:/calendario-profesor");
+        }
+
+        @PostMapping("/desagendar-horario")
+        public ModelAndView desagendarHorario(@RequestParam("diaSemana") String diaSemana,
+                                              @RequestParam("hora") String hora,
+                                              HttpServletRequest request) {
+            Usuario usuario = (Usuario) request.getSession().getAttribute("USUARIO");
+            if (usuario == null) {
+                return new ModelAndView("redirect:/login");
+            }
+
+            if (!esProfesor(usuario)) {
+                return new ModelAndView("redirect:/home");
+            }
+
+            String diaLimpio = diaSemana != null ? diaSemana.trim() : "";
+            String horaLimpia = hora != null ? hora.trim() : "";
+
+            if (!sonParametrosValidos(diaLimpio, horaLimpia)) {
+                return new ModelAndView("redirect:/calendario-profesor");
+            }
+
+            try {
+                servicioDisponibilidadProfesor.desagendarHorario(usuario.getEmail(), diaLimpio, horaLimpia);
+            } catch (Exception e) {
+                System.err.println("Error al desagendar horario: " + e.getMessage());
+            }
+
+            return new ModelAndView("redirect:/calendario-profesor");
+        }
 }
