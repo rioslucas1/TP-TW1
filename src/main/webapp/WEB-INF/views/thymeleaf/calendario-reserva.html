@@ -60,53 +60,67 @@
 </nav>
 
 <div class="container my-5">
-  <h2 class="text-center mb-4">Disponibilidad Semanal</h2>
-  <p class="text-center mb-4">Hace clic en los horarios donde estés disponible para dar clases</p>
+  <h2 class="text-center mb-4">Reservar Clase</h2>
+  <p class="text-center mb-4">Selecciona un horario disponible para reservar tu clase</p>
+
+  <div class="week-navigation mb-4">
+    <div class="d-flex justify-content-center align-items-center">
+      <a th:href="@{/calendario-reserva(emailProfesor=${emailProfesor}, semana=${fechaInicioSemana.minusWeeks(1)})}"
+         class="btn btn-outline-primary me-3">
+        Semana Anterior
+      </a>
+
+      <div class="text-center mx-4">
+        <h5 class="mb-0">Semana del
+          <span th:text="${fechaInicioFormateada}"></span>
+          al
+          <span th:text="${fechaFinFormateada}"></span>
+        </h5>
+      </div>
+
+      <a th:href="@{/calendario-reserva(emailProfesor=${emailProfesor}, semana=${fechaInicioSemana.plusWeeks(1)})}"
+         class="btn btn-outline-primary ms-3">
+        Semana Siguiente
+      </a>
+    </div>
+  </div>
+
 
   <div class="table-wrapper">
     <table class="table tabla-calendario table-bordered">
       <tbody>
-
       <tr>
         <td class="horas-calendario"></td>
-        <td class="dia-calendario" th:each="dia : ${'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo'.split(',')}" th:text="${dia}"></td>
+        <td class="dia-calendario"
+            th:each="dia : ${'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo'.split(',')}">
+          <span th:text="${dia}"></span>
+        </td>
       </tr>
-
-
       <tr th:each="hora : ${'06:00,07:00,08:00,09:00,10:00,11:00,12:00,13:00,14:00,15:00,16:00,17:00,18:00,19:00,20:00,21:00,22:00,23:00'.split(',')}">
         <td class="hour-label" th:text="${hora}"></td>
-
-
         <td th:each="dia : ${'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo'.split(',')}">
-          <div th:with="estado=${estadosMap.get(dia + '-' + hora)}" th:switch="${estado}">
-
+          <div th:with="clave=${dia + '-' + hora}, estado=${estadosMap.get(clave)}, disponibilidadId=${idsMap.get(clave)}" th:switch="${estado}">
             <div th:case="'DISPONIBLE'">
-              <form th:action="@{/}" method="post" accept-charset="UTF-8" style="display: inline;">
-                <input type="hidden" name="diaSemana" th:value="${dia}"/>
-                <input type="hidden" name="hora" th:value="${hora}"/>
-                <button type="submit" class="boton-disponible btn btn-success btn-sm">Disponible</button>
+              <form th:action="@{/reservar-clase}" method="post" accept-charset="UTF-8" style="display: inline;">
+                <input type="hidden" name="disponibilidadId" th:value="${disponibilidadId}"/>
+                <input type="hidden" name="emailProfesor" th:value="${emailProfesor}"/>
+                <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
+                <button type="submit" class="boton-disponible btn btn-success btn-sm">Reservar</button>
               </form>
             </div>
-
 
             <div th:case="'OCUPADO'">
-              <form th:action="@{/}" method="post" accept-charset="UTF-8" style="display: inline;">
-                <input type="hidden" name="diaSemana" th:value="${dia}"/>
-                <input type="hidden" name="hora" th:value="${hora}"/>
-                <button type="submit" class="boton-libre btn btn-outline-primary btn-sm" >Ocupado</button>
-              </form>
+              <button class="boton-libre btn btn-secondary btn-sm" disabled></button>
             </div>
+
 
             <div th:case="'RESERVADO'">
-              <button class="btn btn-warning btn-sm" disabled>Reservado</button>
+              <button class="boton-reservado btn btn-warning btn-sm" disabled>Reservado</button>
             </div>
 
+
             <div th:case="*">
-              <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
-                <input type="hidden" name="diaSemana" th:value="${dia}"/>
-                <input type="hidden" name="hora" th:value="${hora}"/>
-                <button type="submit" class="boton-libre btn btn-outline-primary btn-sm">Ocupado</button>
-              </form>
+              <button class="btn btn-light btn-sm" disabled>-</button>
             </div>
 
           </div>

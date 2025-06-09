@@ -8,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository("repositorioDisponibilidadProfesor")
@@ -47,4 +48,32 @@ public class RepositorioDisponibilidadProfesorImpl implements RepositorioDisponi
                 .add(Restrictions.eq("hora", hora))
                 .uniqueResult();
     }
+
+    @Override
+    public List<disponibilidadProfesor> buscarPorProfesorDiaFecha(
+            String emailProfesor, String diaSemana, LocalDate fechaEspecifica) {
+
+        final Session session = sessionFactory.getCurrentSession();
+        return session.createCriteria(disponibilidadProfesor.class)
+                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .add(Restrictions.eq("diaSemana", diaSemana))
+                .add(Restrictions.eq("fechaEspecifica", fechaEspecifica))
+                .list();
+    }
+
+    @Override
+    public disponibilidadProfesor buscarPorProfesorDiaHoraFecha(
+            String emailProfesor, String diaSemana, String hora, LocalDate fechaEspecifica) {
+
+        final Session session = sessionFactory.getCurrentSession();
+        return (disponibilidadProfesor) session.createCriteria(disponibilidadProfesor.class)
+                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .add(Restrictions.eq("diaSemana", diaSemana))
+                .add(Restrictions.eq("hora", hora))
+                .add(Restrictions.eq("fechaEspecifica", fechaEspecifica))
+                .uniqueResult();
+    }
+
+
+
 }

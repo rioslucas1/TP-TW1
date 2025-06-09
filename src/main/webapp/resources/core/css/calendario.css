@@ -31,6 +31,13 @@
     background-color: darkgreen;
 }
 
+.boton-reservado {
+    width: 100%;
+    height: 50px;
+    border: none;
+    background-color: #ed830e;
+}
+
 .table-wrapper {
     overflow-x: auto;
 }

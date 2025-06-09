@@ -4,7 +4,7 @@ INSERT INTO Tema(id, nombre) VALUES (2, 'Diseño');
 INSERT INTO Tema(id, nombre) VALUES (3, 'Inglés');
 
 INSERT INTO Usuario(nombre, apellido, email, password, rol, activo, tema_id)
-VALUES ('Maria', 'García', 'ana@unlam.edu.ar', 'clave1', 'profesor', true, 1);
+VALUES ('Ana Maria', 'García', 'ana@unlam.edu.ar', 'clave1', 'profesor', true, 1);
 INSERT INTO Usuario(nombre, apellido, email, password, rol, activo, tema_id)
 VALUES ('Carlos', 'Pérez', 'carlos@unlam.edu.ar', 'clave2', 'profesor', true, 2);
 INSERT INTO Usuario(nombre, apellido, email, password, rol, activo, tema_id)

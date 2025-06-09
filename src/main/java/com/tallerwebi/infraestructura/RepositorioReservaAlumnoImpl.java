@@ -8,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository("repositorioReservaAlumno")
@@ -39,8 +40,26 @@ public class RepositorioReservaAlumnoImpl implements RepositorioReservaAlumno {
     }
 
     @Override
+    public disponibilidadProfesor buscarPorId(Long id) {
+        final Session session = sessionFactory.getCurrentSession();
+        return (disponibilidadProfesor) session.get(disponibilidadProfesor.class, id);
+    }
+
+    @Override
     public void guardar(disponibilidadProfesor disponibilidad) {
         sessionFactory.getCurrentSession().saveOrUpdate(disponibilidad);
+    }
+
+    @Override
+    public List<disponibilidadProfesor> buscarPorProfesorDiaFecha(
+            String emailProfesor, String diaSemana, LocalDate fechaEspecifica) {
+
+        final Session session = sessionFactory.getCurrentSession();
+        return session.createCriteria(disponibilidadProfesor.class)
+                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .add(Restrictions.eq("diaSemana", diaSemana))
+                .add(Restrictions.eq("fechaEspecifica", fechaEspecifica))
+                .list();
     }
 
 }

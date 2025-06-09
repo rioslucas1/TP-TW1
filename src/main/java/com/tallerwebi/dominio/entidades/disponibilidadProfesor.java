@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio.entidades;
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class disponibilidadProfesor {
@@ -11,6 +12,13 @@ public class disponibilidadProfesor {
     public String emailProfesor;
     public String diaSemana;
     public String hora;
+
+    public String mailAlumno;
+
+    @Column(name = "fecha_especifica")
+    private LocalDate fechaEspecifica;
+
+
 
     @Enumerated(EnumType.STRING)
     private EstadoDisponibilidad estado = EstadoDisponibilidad.DISPONIBLE;
@@ -27,6 +35,14 @@ public class disponibilidadProfesor {
         this.emailProfesor = emailProfesor;
         this.diaSemana = diaSemana;
         this.hora = hora;
+        this.estado = estado;
+    }
+
+    public disponibilidadProfesor(String emailProfesor, String diaSemana, String hora, LocalDate fechaEspecifica, EstadoDisponibilidad estado) {
+        this.emailProfesor = emailProfesor;
+        this.diaSemana = diaSemana;
+        this.hora = hora;
+        this.fechaEspecifica = fechaEspecifica;
         this.estado = estado;
     }
 
@@ -92,6 +108,22 @@ public class disponibilidadProfesor {
 
     public void marcarComoReservado() {
         this.estado = EstadoDisponibilidad.RESERVADO;
+    }
+
+    public LocalDate getFechaEspecifica() {
+        return fechaEspecifica;
+    }
+
+    public void setFechaEspecifica(LocalDate fechaEspecifica) {
+        this.fechaEspecifica = fechaEspecifica;
+    }
+
+    public String getMailAlumno() {
+        return mailAlumno;
+    }
+
+    public void setMailAlumno(String mailAlumno) {
+        this.mailAlumno = mailAlumno;
     }
 
 }
