@@ -62,6 +62,7 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
+          <a class="nav-link" th:href="@{/calendario-profesor}">Calendario</a>
         </li>
       </ul>
 
@@ -248,9 +249,7 @@
               <span class="badge-tema" th:if="${profesor.tema != null}" th:text="${profesor.tema.nombre}">Tema</span>
               <span class="badge-tema" th:if="${profesor.tema == null}">Sin tema asignado</span>
             </div>
-
-
-
+              <a class="nav-link" th:href="@{/calendario-reserva(emailProfesor=${profesor.email})}">Calendario</a>
           </div>
         </div>
       </div>
