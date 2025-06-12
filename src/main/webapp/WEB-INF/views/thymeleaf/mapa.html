@@ -8,75 +8,104 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-
     <link rel="stylesheet" th:href="@{/css/profesores.css}"/>
-
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
 <div class="d-flex">
+    <!-- Sidebar a la izquierda -->
+    <div class="sidebar-custom">
+        <a href="#" class="sidebar-logo">
+            <i class='bx bx-layer'></i>
+            <span>ClasesYa</span>
+        </a>
 
+        <nav class="nav">
+            <a href="#" class="nav-link-custom active">
+                <i class='bx bx-grid-alt'></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-link-custom">
+                <i class='bx bx-user'></i>
+                <span>Historial</span>
+            </a>
+            <a href="#" class="nav-link-custom">
+                <i class='bx bx-message-square-detail'></i>
+                <span>Mensajes</span>
+            </a>
+            <a href="#" class="nav-link-custom">
+                <i class='bx bx-bookmark'></i>
+                <span>Guardados</span>
+            </a>
+            <a href="#" class="nav-link-custom">
+                <i class='bx bx-folder'></i>
+                <span>Archivos Compartidos</span>
+            </a>
+            <a href="#" class="nav-link-custom">
+                <i class='bx bx-bar-chart-alt-2'></i>
+                <span>Estadísticas</span>
+            </a>
+        </nav>
 
-<div class="sidebar-custom d-flex flex-column p-3">
-    <a href="#" class="sidebar-logo mb-4">
-        <i class='bx bx-layer'></i>
-        <span>ClasesYa</span>
-    </a>
-
-    <nav class="nav flex-column gap-2">
-        <a href="#" class="nav-link-custom active"><i class='bx bx-grid-alt'></i> Dashboard</a>
-        <a href="#" class="nav-link-custom"><i class='bx bx-user'></i> Historial</a>
-        <a href="#" class="nav-link-custom"><i class='bx bx-message-square-detail'></i> Mensajes</a>
-        <a href="#" class="nav-link-custom"><i class='bx bx-bookmark'></i> Guardados</a>
-        <a href="#" class="nav-link-custom"><i class='bx bx-folder'></i> Archivos Compartidos</a>
-        <a href="#" class="nav-link-custom"><i class='bx bx-bar-chart-alt-2'></i> Estadísticas</a>
-    </nav>
-
-    <div class="mt-auto">
-        <a href="#" class="nav-link-custom"><i class='bx bx-log-out'></i> Cerrar sesión</a>
-    </div>
-</div>
-
-
-<div class="container">
-    <header>
-        <h1>Ubicación de Profesores</h1>
-        <p>Sistema de localización de profesores por materia</p>
-    </header>
-
-    <div class="profesores-cards" th:if="${not #lists.isEmpty(datosProfesores)}">
-        <div class="profesor-card" th:each="profesor : ${datosProfesores}">
-            <div class="profesor-nombre" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre Profesor</div>
-            <div class="profesor-info">
-                <span>Materia:</span> <span th:text="${profesor.materia}">Materia</span>
-            </div>
-            <div class="profesor-info">
-                <span>Ubicación:</span>
-                <span th:text="${#numbers.formatDecimal(profesor.latitud, 1, 6) + ', ' + #numbers.formatDecimal(profesor.longitud, 1, 6)}">
-                        Coordenadas
-                    </span>
-            </div>
-            <button class="btn-ver-mapa" th:onclick="'centrarMapa(' + ${profesor.latitud} + ',' + ${profesor.longitud} + ')'">
-                Ver en mapa
-            </button>
+        <div class="mt-auto">
+            <a href="#" class="nav-link-custom">
+                <i class='bx bx-log-out'></i>
+                <span>Cerrar sesión</span>
+            </a>
         </div>
     </div>
 
-    <div class="no-profesores" th:if="${#lists.isEmpty(datosProfesores)}">
-        <p>No se han encontrado profesores en el sistema.</p>
-    </div>
+    <!-- Contenido principal -->
+    <div class="container">
+        <header>
+            <h1>Ubicación de Profesores</h1>
+            <p>Sistema de localización de profesores por materia</p>
 
-    <!-- Contenedor del mapa -->
-    <div class="map-container">
-        <h2 class="map-title">Mapa de Ubicaciones</h2>
-        <div id="map"></div>
-    </div>
+            <!-- Buscador de profesores -->
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Buscar profesor por nombre o materia..." class="search-input">
+                <button id="searchButton" class="search-button">
+                    <i class='bx bx-search'></i> Buscar
+                </button>
+            </div>
+        </header>
 
-    <footer>
-        &copy; 2025 Sistema de Localización de Profesores
-    </footer>
+        <!-- Contenedor del mapa - Ahora aparece primero -->
+        <div class="map-container">
+            <h2 class="map-title">Mapa de Ubicaciones</h2>
+            <div id="map"></div>
+        </div>
+
+        <!-- Tarjetas de profesores - Ahora aparecen debajo del mapa -->
+        <h2 class="profesores-title">Listado de Profesores</h2>
+        <div class="profesores-cards" id="profesoresContainer" th:if="${not #lists.isEmpty(datosProfesores)}">
+            <div class="profesor-card" th:each="profesor : ${datosProfesores}" th:data-nombre="${profesor.nombre + ' ' + profesor.apellido}" th:data-materia="${profesor.materia}">
+                <div class="profesor-nombre" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre Profesor</div>
+                <div class="profesor-info">
+                    <span>Materia:</span> <span th:text="${profesor.materia}">Materia</span>
+                </div>
+                <div class="profesor-info">
+                    <span>Ubicación:</span>
+                    <span th:text="${#numbers.formatDecimal(profesor.latitud, 1, 6) + ', ' + #numbers.formatDecimal(profesor.longitud, 1, 6)}">
+                        Coordenadas
+                    </span>
+                </div>
+                <button class="btn-ver-mapa" th:onclick="'centrarMapa(' + ${profesor.latitud} + ',' + ${profesor.longitud} + ')'">
+                    Ver en mapa
+                </button>
+            </div>
+        </div>
+
+        <div class="no-profesores" th:if="${#lists.isEmpty(datosProfesores)}">
+            <p>No se han encontrado profesores en el sistema.</p>
+        </div>
+
+        <footer>
+            &copy; 2025 Sistema de Localización de Profesores
+        </footer>
+    </div>
 </div>
-</div>
+
 <script th:inline="javascript">
     /*<![CDATA[*/
     // Obtener datos de profesores desde el backend
@@ -91,7 +120,7 @@
         attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>'
     }).addTo(map);
 
-    // Esta funcion es para traer al profe al mapa, se puede modificar para que sea fijo
+    // Función para centrar el mapa en un profesor específico
     function centrarMapa(lat, lng) {
         map.setView([lat, lng], 15);
         // Resaltar el marcador correspondiente
@@ -105,7 +134,6 @@
 
     // Agrego los marcadores para los profesores, leo el array y los agrego
     if (profesores && profesores.length > 0) {
-
         let sumLat = 0;
         let sumLng = 0;
 
@@ -121,12 +149,12 @@
             const marker = L.marker([profesor.latitud, profesor.longitud], { icon: customIcon })
                 .addTo(map)
                 .bindPopup(`
-                        <div style="text-align: center;">
-                            <strong style="color: #FF8C00;">${profesor.nombre} ${profesor.apellido}</strong>
-                            <br>
-                            <span style="color: #5CACEE;">${profesor.materia}</span>
-                        </div>
-                    `);
+                    <div style="text-align: center;">
+                        <strong style="color: #FF8C00;">${profesor.nombre} ${profesor.apellido}</strong>
+                        <br>
+                        <span style="color: #5CACEE;">${profesor.materia}</span>
+                    </div>
+                `);
 
             markers.push(marker);
 
@@ -147,6 +175,80 @@
             return div;
         };
         messageControl.addTo(map);
+    }
+
+    // Funcionalidad de búsqueda
+    document.getElementById('searchButton').addEventListener('click', buscarProfesor);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            buscarProfesor();
+        }
+    });
+
+    function buscarProfesor() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const profesorCards = document.querySelectorAll('.profesor-card');
+        let encontrado = false;
+
+        profesorCards.forEach(card => {
+            const nombre = card.getAttribute('data-nombre').toLowerCase();
+            const materia = card.getAttribute('data-materia').toLowerCase();
+
+            if (nombre.includes(searchTerm) || materia.includes(searchTerm)) {
+                card.style.display = 'block';
+                card.classList.add('highlight');
+
+                // Si es el primer resultado encontrado, centramos el mapa en ese profesor
+                if (!encontrado) {
+                    const btnVerMapa = card.querySelector('.btn-ver-mapa');
+                    if (btnVerMapa) {
+                        btnVerMapa.click(); // Simular clic en el botón "Ver en mapa"
+                    }
+                    encontrado = true;
+
+                    // Hacer scroll hasta la tarjeta
+                    setTimeout(() => {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 500);
+                }
+            } else {
+                card.style.display = 'none';
+                card.classList.remove('highlight');
+            }
+        });
+
+        // Si no se encontró ningún profesor, mostrar todos
+        if (!encontrado) {
+            profesorCards.forEach(card => {
+                card.style.display = 'block';
+                card.classList.remove('highlight');
+            });
+
+            // Centrar el mapa en todos los marcadores
+            if (markers.length > 0) {
+                const bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
+                map.fitBounds(bounds);
+            }
+
+            alert('No se encontraron profesores que coincidan con la búsqueda.');
+        }
+    }
+
+    // Función para limpiar la búsqueda
+    function limpiarBusqueda() {
+        document.getElementById('searchInput').value = '';
+        const profesorCards = document.querySelectorAll('.profesor-card');
+
+        profesorCards.forEach(card => {
+            card.style.display = 'block';
+            card.classList.remove('highlight');
+        });
+
+        // Centrar el mapa en todos los marcadores
+        if (markers.length > 0) {
+            const bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
+            map.fitBounds(bounds);
+        }
     }
     /*]]>*/
 </script>
