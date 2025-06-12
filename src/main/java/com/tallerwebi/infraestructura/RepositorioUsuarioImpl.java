@@ -4,7 +4,7 @@ import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.Usuario;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,21 +13,21 @@ import java.util.List;
 @Repository("repositorioUsuario")
 public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     @Autowired
-    public RepositorioUsuarioImpl(SessionFactory sessionFactory){
+    public RepositorioUsuarioImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Override
     public Usuario buscarUsuario(String email, String password) {
-
-        final Session session = sessionFactory.getCurrentSession();
-        return (Usuario) session.createCriteria(Usuario.class)
-                .add(Restrictions.eq("email", email))
-                .add(Restrictions.eq("password", password))
-                .uniqueResult();
+        Session session = sessionFactory.getCurrentSession();
+        Query<Usuario> query = session.createQuery(
+                "FROM Usuario WHERE email = :email AND contrasenia = :contrasenia", Usuario.class);
+        query.setParameter("email", email);
+        query.setParameter("contrasenia", password);
+        return query.uniqueResult();
     }
 
     @Override
@@ -37,9 +37,11 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
     @Override
     public Usuario buscar(String email) {
-        return (Usuario) sessionFactory.getCurrentSession().createCriteria(Usuario.class)
-                .add(Restrictions.eq("email", email))
-                .uniqueResult();
+        Session session = sessionFactory.getCurrentSession();
+        Query<Usuario> query = session.createQuery(
+                "FROM Usuario WHERE email = :email", Usuario.class);
+        query.setParameter("email", email);
+        return query.uniqueResult();
     }
 
     @Override
@@ -47,14 +49,18 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         sessionFactory.getCurrentSession().update(usuario);
     }
 
+    @Override
+    public List<Usuario> buscarPorRol(String rol) {
+        Session session = sessionFactory.getCurrentSession();
+        Query<Usuario> query = session.createQuery(
+                "FROM Usuario WHERE rol = :rol", Usuario.class);
+        query.setParameter("rol", rol);
+        return query.getResultList();
+    }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Usuario> buscarPorRol(String rol) {
-        final Session session = sessionFactory.getCurrentSession();
-        return session.createCriteria(Usuario.class)
-                .add(Restrictions.eq("rol", rol))
-                .list();
+    public Usuario buscarPorId(Long id) {
+        return sessionFactory.getCurrentSession().get(Usuario.class, id);
     }
 
 }

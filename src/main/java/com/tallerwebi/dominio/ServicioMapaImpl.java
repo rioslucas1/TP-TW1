@@ -10,11 +10,12 @@ import java.util.List;
 @Service("servicioMapa")
 @Transactional
 public class ServicioMapaImpl implements ServicioMapa {
+
  @Autowired
- private RepositorioProfesor repositorioProfesor;
+ private RepositorioUsuario repositorioUsuario;
 
  @Override
- public List<Profesor> obtenerProfesores() {
-  return repositorioProfesor.obtenerTodos();
+ public List<Usuario> obtenerProfesores() {
+  return repositorioUsuario.buscarPorRol("PROFESOR");
  }
 }

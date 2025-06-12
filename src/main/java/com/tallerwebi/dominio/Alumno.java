@@ -1,29 +1,28 @@
 package com.tallerwebi.dominio;
+import java.util.List;
 
 import javax.persistence.*;
-import java.util.List;
+
 @Entity
-public class Profesor {
+public class Alumno {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private Materia materia;
-
+    private String materiaInteres;
     private double latitud;
     private double longitud;
 
-    @OneToMany(mappedBy = "profesor")
-    private List<Curso> cursos;
+    @OneToMany(mappedBy = "alumno")
+    private List<CursoAlumno> cursosInscritos;
 
     // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Materia getMateria() { return materia; }
-    public void setMateria(Materia materia) { this.materia = materia; }
+    public String getMateriaInteres() { return materiaInteres; }
+    public void setMateriaInteres(String materiaInteres) { this.materiaInteres = materiaInteres; }
 
     public double getLatitud() { return latitud; }
     public void setLatitud(double latitud) { this.latitud = latitud; }
@@ -31,6 +30,7 @@ public class Profesor {
     public double getLongitud() { return longitud; }
     public void setLongitud(double longitud) { this.longitud = longitud; }
 
-    public List<Curso> getCursos() { return cursos; }
-    public void setCursos(List<Curso> cursos) { this.cursos = cursos; }
+    public List<CursoAlumno> getCursosInscritos() { return cursosInscritos; }
+    public void setCursosInscritos(List<CursoAlumno> cursosInscritos) { this.cursosInscritos = cursosInscritos; }
 }
+

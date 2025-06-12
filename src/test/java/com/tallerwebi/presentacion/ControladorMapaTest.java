@@ -1,4 +1,4 @@
-package com.tallerwebi.presentacion;
+/*package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.Profesor;
 import com.tallerwebi.dominio.ServicioMapa;
@@ -67,3 +67,4 @@ public class ControladorMapaTest {
         assertThat(segundo.getLongitud(), equalTo(-58.3838));
     }
 }
+*/

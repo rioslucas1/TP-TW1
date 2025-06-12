@@ -19,12 +19,9 @@ public class ControladorLogin {
 
     private ServicioLogin servicioLogin;
 
-    private ServicioTema servicioTema;
-
     @Autowired
-    public ControladorLogin(ServicioLogin servicioLogin, ServicioTema servicioTema){
+    public ControladorLogin(ServicioLogin servicioLogin){
         this.servicioLogin = servicioLogin;
-        this.servicioTema = servicioTema;
     }
 
     @RequestMapping("/login")
@@ -143,32 +140,36 @@ public class ControladorLogin {
     public ModelAndView mostrarFormularioProfesor() {
         ModelMap model = new ModelMap();
         model.put("usuario", new Usuario());
-        model.put("temas", servicioTema.obtenerTodos());
+        model.put("materias", Materia.values());
         return new ModelAndView("registrar-profesor", model);
     }
 
+
     @RequestMapping(path = "/registrarprofesor", method = RequestMethod.POST)
-    public ModelAndView procesarRegistroProfesor(@ModelAttribute("usuario") Usuario usuario, @RequestParam("temaId") Long temaId) {
+    public ModelAndView procesarRegistroProfesor(@ModelAttribute("usuario") Usuario usuario,
+                                                 @RequestParam("materia") Materia materia) {
         ModelMap model = new ModelMap();
 
         usuario.setRol("profesor");
-        usuario.setActivo(true);
-        usuario.setTema(servicioTema.obtenerPorId(temaId));
+
+        Profesor profesor = new Profesor();
+        profesor.setMateria(materia);
+        profesor.setLatitud(0.0);
+        profesor.setLongitud(0.0);
+        usuario.setProfesor(profesor);
 
         if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty() ||
                 usuario.getEmail() == null || usuario.getEmail().trim().isEmpty() ||
-                usuario.getPassword() == null || usuario.getPassword().trim().isEmpty() ||
-                temaId == null) {
+                usuario.getPassword() == null || usuario.getPassword().trim().isEmpty()) {
             model.put("error", "Todos los campos son obligatorios");
-            model.put("temas", servicioTema.obtenerTodos());
+            model.put("materias", Materia.values());
             return new ModelAndView("registrar-profesor", model);
         }
 
-        // Validación del email
         String errorEmail = validarEmail(usuario.getEmail());
         if (errorEmail != null) {
             model.put("error", errorEmail);
-            model.put("temas", servicioTema.obtenerTodos());
+            model.put("materias", Materia.values());
             return new ModelAndView("registrar-profesor", model);
         }
 
@@ -176,11 +177,11 @@ public class ControladorLogin {
             servicioLogin.registrar(usuario);
         } catch (UsuarioExistente e) {
             model.put("error", "El correo ya está registrado");
-            model.put("temas", servicioTema.obtenerTodos());
+            model.put("materias", Materia.values());
             return new ModelAndView("registrar-profesor", model);
         } catch (Exception e) {
             model.put("error", "Error inesperado");
-            model.put("temas", servicioTema.obtenerTodos());
+            model.put("materias", Materia.values());
             return new ModelAndView("registrar-profesor", model);
         }
 

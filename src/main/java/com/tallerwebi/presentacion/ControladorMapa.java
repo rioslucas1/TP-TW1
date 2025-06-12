@@ -1,7 +1,9 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.Materia;
 import com.tallerwebi.dominio.Profesor;
 import com.tallerwebi.dominio.ServicioMapa;
+import com.tallerwebi.dominio.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
 @Controller
 public class ControladorMapa {
 
-    private ServicioMapa servicioMapa;
+    private final ServicioMapa servicioMapa;
 
     @Autowired
     public ControladorMapa(ServicioMapa servicioMapa) {
@@ -25,16 +27,20 @@ public class ControladorMapa {
     public ModelAndView irVerMapa() {
         ModelMap modelo = new ModelMap();
 
-        List<Profesor> profesores = servicioMapa.obtenerProfesores();
+        List<Usuario> usuarios = servicioMapa.obtenerProfesores();
 
-        List<DatosMapa> datosProfesores = profesores.stream()
-                .map(profesor -> new DatosMapa(
-                        profesor.getNombre(),
-                        profesor.getApellido(),
-                        profesor.getMateria().toString(),
-                        profesor.getLatitud(),
-                        profesor.getLongitud()
-                ))
+        List<DatosMapa> datosProfesores = usuarios.stream()
+                .filter(usuario -> usuario.getProfesor() != null)
+                .map(usuario -> {
+                    Profesor profesor = usuario.getProfesor();
+                    return new DatosMapa(
+                            usuario.getNombre(),
+                            usuario.getApellido(),
+                            profesor.getMateria().toString(),
+                            profesor.getLatitud(),
+                            profesor.getLongitud()
+                    );
+                })
                 .collect(Collectors.toList());
 
         modelo.put("datosProfesores", datosProfesores);
