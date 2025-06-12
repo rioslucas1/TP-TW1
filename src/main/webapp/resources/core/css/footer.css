@@ -1,0 +1,9 @@
+/*FOOTER*/
+.footer {
+    background-color: #2ea9d3;
+    font-size: 0.95rem;
+}
+
+.footer ul li {
+    margin: 0 8px;
+}
