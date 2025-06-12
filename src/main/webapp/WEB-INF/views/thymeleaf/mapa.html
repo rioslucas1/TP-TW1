@@ -6,13 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" th:href="@{/css/profesores.css}"/>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
+<div class="d-flex">
+
+
+<div class="sidebar-custom d-flex flex-column p-3">
+    <a href="#" class="sidebar-logo mb-4">
+        <i class='bx bx-layer'></i>
+        <span>ClasesYa</span>
+    </a>
+
+    <nav class="nav flex-column gap-2">
+        <a href="#" class="nav-link-custom active"><i class='bx bx-grid-alt'></i> Dashboard</a>
+        <a href="#" class="nav-link-custom"><i class='bx bx-user'></i> Historial</a>
+        <a href="#" class="nav-link-custom"><i class='bx bx-message-square-detail'></i> Mensajes</a>
+        <a href="#" class="nav-link-custom"><i class='bx bx-bookmark'></i> Guardados</a>
+        <a href="#" class="nav-link-custom"><i class='bx bx-folder'></i> Archivos Compartidos</a>
+        <a href="#" class="nav-link-custom"><i class='bx bx-bar-chart-alt-2'></i> Estadísticas</a>
+    </nav>
+
+    <div class="mt-auto">
+        <a href="#" class="nav-link-custom"><i class='bx bx-log-out'></i> Cerrar sesión</a>
+    </div>
+</div>
+
+
 <div class="container">
     <header>
         <h1>Ubicación de Profesores</h1>
@@ -124,6 +149,7 @@
         messageControl.addTo(map);
     }
     /*]]>*/
+    </div>
 </script>
 </body>
 </html>

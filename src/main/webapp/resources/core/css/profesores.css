@@ -1,12 +1,13 @@
 :root {
-    --color-primary: #FF8C00; /* Orange */
-    --color-secondary: #87CEEB; /* Light blue (celeste) */
-    --color-primary-dark: #E67E00;
-    --color-secondary-dark: #5CACEE;
-    --color-white: #FFFFFF;
-    --color-gray: #F5F5F5;
-    --color-text: #333333;
-}
+          --color-primary: #0098C7; /* Azul original */
+          --color-secondary: #87CEEB; /* Celeste */
+          --color-primary-dark: #0098C7; /* Azul más oscuro */
+          --color-secondary-dark: #5CACEE;
+          --color-white: #FFFFFF;
+          --color-gray: #F5F5F5;
+          --color-text: #333333;
+      }
+
 
 * {
     margin: 0;
@@ -67,7 +68,7 @@ h1 {
 .profesor-nombre {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--color-primary-dark);
+    color: var(--color-primary);
     margin-bottom: 10px;
     border-bottom: 2px solid var(--color-secondary);
     padding-bottom: 5px;
@@ -99,7 +100,7 @@ h1 {
 .map-title {
     text-align: center;
     margin-bottom: 15px;
-    color: var(--color-primary-dark);
+    color: #0098C7;
     font-size: 1.5rem;
 }
 
