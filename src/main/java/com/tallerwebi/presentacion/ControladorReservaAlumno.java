@@ -82,7 +82,6 @@ public class ControladorReservaAlumno {
 
     private boolean esAlumno(Usuario usuario) {
         return usuario != null &&
-                usuario.getRol() != null &&
                 !"profesor".equals(usuario.getRol());
 
     }
