@@ -212,7 +212,6 @@ body {
     margin: 0.2rem;
 }
 
-/* Búsqueda de ver tutores */
 .search-section {
     background-color: #0098c7;
     color: white;
@@ -225,6 +224,7 @@ body {
     object-fit: cover;
 }
 
+
 .contenedor-grid {
     position: absolute;
     top: 0;
@@ -236,7 +236,30 @@ body {
     grid-template-rows: repeat(2, 1fr);
     gap: 10px;
     padding: 20px;
+
+.navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .btn-signin,
+    .btn-signup {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+
+@media (max-width: 992px) {
+    .main-title {
+        font-size: 2.5rem;
+    }
 }
+
+
+@media (max-width: 576px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+}
+    
 
 .item-grid {
     background-color: rgba(255, 255, 255, 0.1);

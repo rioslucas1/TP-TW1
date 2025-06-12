@@ -54,16 +54,16 @@
           <a class="nav-link" th:href="@{/home}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Ver tutores</a>
+          <a class="nav-link" th:href="@{/verTutores}" >Ver tutores</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Mi perfil</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/calendario-profesor}">Calendario</a>
+          <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
         </li>
       </ul>
-
       <div class="d-flex align-items-center">
         <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
         <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
@@ -174,7 +174,6 @@
         <h4><i class="bi bi-search-text-white"></i> Encontrar Profesores</h4>
         <a href="#" class="btn-ver-todos">Ver todos <i class="bi bi-arrow-right"></i></a>
       </div>
-
       <div class="row g-4">
         <div class="col-md-3" th:each="profesor : ${listaProfesores}">
           <div class="card text-center p-3 h-100 profesor-card">
