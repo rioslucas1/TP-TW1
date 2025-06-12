@@ -42,17 +42,24 @@ public class ControladorDisponibilidadTest {
 	private ServicioTema servicioTemaMock;
 	private EstadoDisponibilidad estadoDisponibilidad;
 
+
+	private static LocalDate diaLunes = LocalDate.of(2025, 6, 9);
+	private static LocalDate diaMartes = LocalDate.of(2025, 6, 10);
+	private static LocalDate diaMiercoles = LocalDate.of(2025, 6, 11);
+	private static LocalDate diaJueves = LocalDate.of(2025, 6, 12);
+	private static LocalDate diaViernes = LocalDate.of(2025, 6, 13);
+	private static LocalDate diaSabado = LocalDate.of(2025, 6, 14);
+	private static LocalDate diaDomingo = LocalDate.of(2025, 6, 15);
+
+
+
 	@BeforeEach
 	public void init(){
 		datosLoginMock = new DatosLogin("test@unlam.com", "123");
-
-		// Mock para usuario profesor
 		usuarioProfesorMock = mock(Usuario.class);
 		when(usuarioProfesorMock.getEmail()).thenReturn("profesor@test.com");
 		when(usuarioProfesorMock.getRol()).thenReturn("profesor");
 		when(usuarioProfesorMock.getNombre()).thenReturn("Juan");
-
-		// Mock para usuario estudiante
 		usuarioEstudianteMock = mock(Usuario.class);
 		when(usuarioEstudianteMock.getEmail()).thenReturn("estudiante@test.com");
 		when(usuarioEstudianteMock.getRol()).thenReturn("estudiante");
@@ -60,155 +67,125 @@ public class ControladorDisponibilidadTest {
 		requestMock = mock(HttpServletRequest.class);
 		sessionMock = mock(HttpSession.class);
 		when(requestMock.getSession()).thenReturn(sessionMock);
-
 		servicioDisponibilidadProfesorMock = mock(ServicioDisponibilidadProfesor.class);
 		controladorDisponibilidad = new ControladorDisponibilidad(servicioDisponibilidadProfesorMock);
 	}
 
     @Test
     public void deberiaCargarCalendarioConDisponibilidadesDelProfesor() {
-        // Preparación
-        LocalDate fechaInicio = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
+
         List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-                new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", fechaInicio, EstadoDisponibilidad.DISPONIBLE),
-                new disponibilidadProfesor("profesor@test.com", "Martes", "10:00", fechaInicio.plusDays(1), EstadoDisponibilidad.DISPONIBLE)
+                new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", diaLunes, EstadoDisponibilidad.DISPONIBLE),
+                new disponibilidadProfesor("profesor@test.com", "Martes", "10:00", diaMartes, EstadoDisponibilidad.DISPONIBLE)
         );
 
         when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-        when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
-                eq("profesor@test.com"), any(LocalDate.class)))
-                .thenReturn(disponibilidades);
+		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
+				eq("profesor@test.com"), eq(diaLunes)))
+				.thenReturn(disponibilidades);
 
-        ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
 
+        ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(diaLunes.toString(), requestMock);
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-profesor"));
-
-        List<String> reales = (List<String>) modelAndView.getModel().get("disponibilidadesKeys");
+        List<String> disponibilidadesKeys = (List<String>) modelAndView.getModel().get("disponibilidadesKeys");
         List<String> esperadas = Arrays.asList("Lunes-09:00", "Martes-10:00");
-        assertTrue(reales.containsAll(esperadas) && esperadas.containsAll(reales));
+        assertTrue(disponibilidadesKeys.containsAll(esperadas) && esperadas.containsAll(disponibilidadesKeys));
         assertThat(modelAndView.getModel().get("emailProfesor").toString(), equalToIgnoringCase("profesor@test.com"));
         assertThat(modelAndView.getModel().get("nombreUsuario").toString(), equalToIgnoringCase("Juan"));
-
-
-        assertNotNull(modelAndView.getModel().get("fechaInicioSemana"));
+		assertNotNull(modelAndView.getModel().get("fechaInicioSemana"));
         assertNotNull(modelAndView.getModel().get("diasConFecha"));
         assertNotNull(modelAndView.getModel().get("fechasSemanales"));
         assertNotNull(modelAndView.getModel().get("diasConFechas"));
 
-        verify(servicioDisponibilidadProfesorMock, times(1))
-                .obtenerDisponibilidadProfesorPorSemana(eq("profesor@test.com"), any(LocalDate.class));
+		verify(servicioDisponibilidadProfesorMock)
+				.obtenerDisponibilidadProfesorPorSemana(eq("profesor@test.com"), eq(diaLunes));
     }
 
     @Test
     public void deberiaCargarCalendarioConParametroSemanaEspecifica() {
 
-        LocalDate fechaEspecifica = LocalDate.of(2024, 6, 10);
-        String semanaParam = fechaEspecifica.toString();
-
         when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-        when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
-                eq("profesor@test.com"), eq(fechaEspecifica)))
-                .thenReturn(Arrays.asList());
+		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
+				"profesor@test.com", diaLunes))
+				.thenReturn(Arrays.asList());
 
-        ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(semanaParam, requestMock);
+        ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(diaLunes.toString(), requestMock);
+
+
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-profesor"));
-        verify(servicioDisponibilidadProfesorMock, times(1))
-                .obtenerDisponibilidadProfesorPorSemana("profesor@test.com", fechaEspecifica);
+        verify(servicioDisponibilidadProfesorMock)
+                .obtenerDisponibilidadProfesorPorSemana("profesor@test.com", diaLunes);
     }
 
 
 	@Test
 	public void deberiaDenegarAccessoACalendarioSiUsuarioNoEsProfesor() {
-		// Preparación
+
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioEstudianteMock);
 
-		// Ejecución
+
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
 
-		// Validación
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
 		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(anyString());
 	}
 
 	@Test
 	public void deberiaRedirigirALoginSiUsuarioNoEstaLogueado() {
-		// Preparación
+
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
-
-		// Ejecución
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
-
-		// Validación
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
 		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(anyString());
 	}
 
 	@Test
 	public void deberiaToggleDisponibilidadCorrectamente() {
-		// Preparación
-		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 
-		// Ejecución
+		LocalDate fechaEsperadaLunes = LocalDate.now().with(DayOfWeek.MONDAY);
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad("Lunes", "09:00", null, null, requestMock);
 
-		// Validación
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-        verify(servicioDisponibilidadProfesorMock, times(1))
-                .toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), any(LocalDate.class));
+		verify(servicioDisponibilidadProfesorMock).toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"),
+				eq("09:00"), eq(fechaEsperadaLunes)
+				);
 	}
 
     @Test
     public void deberiaToggleDisponibilidadConFechaEspecifica() {
-        // Preparación
         when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-        LocalDate fechaEspecifica = LocalDate.of(2024, 6, 10);
-
-        // Ejecución
         ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad(
-                "Lunes", "09:00", fechaEspecifica.toString(), null, requestMock);
-
-        // Validación
+                "Lunes", "09:00", diaLunes.toString(), null, requestMock);
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-        verify(servicioDisponibilidadProfesorMock, times(1))
-                .toggleDisponibilidadConFecha("profesor@test.com", "Lunes", "09:00", fechaEspecifica);
+        verify(servicioDisponibilidadProfesorMock)
+                .toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"),
+						eq("09:00"), eq(diaLunes));
     }
 
 
 	@Test
 	public void deberiaRedirigirALoginEnToggleSiUsuarioNoEstaLogueado() {
-		// Preparación
+
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
-
-		// Ejecución
 		ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad("Lunes", "09:00", null, null, requestMock);
-
-		// Validación
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
 		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(anyString(), anyString(), anyString());
 	}
 
 	@Test
 	public void deberiaRedirigirAHomeEnToggleSiUsuarioNoEsProfesor() {
-		// Preparación
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioEstudianteMock);
-
-		// Ejecución
 		ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad("Lunes", "09:00", null, null, requestMock);
 
-		// Validación
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
 		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(anyString(), anyString(), anyString());
 	}
 
 	@Test
 	public void deberiaManejorParametrosNulosEnToggle() {
-		// Preparación
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-
-		// Ejecución
 		ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad(null, "09:00", null, null, requestMock);
-
-		// Validación
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(anyString(), anyString(), anyString());
 	}
@@ -216,18 +193,14 @@ public class ControladorDisponibilidadTest {
 
 	@Test
 	public void deberiaCargarCalendarioVacioSiNoHayDisponibilidades() {
-		// Preparación
+
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor("profesor@test.com"))
-				.thenReturn(Arrays.asList());
+		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
+				"profesor@test.com", diaLunes)).thenReturn(Arrays.asList());
 
-		// Ejecución
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
-
-		// Validación
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-profesor"));
 
-		@SuppressWarnings("unchecked")
 		List<String> disponibilidadesKeys = (List<String>) modelAndView.getModel().get("disponibilidadesKeys");
 		assertTrue(disponibilidadesKeys.isEmpty());
 	}
@@ -316,7 +289,7 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), any(LocalDate.class));
+				.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), eq(diaLunes));
 	}
 
 	@Test
@@ -367,6 +340,27 @@ public class ControladorDisponibilidadTest {
 		assertThat(resultado3.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(3))
 				.toggleDisponibilidadConFecha(eq("profesor@test.com"), anyString(), anyString(), any(LocalDate.class));
+	}
+
+	@Test
+	public void deberiaReservarHorarioCorrectamente() {
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+		ModelAndView resultado = controladorDisponibilidad.reservarHorario(
+				"Miércoles", "14:00", null, requestMock);
+		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock)
+				.reservarHorario("profesor@test.com", "Miércoles", "14:00");
+	}
+
+	@Test
+	public void deberiaDesagendarHorarioCorrectamente() {
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
+
+		ModelAndView resultado = controladorDisponibilidad.desagendarHorario(
+				"Jueves", "16:00", null, requestMock);
+		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+		verify(servicioDisponibilidadProfesorMock)
+				.desagendarHorario("profesor@test.com", "Jueves", "16:00");
 	}
 
 
@@ -524,7 +518,6 @@ public class ControladorDisponibilidadTest {
 	@Test
 	public void deberiaCargarEstadosMapCorrectamenteEnCalendario() {
 
-		LocalDate fechaInicio = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
 		List<disponibilidadProfesor> disponibilidades = Arrays.asList(
 				new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", EstadoDisponibilidad.DISPONIBLE),
 				new disponibilidadProfesor("profesor@test.com", "Martes", "10:00", EstadoDisponibilidad.OCUPADO),
@@ -533,22 +526,17 @@ public class ControladorDisponibilidadTest {
 
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
-				eq("profesor@test.com"), any(LocalDate.class)))
+				eq("profesor@test.com"), eq(diaLunes)))
 				.thenReturn(disponibilidades);
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-profesor"));
-
-		@SuppressWarnings("unchecked")
 		Map<String, String> estadosMap = (Map<String, String>) modelAndView.getModel().get("estadosMap");
-
 		assertThat(estadosMap.get("Lunes-09:00"), equalToIgnoringCase("DISPONIBLE"));
 		assertThat(estadosMap.get("Martes-10:00"), equalToIgnoringCase("OCUPADO"));
 		assertThat(estadosMap.get("Miércoles-11:00"), equalToIgnoringCase("RESERVADO"));
 	}
 
-
-	/*
 	@Test
 	public void deberiaFuncionarConTodosLosEstados() {
 
@@ -560,16 +548,13 @@ public class ControladorDisponibilidadTest {
 
 		for (EstadoDisponibilidad estado : estados) {
 			List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-					new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", estado)
+					new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", fechaInicio, estado)
 			);
-
 			when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
 					eq("profesor@test.com"), any(LocalDate.class)))
-					.thenReturn(Arrays.asList());
-
+					.thenReturn(disponibilidades);
 
 			ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null,requestMock);
-
 
 			Map<String, String> estadosMap = (Map<String, String>) modelAndView.getModel().get("estadosMap");
 			assertThat("Falló para el estado: " + estado,
@@ -577,16 +562,11 @@ public class ControladorDisponibilidadTest {
 		}
 	}
 
-	 */
-
 	@Test
 	public void deberiaManejarSesionNulaEnObtenerUsuario() {
 
 		when(requestMock.getSession()).thenReturn(null);
-
-
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null,requestMock);
-
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
 		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(anyString());
 	}
@@ -644,28 +624,17 @@ public class ControladorDisponibilidadTest {
 
 	@Test
 	public void deberiaCalcularFechaCorrectaParaCadaDiaDeLaSemana() {
-
-		LocalDate inicioDeSemana = LocalDate.of(2025, 6, 9);
-
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-
-
 		String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 		LocalDate[] fechasEsperadas = {
-				LocalDate.of(2025, 6, 9),
-				LocalDate.of(2025, 6, 10),
-				LocalDate.of(2025, 6, 11),
-				LocalDate.of(2025, 6, 12),
-				LocalDate.of(2025, 6, 13),
-				LocalDate.of(2025, 6, 14),
-				LocalDate.of(2025, 6, 15)
+				diaLunes, diaMartes, diaMiercoles, diaJueves, diaViernes, diaSabado, diaDomingo
 		};
 
 		for (int i = 0; i < dias.length; i++) {
 			String dia = dias[i];
 			LocalDate fechaEsperada = fechasEsperadas[i];
-			ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad(
-					dia, "10:00", fechaEsperada.toString(), null, requestMock);
+			 controladorDisponibilidad.toggleDisponibilidad(
+					dia, "10:00", null, diaLunes.toString(), requestMock);
 			verify(servicioDisponibilidadProfesorMock)
 					.toggleDisponibilidadConFecha("profesor@test.com", dia, "10:00", fechaEsperada);
 		}
@@ -674,15 +643,15 @@ public class ControladorDisponibilidadTest {
 	@Test
 	public void deberiaUsarFechaEspecificaCuandoSeProvee() {
 
-		LocalDate fechaEspecifica = LocalDate.of(2025, 7, 7);
+
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad(
-				"Lunes", "09:00", fechaEspecifica.toString(), null, requestMock);
+				"Lunes", "09:00", diaLunes.toString(), null, requestMock);
 
 
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha("profesor@test.com", "Lunes", "09:00", fechaEspecifica);
+				.toggleDisponibilidadConFecha("profesor@test.com", "Lunes", "09:00", diaLunes);
 	}
 
 	@Test
@@ -702,18 +671,11 @@ public class ControladorDisponibilidadTest {
 
 	@Test
 	public void deberiaRedirigiralaMismaSemanaDespuesDeAgendar() {
-		LocalDate semanaEspecifica = LocalDate.of(2025, 6, 9);
-		String semanaParam = semanaEspecifica.toString();
-
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-
-
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad(
-				"Lunes", "10:00", null, semanaParam, requestMock);
-
-
+				"Lunes", "10:00", null, diaLunes.toString(), requestMock);
 		assertThat(resultado.getViewName(),
-				equalToIgnoringCase("redirect:/calendario-profesor?semana=" + semanaParam));
+				equalToIgnoringCase("redirect:/calendario-profesor?semana=" + diaLunes.toString()));
 	}
 
 	@Test
@@ -797,14 +759,10 @@ public class ControladorDisponibilidadTest {
 	public void deberiaUsarFechaEspecificaSobreSemanaActual() {
 
 		LocalDate fechaEspecifica = LocalDate.of(2025, 7, 24);
-		LocalDate semanaActual = LocalDate.of(2025, 6, 9);
-
+		LocalDate semanaActual = diaLunes;
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-
-
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad(
 				"Jueves", "13:00", fechaEspecifica.toString(), semanaActual.toString(), requestMock);
-
 		verify(servicioDisponibilidadProfesorMock)
 				.toggleDisponibilidadConFecha("profesor@test.com", "Jueves", "13:00", fechaEspecifica);
 	}
