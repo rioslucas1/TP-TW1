@@ -13,7 +13,6 @@
 </head>
 <body>
 <div class="d-flex">
-    <!-- Sidebar a la izquierda -->
     <div class="sidebar-custom">
         <a href="#" class="sidebar-logo">
             <i class='bx bx-layer'></i>
@@ -55,13 +54,11 @@
         </div>
     </div>
 
-    <!-- Contenido principal -->
     <div class="container">
         <header>
             <h1>Ubicación de Profesores</h1>
             <p>Sistema de localización de profesores por materia</p>
 
-            <!-- Buscador de profesores -->
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Buscar profesor por nombre o materia..." class="search-input">
                 <button id="searchButton" class="search-button">
@@ -70,13 +67,12 @@
             </div>
         </header>
 
-        <!-- Contenedor del mapa - Ahora aparece primero -->
         <div class="map-container">
             <h2 class="map-title">Mapa de Ubicaciones</h2>
             <div id="map"></div>
         </div>
 
-        <!-- Tarjetas de profesores - Ahora aparecen debajo del mapa -->
+        <!-- Card de profesores dinamica -->
         <h2 class="profesores-title">Listado de Profesores</h2>
         <div class="profesores-cards" id="profesoresContainer" th:if="${not #lists.isEmpty(datosProfesores)}">
             <div class="profesor-card" th:each="profesor : ${datosProfesores}" th:data-nombre="${profesor.nombre + ' ' + profesor.apellido}" th:data-materia="${profesor.materia}">
@@ -100,9 +96,19 @@
             <p>No se han encontrado profesores en el sistema.</p>
         </div>
 
-        <footer>
-            &copy; 2025 Sistema de Localización de Profesores
+        <footer class="footer text-white py-4 mt-5">
+            <div class="container text-center">
+                <p class="mb-2">© 2025 Clases-Ya. Todos los derechos reservados.</p>
+                <ul class="list-inline mt-2 mb-0">
+                    <li class="list-inline-item">Angel Leyes</li>
+                    <li class="list-inline-item">Ezequiel Mendoza</li>
+                    <li class="list-inline-item">Fede Hodara</li>
+                    <li class="list-inline-item">Lucas Rios</li>
+                    <li class="list-inline-item">Luka Cambriglia</li>
+                </ul>
+            </div>
         </footer>
+
     </div>
 </div>
 
@@ -177,7 +183,7 @@
         messageControl.addTo(map);
     }
 
-    // Funcionalidad de búsqueda
+    // Busqueda con js
     document.getElementById('searchButton').addEventListener('click', buscarProfesor);
     document.getElementById('searchInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
@@ -198,15 +204,12 @@
                 card.style.display = 'block';
                 card.classList.add('highlight');
 
-                // Si es el primer resultado encontrado, centramos el mapa en ese profesor
                 if (!encontrado) {
                     const btnVerMapa = card.querySelector('.btn-ver-mapa');
                     if (btnVerMapa) {
-                        btnVerMapa.click(); // Simular clic en el botón "Ver en mapa"
+                        btnVerMapa.click();
                     }
                     encontrado = true;
-
-                    // Hacer scroll hasta la tarjeta
                     setTimeout(() => {
                         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 500);
@@ -217,7 +220,6 @@
             }
         });
 
-        // Si no se encontró ningún profesor, mostrar todos
         if (!encontrado) {
             profesorCards.forEach(card => {
                 card.style.display = 'block';
@@ -233,8 +235,6 @@
             alert('No se encontraron profesores que coincidan con la búsqueda.');
         }
     }
-
-    // Función para limpiar la búsqueda
     function limpiarBusqueda() {
         document.getElementById('searchInput').value = '';
         const profesorCards = document.querySelectorAll('.profesor-card');
@@ -243,8 +243,6 @@
             card.style.display = 'block';
             card.classList.remove('highlight');
         });
-
-        // Centrar el mapa en todos los marcadores
         if (markers.length > 0) {
             const bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
             map.fitBounds(bounds);
