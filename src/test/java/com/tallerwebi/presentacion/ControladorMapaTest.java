@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.Profesor;
-import com.tallerwebi.dominio.ServicioMapa;
+import com.tallerwebi.dominio.entidades.Profesor;
+import com.tallerwebi.dominio.servicios.ServicioMapa;
 import com.tallerwebi.dominio.Materia;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

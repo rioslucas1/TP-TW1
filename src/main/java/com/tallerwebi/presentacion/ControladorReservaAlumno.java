@@ -1,5 +1,6 @@
 package com.tallerwebi.presentacion;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.entidades.Alumno;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
-import com.tallerwebi.dominio.ServicioReservaAlumno;
+import com.tallerwebi.dominio.servicios.ServicioReservaAlumno;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -28,7 +29,6 @@ public class ControladorReservaAlumno {
     public ControladorReservaAlumno(ServicioReservaAlumno servicioReservaAlumno) {
         this.servicioReservaAlumno = servicioReservaAlumno;
     }
-
     @GetMapping("/calendario-reserva")
     public ModelAndView verCalendarioProfesor(
             @RequestParam String emailProfesor,
@@ -81,8 +81,12 @@ public class ControladorReservaAlumno {
     }
 
     private boolean esAlumno(Usuario usuario) {
+<<<<<<< Updated upstream
         return usuario != null &&
                 !"profesor".equals(usuario.getRol());
+=======
+        return usuario instanceof Alumno;
+>>>>>>> Stashed changes
 
     }
 
@@ -203,9 +207,5 @@ public class ControladorReservaAlumno {
         }
         return new ModelAndView(redirectUrl);
     }
-
-
-
-
 
 }

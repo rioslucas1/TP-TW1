@@ -1,4 +1,5 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.entidades;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -6,16 +7,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Usuario {
+public abstract class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
+
     private String apellido;
+
     private String email;
+
     private String password;
-    private String rol;
+
     private Boolean activo = false;
 
 
@@ -41,12 +46,6 @@ public class Usuario {
     }
     public void setPassword(String password) {
         this.password = password;
-    }
-    public String getRol() {
-        return rol;
-    }
-    public void setRol(String rol) {
-        this.rol = rol;
     }
     public Boolean getActivo() {
         return activo;

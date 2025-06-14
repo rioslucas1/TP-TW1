@@ -1,7 +1,9 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.ServicioDisponibilidadProfesor;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.servicios.ServicioDisponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.entidades.Alumno;
+import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.time.format.DateTimeFormatter;
 
+
+
 @Controller
 public class ControladorDisponibilidad {
 
@@ -28,7 +32,6 @@ public class ControladorDisponibilidad {
     public ControladorDisponibilidad(ServicioDisponibilidadProfesor servicioDisponibilidadProfesor) {
         this.servicioDisponibilidadProfesor = servicioDisponibilidadProfesor;
     }
-
     @GetMapping("/calendario-profesor")
     public ModelAndView irACalendarioProfesor(
             @RequestParam(value = "semana", required = false) String semanaParam,
@@ -88,11 +91,7 @@ public class ControladorDisponibilidad {
     }
 
     private boolean esProfesor(Usuario usuario) {
-        return usuario != null &&
-                usuario.getRol() != null &&
-                "profesor".equals(usuario.getRol());
-
-
+        return usuario instanceof Profesor;
     }
 
     private boolean sonParametrosValidos(String diaSemana, String hora) {
@@ -110,51 +109,51 @@ public class ControladorDisponibilidad {
         return esDiaValido && horaValida;
     }
 
-        @PostMapping("/toggle-disponibilidad")
-        public ModelAndView toggleDisponibilidad(
-                @RequestParam("diaSemana") String diaSemana,
-                @RequestParam("hora") String hora,
-                @RequestParam(value = "fechaEspecifica", required = false) String fechaEspecificaStr,
-                @RequestParam(value = "semanaActual", required = false) String semanaActualStr,
-                HttpServletRequest request) {
+    @PostMapping("/toggle-disponibilidad")
+    public ModelAndView toggleDisponibilidad(
+            @RequestParam("diaSemana") String diaSemana,
+            @RequestParam("hora") String hora,
+            @RequestParam(value = "fechaEspecifica", required = false) String fechaEspecificaStr,
+            @RequestParam(value = "semanaActual", required = false) String semanaActualStr,
+            HttpServletRequest request) {
 
-            Usuario usuario = (Usuario) request.getSession().getAttribute("USUARIO");
-            if (usuario == null) {
-                return new ModelAndView("redirect:/login");
-            }
-            if (!esProfesor(usuario)) {
-                return new ModelAndView("redirect:/home");
-            }
+        Usuario usuario = (Usuario) request.getSession().getAttribute("USUARIO");
+        if (usuario == null) {
+            return new ModelAndView("redirect:/login");
+        }
+        if (!esProfesor(usuario)) {
+            return new ModelAndView("redirect:/home");
+        }
 
-            String diaLimpio = diaSemana != null ? diaSemana.trim() : "";
-            String horaLimpia = hora != null ? hora.trim() : "";
+        String diaLimpio = diaSemana != null ? diaSemana.trim() : "";
+        String horaLimpia = hora != null ? hora.trim() : "";
 
-            if (!sonParametrosValidos(diaLimpio, horaLimpia)) {
-                System.err.println("Parámetros inválidos - Día: " + diaLimpio + ", Hora: " + horaLimpia);
-                return crearRedirectConSemana("/calendario-profesor", semanaActualStr);
-            }
-
-            LocalDate fechaEspecifica;
-            if (fechaEspecificaStr != null && !fechaEspecificaStr.trim().isEmpty()) {
-                try {
-                    fechaEspecifica = LocalDate.parse(fechaEspecificaStr);
-                } catch (Exception e) {
-                    System.err.println("Error parseando fecha específica: " + fechaEspecificaStr + ", error: " + e.getMessage());
-                    fechaEspecifica = calcularFechaCorrecta(diaLimpio, semanaActualStr);
-                }
-            } else {
-                fechaEspecifica = calcularFechaCorrecta(diaLimpio, semanaActualStr);
-            }
-
-            try {
-                servicioDisponibilidadProfesor.toggleDisponibilidadConFecha(
-                        usuario.getEmail(), diaLimpio, horaLimpia, fechaEspecifica);
-            } catch (Exception e) {
-                System.err.println("Error al procesar toggle disponibilidad: " + e.getMessage());
-            }
-
+        if (!sonParametrosValidos(diaLimpio, horaLimpia)) {
+            System.err.println("Parámetros inválidos - Día: " + diaLimpio + ", Hora: " + horaLimpia);
             return crearRedirectConSemana("/calendario-profesor", semanaActualStr);
         }
+
+        LocalDate fechaEspecifica;
+        if (fechaEspecificaStr != null && !fechaEspecificaStr.trim().isEmpty()) {
+            try {
+                fechaEspecifica = LocalDate.parse(fechaEspecificaStr);
+            } catch (Exception e) {
+                System.err.println("Error parseando fecha específica: " + fechaEspecificaStr + ", error: " + e.getMessage());
+                fechaEspecifica = calcularFechaCorrecta(diaLimpio, semanaActualStr);
+            }
+        } else {
+            fechaEspecifica = calcularFechaCorrecta(diaLimpio, semanaActualStr);
+        }
+
+        try {
+            servicioDisponibilidadProfesor.toggleDisponibilidadConFecha(
+                    usuario.getEmail(), diaLimpio, horaLimpia, fechaEspecifica);
+        } catch (Exception e) {
+            System.err.println("Error al procesar toggle disponibilidad: " + e.getMessage());
+        }
+
+        return crearRedirectConSemana("/calendario-profesor", semanaActualStr);
+    }
 
     @PostMapping("/reservar-horario")
     public ModelAndView reservarHorario(
@@ -310,11 +309,5 @@ public class ControladorDisponibilidad {
         }
         return new ModelAndView(redirectUrl);
     }
-
-
-
-
-
-
 
 }

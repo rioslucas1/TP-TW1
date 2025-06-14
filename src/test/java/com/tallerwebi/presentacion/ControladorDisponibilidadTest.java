@@ -1,13 +1,9 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.entidades.EstadoDisponibilidad;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
-import com.tallerwebi.dominio.ServicioDisponibilidadProfesor;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
-import com.tallerwebi.dominio.ServicioLogin;
-import com.tallerwebi.dominio.ServicioTema;
-import com.tallerwebi.dominio.Usuario;
-import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.servicios.ServicioDisponibilidadProfesor;
+import com.tallerwebi.dominio.servicios.ServicioLogin;
+import com.tallerwebi.dominio.servicios.ServicioTema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,18 +46,14 @@ public class ControladorDisponibilidadTest {
 	private static LocalDate diaSabado = LocalDate.of(2025, 6, 14);
 	private static LocalDate diaDomingo = LocalDate.of(2025, 6, 15);
 
-
-
 	@BeforeEach
 	public void init(){
 		datosLoginMock = new DatosLogin("test@unlam.com", "123");
-		usuarioProfesorMock = mock(Usuario.class);
+		usuarioProfesorMock = mock(Profesor.class);
 		when(usuarioProfesorMock.getEmail()).thenReturn("profesor@test.com");
-		when(usuarioProfesorMock.getRol()).thenReturn("profesor");
 		when(usuarioProfesorMock.getNombre()).thenReturn("Juan");
-		usuarioEstudianteMock = mock(Usuario.class);
+		usuarioEstudianteMock = mock(Alumno.class);
 		when(usuarioEstudianteMock.getEmail()).thenReturn("estudiante@test.com");
-		when(usuarioEstudianteMock.getRol()).thenReturn("estudiante");
 
 		requestMock = mock(HttpServletRequest.class);
 		sessionMock = mock(HttpSession.class);

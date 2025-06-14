@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.servicios;
 import com.tallerwebi.dominio.entidades.EstadoDisponibilidad;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 

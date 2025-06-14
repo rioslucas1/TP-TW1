@@ -1,8 +1,10 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.*;
-import com.tallerwebi.dominio.entidades.EstadoDisponibilidad;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.servicios.ServicioDisponibilidadProfesor;
+import com.tallerwebi.dominio.servicios.ServicioLogin;
+import com.tallerwebi.dominio.servicios.ServicioReservaAlumno;
+import com.tallerwebi.dominio.servicios.ServicioTema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,17 +48,16 @@ public class ControladorReservaAlumnoTest {
 	String emailProfesor = "profesor@test.com";
 	String emailAlumno = "alumno@test.com";
 
+
 	@BeforeEach
 	public void init(){
 		datosLoginMock = new DatosLogin("test@unlam.com", "123");
 
-		usuarioProfesorMock = mock(Usuario.class);
+		usuarioProfesorMock = mock(Profesor.class);
 		when(usuarioProfesorMock.getEmail()).thenReturn(emailProfesor);
-		when(usuarioProfesorMock.getRol()).thenReturn("profesor");
 		when(usuarioProfesorMock.getNombre()).thenReturn("Juan");
-		usuarioAlumnoMock = mock(Usuario.class);
+		usuarioAlumnoMock = mock(Alumno.class);
 		when(usuarioAlumnoMock.getEmail()).thenReturn(emailAlumno);
-		when(usuarioAlumnoMock.getRol()).thenReturn("alumno");
 		when(usuarioAlumnoMock.getNombre()).thenReturn("Juan2");
 
 		requestMock = mock(HttpServletRequest.class);
@@ -321,4 +322,5 @@ public class ControladorReservaAlumnoTest {
 		verify(servicioReservaAlumnoMock, times(1))
 				.reservarClasePorId(disponibilidadId, emailAlumno);
 	}
+
 }

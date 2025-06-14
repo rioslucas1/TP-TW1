@@ -1,6 +1,6 @@
 package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.Profesor;
+import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.RepositorioProfesor;
 import org.springframework.stereotype.Repository;
 
