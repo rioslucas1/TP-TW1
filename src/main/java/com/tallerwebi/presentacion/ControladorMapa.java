@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.Profesor;
-import com.tallerwebi.dominio.ServicioMapa;
+import com.tallerwebi.dominio.entidades.Profesor;
+import com.tallerwebi.dominio.servicios.ServicioMapa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,7 +26,11 @@ public class ControladorMapa {
         ModelMap modelo = new ModelMap();
 
         List<Profesor> profesores = servicioMapa.obtenerProfesores();
-
+        if (profesores == null) {
+            modelo.put("datosProfesores", List.of());
+            modelo.put("mensaje", "No se encontraron profesores para mostrar en el mapa.");
+            return new ModelAndView("mapa", modelo);
+        }
         List<DatosMapa> datosProfesores = profesores.stream()
                 .map(profesor -> new DatosMapa(
                         profesor.getNombre(),

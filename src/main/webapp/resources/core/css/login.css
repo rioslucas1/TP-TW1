@@ -1,6 +1,6 @@
 .login-body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #7367F0, #CE9FFC);
+    background: linear-gradient(135deg, #0098c7, #01d4fb);
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -30,7 +30,7 @@
 .user-icon {
     width: 60px;
     height: 60px;
-    background-color: #7367F0;
+    background-color: #0098c7;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -63,7 +63,7 @@
     transform: translateX(-50%);
     height: 3px;
     width: 50px;
-    background-color: #7367F0;
+    background-color: #0098c7;
 }
 
 .form-contenedor label {
@@ -79,7 +79,7 @@
 }
 
 .btn-login {
-    background-color: #7367F0;
+    background-color: #0098c7;
     border: none;
     padding: 0.75rem;
     font-size: 1.1rem;
@@ -88,9 +88,9 @@
 }
 
 .btn-login:hover {
-    background-color: #6355e8;
+    background-color: #0098c7;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(115, 103, 240, 0.4);
+    box-shadow: 0 5px 15px rgba(14, 202, 239, 0.4);
 }
 
 .login-footer {
@@ -101,7 +101,7 @@
 }
 
 .olvido-contrasena {
-    color: #7367F0;
+    color: #0098c7;
     text-decoration: none;
 }
 
@@ -116,7 +116,7 @@
 }
 
 .registro-link a {
-    color: #7367F0;
+    color: #0098c7;
     text-decoration: none;
     font-weight: 500;
 }

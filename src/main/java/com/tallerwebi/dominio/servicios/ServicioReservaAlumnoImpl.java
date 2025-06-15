@@ -1,11 +1,9 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.servicios;
 
-import com.tallerwebi.dominio.entidades.EstadoDisponibilidad;
+import com.tallerwebi.dominio.RepositorioReservaAlumno;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
-import com.tallerwebi.infraestructura.RepositorioReservaAlumnoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;

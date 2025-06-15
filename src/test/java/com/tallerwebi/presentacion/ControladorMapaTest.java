@@ -1,8 +1,8 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.Profesor;
-import com.tallerwebi.dominio.ServicioMapa;
-import com.tallerwebi.dominio.Materia;
+import com.tallerwebi.dominio.entidades.Profesor;
+import com.tallerwebi.dominio.servicios.ServicioMapa;
+import com.tallerwebi.dominio.entidades.Materia;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,4 +66,52 @@ public class ControladorMapaTest {
         assertThat(segundo.getLatitud(), equalTo(-34.6090));
         assertThat(segundo.getLongitud(), equalTo(-58.3838));
     }
+
+
+    @Test
+    public void deberiaRetornarVistaMapaConListaVaciaCuandoNoHayProfesores() {
+        when(servicioMapaMock.obtenerProfesores()).thenReturn(List.of());
+
+        ModelAndView modelAndView = controladorMapa.irVerMapa();
+
+        assertThat(modelAndView.getViewName(), equalTo("mapa"));
+        List<DatosMapa> datosMapa = (List<DatosMapa>) modelAndView.getModel().get("datosProfesores");
+        assertThat(datosMapa, is(empty()));
+    }
+
+    @Test
+    public void deberiaFallarLaVistaMapaCuandoServicioDevuelveNull() {
+        when(servicioMapaMock.obtenerProfesores()).thenReturn(null);
+
+        ModelAndView modelAndView = controladorMapa.irVerMapa();
+
+        assertThat(modelAndView.getViewName(), equalTo("mapa"));
+
+        List<DatosMapa> datosMapa = (List<DatosMapa>) modelAndView.getModel().get("datosProfesores");
+        assertThat(datosMapa, is(empty()));
+        // evaluo mensaje tengo que refactorizar despues esto. Esta bien que muestr el mensaje asi?
+        String mensaje = (String) modelAndView.getModel().get("mensaje");
+        assertThat(mensaje, equalTo("No se encontraron profesores para mostrar en el mapa."));
+    }
+
+    @Test
+    public void deberiaManejarProfesorConCoordenadasInvalidas() {
+        Profesor profesor = mock(Profesor.class);
+        when(profesor.getNombre()).thenReturn("Carlos");
+        when(profesor.getApellido()).thenReturn("Lopez");
+        when(profesor.getMateria()).thenReturn(Materia.PROGRAMACION);
+        when(profesor.getLatitud()).thenReturn(0.0); // por el momento lo dejo en double deberia ser null despues(?
+        when(profesor.getLongitud()).thenReturn(0.0); // lo mismo que arriba
+
+        when(servicioMapaMock.obtenerProfesores()).thenReturn(List.of(profesor));
+
+        ModelAndView modelAndView = controladorMapa.irVerMapa();
+
+        List<DatosMapa> datosMapa = (List<DatosMapa>) modelAndView.getModel().get("datosProfesores");
+        assertThat(datosMapa, hasSize(1)); //comparacion / validacion
+        DatosMapa dato = datosMapa.get(0);
+        assertThat(dato.getLatitud(), is(0.0));
+        assertThat(dato.getLongitud(), is(0.0));
+    }
+
 }

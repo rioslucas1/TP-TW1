@@ -1,5 +1,6 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.servicios;
 
+import com.tallerwebi.dominio.RepositorioDisponibilidadProfesor;
 import com.tallerwebi.dominio.entidades.EstadoDisponibilidad;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import org.springframework.beans.factory.annotation.Autowired;

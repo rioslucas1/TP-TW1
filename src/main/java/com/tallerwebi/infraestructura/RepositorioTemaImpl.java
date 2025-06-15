@@ -2,11 +2,8 @@ package com.tallerwebi.infraestructura;
 import java.util.List;
 
 import com.tallerwebi.dominio.RepositorioTema;
-import com.tallerwebi.dominio.Tema;
-import com.tallerwebi.dominio.Usuario;
-import org.hibernate.Session;
+import com.tallerwebi.dominio.entidades.Tema;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

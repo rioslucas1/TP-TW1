@@ -1,4 +1,6 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.servicios;
+
+import com.tallerwebi.dominio.entidades.Profesor;
 
 import java.util.List;
 
