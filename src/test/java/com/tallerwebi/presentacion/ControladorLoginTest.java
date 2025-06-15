@@ -5,7 +5,6 @@ import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Tema;
 import com.tallerwebi.dominio.servicios.ServicioTema;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
-import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

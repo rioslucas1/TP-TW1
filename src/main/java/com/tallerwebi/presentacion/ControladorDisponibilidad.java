@@ -2,7 +2,6 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.servicios.ServicioDisponibilidadProfesor;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,8 @@ public class ControladorDisponibilidad {
 
 
     private static final String[] DIAS_SEMANA = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+
+
     private ServicioDisponibilidadProfesor servicioDisponibilidadProfesor;
 
     @Autowired

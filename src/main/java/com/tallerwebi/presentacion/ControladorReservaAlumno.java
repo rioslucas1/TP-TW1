@@ -81,13 +81,7 @@ public class ControladorReservaAlumno {
     }
 
     private boolean esAlumno(Usuario usuario) {
-<<<<<<< Updated upstream
-        return usuario != null &&
-                !"profesor".equals(usuario.getRol());
-=======
         return usuario instanceof Alumno;
->>>>>>> Stashed changes
-
     }
 
     private Usuario obtenerUsuarioDeSesion(HttpServletRequest request) {

@@ -1,43 +1,54 @@
 package com.tallerwebi.dominio.entidades;
 
-import com.tallerwebi.dominio.Materia;
-
 import javax.persistence.*;
 
 @Entity
+@Table(name = "profesores")
 @PrimaryKeyJoinColumn(name = "id")
-public class Profesor extends Usuario{
+public class Profesor extends Usuario {
 
+    @Column(nullable = false)
+    private Double latitud;
 
+    @Column(nullable = false)
+    private Double longitud;
 
-    private double latitud;
+    private Materia materia;
 
-    public double getLongitud() {
-        return longitud;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tema_id", nullable = false)
+    private Tema tema;
+
+    public Profesor() {
+        super();
+        this.setRol("PROFESOR");
     }
-    public void setLongitud(double longitud) {
-        this.longitud = longitud;
+
+    public Profesor(String nombre, String apellido, String email, String password) {
+        super();
+        this.setNombre(nombre);
+        this.setApellido(apellido);
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setRol("PROFESOR");
     }
 
-    public double getLatitud() {
+    // Getters y Setters
+    public Double getLatitud() {
         return latitud;
     }
 
-    public void setLatitud(double latitud) {
+    public void setLatitud(Double latitud) {
         this.latitud = latitud;
     }
 
-    @Override
-    public Tema getTema() {
-        return tema;
+    public Double getLongitud() {
+        return longitud;
     }
 
-    @Override
-    public void setTema(Tema tema) {
-        this.tema = tema;
+    public void setLongitud(Double longitud) {
+        this.longitud = longitud;
     }
-
-    private double longitud;
 
     public Materia getMateria() {
         return materia;
@@ -47,10 +58,13 @@ public class Profesor extends Usuario{
         this.materia = materia;
     }
 
-    private Materia materia;
+    public Tema getTema() {
+        return tema;
+    }
 
-
-    @OneToOne
-    @JoinColumn(name = "tema_id")
-    private Tema tema;
+    public void setTema(Tema tema) {
+        this.tema = tema;
+    }
 }
+
+
