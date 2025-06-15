@@ -27,6 +27,7 @@ public class ControladorDisponibilidad {
     private static final String[] DIAS_SEMANA = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
 
+   
     private ServicioDisponibilidadProfesor servicioDisponibilidadProfesor;
 
     @Autowired

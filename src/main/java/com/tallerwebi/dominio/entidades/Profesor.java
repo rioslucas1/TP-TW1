@@ -7,15 +7,11 @@ import javax.persistence.*;
 @PrimaryKeyJoinColumn(name = "id")
 public class Profesor extends Usuario {
 
-    @Column(nullable = false)
     private Double latitud;
-
-    @Column(nullable = false)
     private Double longitud;
-
     private Materia materia;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tema_id", nullable = false)
     private Tema tema;
 
@@ -33,7 +29,7 @@ public class Profesor extends Usuario {
         this.setRol("PROFESOR");
     }
 
-    // Getters y Setters
+
     public Double getLatitud() {
         return latitud;
     }

@@ -9,10 +9,7 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "id")
 public class Alumno extends Usuario {
 
-    @Column(nullable = false)
     private Double latitud;
-
-    @Column(nullable = false)
     private Double longitud;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
