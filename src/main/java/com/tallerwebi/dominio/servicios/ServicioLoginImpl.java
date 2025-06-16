@@ -1,5 +1,9 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.servicios;
 import java.util.List;
+
+import com.tallerwebi.dominio.RepositorioUsuario;
+import com.tallerwebi.dominio.entidades.Profesor;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +28,7 @@ public class ServicioLoginImpl implements ServicioLogin {
 
     @Override
     public void registrar(Usuario usuario) throws UsuarioExistente {
-        Usuario usuarioEncontrado = repositorioUsuario.buscarUsuario(usuario.getEmail(), usuario.getPassword());
+        Usuario usuarioEncontrado = repositorioUsuario.buscar(usuario.getEmail());
         if(usuarioEncontrado != null){
             throw new UsuarioExistente();
         }
@@ -33,7 +37,7 @@ public class ServicioLoginImpl implements ServicioLogin {
 
     @Override
     public List<Usuario> obtenerProfesores() {
-        return repositorioUsuario.buscarPorRol("profesor");
+        return repositorioUsuario.buscarPorTipo(Profesor.class);
     }
 
 }

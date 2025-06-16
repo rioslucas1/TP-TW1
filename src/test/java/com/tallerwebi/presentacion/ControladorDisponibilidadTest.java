@@ -1,13 +1,9 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.entidades.EstadoDisponibilidad;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
-import com.tallerwebi.dominio.ServicioDisponibilidadProfesor;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
-import com.tallerwebi.dominio.ServicioLogin;
-import com.tallerwebi.dominio.ServicioTema;
-import com.tallerwebi.dominio.Usuario;
-import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.servicios.ServicioDisponibilidadProfesor;
+import com.tallerwebi.dominio.servicios.ServicioLogin;
+import com.tallerwebi.dominio.servicios.ServicioTema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,26 +38,22 @@ public class ControladorDisponibilidadTest {
 	private EstadoDisponibilidad estadoDisponibilidad;
 
 
-	private static LocalDate diaLunes = LocalDate.of(2025, 6, 9);
-	private static LocalDate diaMartes = LocalDate.of(2025, 6, 10);
-	private static LocalDate diaMiercoles = LocalDate.of(2025, 6, 11);
-	private static LocalDate diaJueves = LocalDate.of(2025, 6, 12);
-	private static LocalDate diaViernes = LocalDate.of(2025, 6, 13);
-	private static LocalDate diaSabado = LocalDate.of(2025, 6, 14);
-	private static LocalDate diaDomingo = LocalDate.of(2025, 6, 15);
-
-
+	private static LocalDate diaLunes = LocalDate.now().with(DayOfWeek.MONDAY);
+	private static LocalDate diaMartes = LocalDate.now().with(DayOfWeek.TUESDAY);
+	private static LocalDate diaMiercoles = LocalDate.now().with(DayOfWeek.WEDNESDAY);
+	private static LocalDate diaJueves = LocalDate.now().with(DayOfWeek.THURSDAY);
+	private static LocalDate diaViernes = LocalDate.now().with(DayOfWeek.FRIDAY);
+	private static LocalDate diaSabado = LocalDate.now().with(DayOfWeek.SATURDAY);
+	private static LocalDate diaDomingo = LocalDate.now().with(DayOfWeek.SUNDAY);
 
 	@BeforeEach
 	public void init(){
 		datosLoginMock = new DatosLogin("test@unlam.com", "123");
-		usuarioProfesorMock = mock(Usuario.class);
+		usuarioProfesorMock = mock(Profesor.class);
 		when(usuarioProfesorMock.getEmail()).thenReturn("profesor@test.com");
-		when(usuarioProfesorMock.getRol()).thenReturn("profesor");
 		when(usuarioProfesorMock.getNombre()).thenReturn("Juan");
-		usuarioEstudianteMock = mock(Usuario.class);
+		usuarioEstudianteMock = mock(Alumno.class);
 		when(usuarioEstudianteMock.getEmail()).thenReturn("estudiante@test.com");
-		when(usuarioEstudianteMock.getRol()).thenReturn("estudiante");
 
 		requestMock = mock(HttpServletRequest.class);
 		sessionMock = mock(HttpSession.class);
@@ -288,8 +279,10 @@ public class ControladorDisponibilidadTest {
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad(" Lunes ", " 09:00 ", null, null, requestMock);
 
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+
+
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), eq(diaLunes));
+		.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), eq(diaLunes));
 	}
 
 	@Test

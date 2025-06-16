@@ -1,13 +1,17 @@
 package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.RepositorioUsuario;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.entidades.Alumno;
+import com.tallerwebi.dominio.entidades.Profesor;
+import com.tallerwebi.dominio.entidades.Usuario;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository("repositorioUsuario")
@@ -22,7 +26,6 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
     @Override
     public Usuario buscarUsuario(String email, String password) {
-
         final Session session = sessionFactory.getCurrentSession();
         return (Usuario) session.createCriteria(Usuario.class)
                 .add(Restrictions.eq("email", email))
@@ -48,13 +51,11 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     }
 
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Usuario> buscarPorRol(String rol) {
+
+    public <T extends Usuario> List<Usuario> buscarPorTipo(Class<T> tipo) {
         final Session session = sessionFactory.getCurrentSession();
-        return session.createCriteria(Usuario.class)
-                .add(Restrictions.eq("rol", rol))
-                .list();
+        return session.createCriteria(tipo).list();
     }
+
 
 }
