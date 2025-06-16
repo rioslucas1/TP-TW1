@@ -38,13 +38,13 @@ public class ControladorDisponibilidadTest {
 	private EstadoDisponibilidad estadoDisponibilidad;
 
 
-	private static LocalDate diaLunes = LocalDate.of(2025, 6, 9);
-	private static LocalDate diaMartes = LocalDate.of(2025, 6, 10);
-	private static LocalDate diaMiercoles = LocalDate.of(2025, 6, 11);
-	private static LocalDate diaJueves = LocalDate.of(2025, 6, 12);
-	private static LocalDate diaViernes = LocalDate.of(2025, 6, 13);
-	private static LocalDate diaSabado = LocalDate.of(2025, 6, 14);
-	private static LocalDate diaDomingo = LocalDate.of(2025, 6, 15);
+	private static LocalDate diaLunes = LocalDate.now().with(DayOfWeek.MONDAY);
+	private static LocalDate diaMartes = LocalDate.now().with(DayOfWeek.TUESDAY);
+	private static LocalDate diaMiercoles = LocalDate.now().with(DayOfWeek.WEDNESDAY);
+	private static LocalDate diaJueves = LocalDate.now().with(DayOfWeek.THURSDAY);
+	private static LocalDate diaViernes = LocalDate.now().with(DayOfWeek.FRIDAY);
+	private static LocalDate diaSabado = LocalDate.now().with(DayOfWeek.SATURDAY);
+	private static LocalDate diaDomingo = LocalDate.now().with(DayOfWeek.SUNDAY);
 
 	@BeforeEach
 	public void init(){
@@ -279,8 +279,10 @@ public class ControladorDisponibilidadTest {
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad(" Lunes ", " 09:00 ", null, null, requestMock);
 
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
+
+
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), eq(diaLunes));
+		.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), eq(diaLunes));
 	}
 
 	@Test

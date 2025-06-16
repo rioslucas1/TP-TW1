@@ -300,4 +300,6 @@ public class RepositorioUsuarioImplTest {
         verify(sessionMock, times(1)).createCriteria(Profesor.class);
         verify(criteriaMock, times(1)).list();
     }
+
+
 }

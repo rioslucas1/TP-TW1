@@ -1,9 +1,9 @@
 
-
+/*
 INSERT INTO Tema(id, nombre) VALUES (1, 'Programación');
 INSERT INTO Tema(id, nombre) VALUES (2, 'Diseño');
 INSERT INTO Tema(id, nombre) VALUES (3, 'Inglés');
-/*
+
 
 INSERT INTO Usuario(id, nombre, apellido, email, password, rol, activo, tema_id)
 VALUES (1, 'Ana Maria', 'García', 'ana@unlam.edu.ar', 'clave1', 'PROFESOR', true, 1);
