@@ -15,6 +15,11 @@ public class Profesor extends Usuario {
     @JoinColumn(name = "tema_id", nullable = false)
     private Tema tema;
 
+    // Campos agregados
+    private String categoria;
+    private String modalidad;
+    private String duracion;
+
     public Profesor() {
         super();
         this.setRol("PROFESOR");
@@ -61,6 +66,16 @@ public class Profesor extends Usuario {
     public void setTema(Tema tema) {
         this.tema = tema;
     }
+
+    // Getters y setters agregados
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public String getModalidad() { return modalidad; }
+    public void setModalidad(String modalidad) { this.modalidad = modalidad; }
+
+    public String getDuracion() { return duracion; }
+    public void setDuracion(String duracion) { this.duracion = duracion; }
 }
 
 

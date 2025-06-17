@@ -97,11 +97,15 @@ public class ControladorLogin {
     public ModelAndView registrarme(@ModelAttribute("datosRegistro") DatosRegistro datosRegistro) {
         ModelMap model = new ModelMap();
 
-        if (usuario == null) {
-            model.put("error", "Error al registrar el nuevo usuario");
-            return new ModelAndView("nuevo-usuario", model);
-        }
+        // Crear nuevo usuario (en este caso, un Alumno)
+        Alumno usuario = new Alumno();
+        usuario.setNombre(datosRegistro.getNombre());
+        usuario.setApellido(datosRegistro.getApellido());
+        usuario.setEmail(datosRegistro.getEmail());
+        usuario.setPassword(datosRegistro.getPassword());
+        usuario.setActivo(true);
 
+        // Validaciones
         if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty() ||
                 usuario.getEmail() == null || usuario.getEmail().trim().isEmpty() ||
                 usuario.getPassword() == null || usuario.getPassword().trim().isEmpty()) {
@@ -109,7 +113,7 @@ public class ControladorLogin {
             return new ModelAndView("nuevo-usuario", model);
         }
 
-        String errorEmail = validarEmail(datosRegistro.getEmail());
+        String errorEmail = validarEmail(usuario.getEmail());
         if (errorEmail != null) {
             model.put("error", errorEmail);
             return new ModelAndView("nuevo-usuario", model);
@@ -124,6 +128,7 @@ public class ControladorLogin {
             model.put("error", "Error al registrar el nuevo usuario");
             return new ModelAndView("nuevo-usuario", model);
         }
+
         return new ModelAndView("redirect:/login");
     }
 
@@ -214,6 +219,13 @@ public class ControladorLogin {
     public String verPerfil() {
         return "verPerfil";
     }
+
+   /* @RequestMapping("/verPerfil")
+    public ModelAndView verPerfil() {
+        ModelMap modelo = new ModelMap();
+        modelo.put("datosLogin", new DatosLogin());
+        return new ModelAndView("verPerfil", modelo);
+    }*/
 
     private String validarEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
