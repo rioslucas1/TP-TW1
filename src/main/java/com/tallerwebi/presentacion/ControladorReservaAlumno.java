@@ -48,14 +48,15 @@ public class ControladorReservaAlumno {
         LocalDate fechaInicioSemana = calcularFechaInicioSemana(semanaParam);
         configurarFechasEnModelo(modelo, fechaInicioSemana);
 
+
         try {
 
             List<disponibilidadProfesor> disponibilidades =
                     servicioReservaAlumno.obtenerDisponibilidadProfesorPorSemana(emailProfesor, fechaInicioSemana);
-
             List<String> disponibilidadesKeys = new ArrayList<>();
             Map<String, String> estadosMap = new HashMap<>();
             Map<String, Long> idsMap = new HashMap<>();
+
 
             for (disponibilidadProfesor disp : disponibilidades) {
                 String key = disp.getDiaSemana() + "-" + disp.getHora();
@@ -110,8 +111,10 @@ public class ControladorReservaAlumno {
             return new ModelAndView("redirect:/home");
         }
 
+
         try {
-            servicioReservaAlumno.reservarClasePorId(disponibilidadId, usuario.getEmail());
+            Alumno alumno = (Alumno) usuario;
+            servicioReservaAlumno.reservarClasePorId(disponibilidadId, alumno);
         } catch (Exception e) {
             System.err.println("Error al reservar clase: " + e.getMessage());
         }

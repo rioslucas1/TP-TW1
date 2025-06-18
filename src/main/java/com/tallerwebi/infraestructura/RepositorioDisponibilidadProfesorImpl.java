@@ -1,6 +1,7 @@
 package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.RepositorioDisponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -32,18 +33,19 @@ public class RepositorioDisponibilidadProfesorImpl implements RepositorioDisponi
     }
 
     @Override
-    public List<disponibilidadProfesor> buscarPorProfesor(String emailProfesor) {
+    public List<disponibilidadProfesor> buscarPorProfesor(Profesor profesor) {
         final Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(disponibilidadProfesor.class)
-                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .add(Restrictions.eq("profesor", profesor))
                 .list();
     }
 
+
     @Override
-    public disponibilidadProfesor buscarPorProfesorDiaHora(String emailProfesor, String diaSemana, String hora) {
+    public disponibilidadProfesor buscarPorProfesorDiaHora(Profesor profesor, String diaSemana, String hora) {
         final Session session = sessionFactory.getCurrentSession();
         return (disponibilidadProfesor) session.createCriteria(disponibilidadProfesor.class)
-                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .add(Restrictions.eq("profesor", profesor))
                 .add(Restrictions.eq("diaSemana", diaSemana))
                 .add(Restrictions.eq("hora", hora))
                 .uniqueResult();
@@ -51,11 +53,10 @@ public class RepositorioDisponibilidadProfesorImpl implements RepositorioDisponi
 
     @Override
     public List<disponibilidadProfesor> buscarPorProfesorDiaFecha(
-            String emailProfesor, String diaSemana, LocalDate fechaEspecifica) {
-
+            Profesor profesor, String diaSemana, LocalDate fechaEspecifica) {
         final Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(disponibilidadProfesor.class)
-                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .add(Restrictions.eq("profesor", profesor))
                 .add(Restrictions.eq("diaSemana", diaSemana))
                 .add(Restrictions.eq("fechaEspecifica", fechaEspecifica))
                 .list();
@@ -63,11 +64,10 @@ public class RepositorioDisponibilidadProfesorImpl implements RepositorioDisponi
 
     @Override
     public disponibilidadProfesor buscarPorProfesorDiaHoraFecha(
-            String emailProfesor, String diaSemana, String hora, LocalDate fechaEspecifica) {
-
+            Profesor profesor, String diaSemana, String hora, LocalDate fechaEspecifica) {
         final Session session = sessionFactory.getCurrentSession();
         return (disponibilidadProfesor) session.createCriteria(disponibilidadProfesor.class)
-                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .add(Restrictions.eq("profesor", profesor))
                 .add(Restrictions.eq("diaSemana", diaSemana))
                 .add(Restrictions.eq("hora", hora))
                 .add(Restrictions.eq("fechaEspecifica", fechaEspecifica))

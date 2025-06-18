@@ -48,14 +48,14 @@ public class ControladorDisponibilidad {
         if (!esProfesor(usuario)) {
             return new ModelAndView("redirect:/home");
         }
-
+        Profesor profesor = (Profesor) usuario;
         LocalDate fechaInicioSemana = calcularFechaInicioSemana(semanaParam);
         configurarFechasEnModelo(modelo, fechaInicioSemana);
 
         try {
             List<disponibilidadProfesor> disponibilidades =
                     servicioDisponibilidadProfesor.obtenerDisponibilidadProfesorPorSemana(
-                            usuario.getEmail(), fechaInicioSemana);
+                            profesor, fechaInicioSemana);
 
             List<String> disponibilidadesKeys = new ArrayList<>();
             Map<String, String> estadosMap = new HashMap<>();
@@ -91,6 +91,7 @@ public class ControladorDisponibilidad {
         }
         return null;
     }
+
 
     private boolean esProfesor(Usuario usuario) {
         return usuario instanceof Profesor;
@@ -147,9 +148,11 @@ public class ControladorDisponibilidad {
             fechaEspecifica = calcularFechaCorrecta(diaLimpio, semanaActualStr);
         }
 
+        Profesor profesor = (Profesor) usuario;
+
         try {
             servicioDisponibilidadProfesor.toggleDisponibilidadConFecha(
-                    usuario.getEmail(), diaLimpio, horaLimpia, fechaEspecifica);
+                    profesor, diaLimpio, horaLimpia, fechaEspecifica);
         } catch (Exception e) {
             System.err.println("Error al procesar toggle disponibilidad: " + e.getMessage());
         }
@@ -179,8 +182,10 @@ public class ControladorDisponibilidad {
             return crearRedirectConSemana("/calendario-profesor", semanaActualStr);
         }
 
+        Profesor profesor = (Profesor) usuario;
+
         try {
-            servicioDisponibilidadProfesor.reservarHorario(usuario.getEmail(), diaLimpio, horaLimpia);
+            servicioDisponibilidadProfesor.reservarHorario(profesor, diaLimpio, horaLimpia);
         } catch (Exception e) {
             System.err.println("Error al reservar horario: " + e.getMessage());
         }
@@ -210,8 +215,10 @@ public class ControladorDisponibilidad {
             return crearRedirectConSemana("/calendario-profesor", semanaActualStr);
         }
 
+        Profesor profesor = (Profesor) usuario;
+
         try {
-            servicioDisponibilidadProfesor.desagendarHorario(usuario.getEmail(), diaLimpio, horaLimpia);
+            servicioDisponibilidadProfesor.desagendarHorario(profesor, diaLimpio, horaLimpia);
         } catch (Exception e) {
             System.err.println("Error al desagendar horario: " + e.getMessage());
         }

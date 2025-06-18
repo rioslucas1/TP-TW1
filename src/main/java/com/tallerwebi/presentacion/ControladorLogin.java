@@ -124,10 +124,22 @@ public class ControladorLogin {
     public ModelAndView irAHome(HttpServletRequest request) {
         ModelMap modelo = new ModelMap();
         Usuario usuario = (Usuario) request.getSession().getAttribute("USUARIO");
+        String rol = definirRol(usuario);
 
         if (usuario != null) {
             modelo.put("nombreUsuario", usuario.getNombre());
-            modelo.put("listaProfesores", servicioLogin.obtenerProfesores());
+            modelo.put("rol", rol);
+
+            if(rol.equals("profesor")){
+                Profesor profesor = (Profesor) usuario;
+                modelo.put("temaProfesor", profesor.getTema());
+                modelo.put("clasesProfesor", servicioLogin.obtenerClasesProfesor(profesor.getId()));
+            } else if(rol.equals("alumno")){
+                Alumno alumno = (Alumno) usuario;
+                modelo.put("listaProfesores", servicioLogin.obtenerProfesores());
+                modelo.put("clasesReservadas", servicioLogin.obtenerClasesAlumno(alumno.getId()));
+            }
+
         }
 
         return new ModelAndView("home", modelo);
@@ -209,6 +221,19 @@ public class ControladorLogin {
             return "El formato del email es inválido";
         }
         return null;
+    }
+
+
+    private String definirRol(Usuario usuario) {
+        if(usuario!=null) {
+            if(usuario instanceof Profesor) {
+                return "profesor";
+            } else if (usuario instanceof Alumno) {
+                return "alumno";
+            }
+
+        }
+        return "usuario";
     }
 
 }
