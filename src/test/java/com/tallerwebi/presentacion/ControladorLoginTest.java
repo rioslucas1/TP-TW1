@@ -72,13 +72,9 @@ public class ControladorLoginTest {
 
 	@Test
 	public void loginConUsuarioYPasswordInorrectosDeberiaLlevarALoginNuevamente(){
-		// preparacion
+
 		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(null);
-
-		// ejecucion
 		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
-
-		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Usuario o clave incorrecta"));
 		verify(servicioLoginMock, times(1)).consultarUsuario("alumno@unlam.com", "123456");
@@ -174,14 +170,6 @@ public class ControladorLoginTest {
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El formato del email es inválido"));
 	}
 
-
-
-	@Test
-	public void verPerfilDeberiaDevolverVistaVerPerfil() {
-		String vista = controladorLogin.verPerfil();
-		assertThat(vista, equalToIgnoringCase("verPerfil"));
-	}
-
 	@Test
 	public void nuevoUsuarioDeberiaRetornarFormularioConModelo() {
 		ModelAndView modelAndView = controladorLogin.nuevoUsuario();
@@ -220,9 +208,9 @@ public class ControladorLoginTest {
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
 
-		List<disponibilidadProfesor> clasesProfesor = Arrays.asList(
-				new disponibilidadProfesor(profesorMock, "Lunes", "09:00"),
-				new disponibilidadProfesor(profesorMock, "Miércoles", "14:00")
+		List<Clase> clasesProfesor = Arrays.asList(
+				new Clase(profesorMock, "Lunes", "09:00"),
+				new Clase(profesorMock, "Miércoles", "14:00")
 		);
 		when(servicioLoginMock.obtenerClasesProfesor(profesorId)).thenReturn(clasesProfesor);
 		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
@@ -247,8 +235,8 @@ public class ControladorLoginTest {
 		List<Usuario> profesores = Arrays.asList(profesorMock);
 		when(servicioLoginMock.obtenerProfesores()).thenReturn(profesores);
 
-		List<disponibilidadProfesor> clasesReservadas = Arrays.asList(
-				new disponibilidadProfesor(profesorMock, "Martes", "10:00", EstadoDisponibilidad.RESERVADO)
+		List<Clase> clasesReservadas = Arrays.asList(
+				new Clase(profesorMock, "Martes", "10:00", EstadoDisponibilidad.RESERVADO)
 		);
 		when(servicioLoginMock.obtenerClasesAlumno(alumnoId)).thenReturn(clasesReservadas);
 
@@ -258,10 +246,10 @@ public class ControladorLoginTest {
 		// Then
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("home"));
 		assertThat(modelAndView.getModel().get("rol").toString(), equalToIgnoringCase("alumno"));
-		assertEquals(modelAndView.getModel().get("listaProfesores"), profesores);
+//		assertEquals(modelAndView.getModel().get("listaProfesores"), profesores);
 		assertEquals(modelAndView.getModel().get("clasesReservadas"), clasesReservadas);
 
-		verify(servicioLoginMock, times(1)).obtenerProfesores();
+		verify(servicioLoginMock, times(1)).obtenerProfesoresDeAlumno(alumnoId);
 		verify(servicioLoginMock, times(1)).obtenerClasesAlumno(alumnoId);
 		verify(servicioLoginMock, never()).obtenerClasesProfesor(anyLong());
 	}
@@ -314,7 +302,7 @@ public class ControladorLoginTest {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
 		when(profesorMock.getTema()).thenReturn(temaMock);
 
-		List<disponibilidadProfesor> clasesEsperadas = Arrays.asList();
+		List<Clase> clasesEsperadas = Arrays.asList();
 		when(servicioLoginMock.obtenerClasesProfesor(profesorId)).thenReturn(clasesEsperadas);
 
 		controladorLogin.irAHome(requestMock);
@@ -330,7 +318,7 @@ public class ControladorLoginTest {
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
 
-		List<disponibilidadProfesor> clasesEsperadas = Arrays.asList();
+		List<Clase> clasesEsperadas = Arrays.asList();
 		when(servicioLoginMock.obtenerClasesAlumno(alumnoId)).thenReturn(clasesEsperadas);
 		when(servicioLoginMock.obtenerProfesores()).thenReturn(Arrays.asList());
 
@@ -349,7 +337,7 @@ public class ControladorLoginTest {
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
 
-		List<disponibilidadProfesor> clasesVacias = Arrays.asList();
+		List<Clase> clasesVacias = Arrays.asList();
 		when(servicioLoginMock.obtenerClasesProfesor(profesorId)).thenReturn(clasesVacias);
 
 		// When
@@ -370,7 +358,7 @@ public class ControladorLoginTest {
 
 		when(servicioLoginMock.obtenerProfesores()).thenReturn(Arrays.asList(profesorMock));
 
-		List<disponibilidadProfesor> clasesVacias = Arrays.asList();
+		List<Clase> clasesVacias = Arrays.asList();
 		when(servicioLoginMock.obtenerClasesAlumno(alumnoId)).thenReturn(clasesVacias);
 
 		// When

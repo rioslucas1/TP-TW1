@@ -1,304 +1,169 @@
 package com.tallerwebi.infraestructura;
 
+import com.tallerwebi.dominio.RepositorioTema;
 import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Profesor;
+import com.tallerwebi.dominio.entidades.Tema;
 import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.infraestructura.config.HibernateInfraestructuraTestConfig;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class RepositorioTemaImplTest {
-
-
-    private SessionFactory sessionFactoryMock;
-    private Session sessionMock;
-    private Criteria criteriaMock;
-    private RepositorioUsuario repositorioUsuarioMock;
-    private Alumno alumnoMock;
-    private Profesor profesorMock;
-    private Usuario usuarioMock;
-
-
-    @BeforeEach
-    public void init(){
-
-        sessionFactoryMock = mock(SessionFactory.class);
-        sessionMock = mock(Session.class);
-        criteriaMock = mock(Criteria.class);
-        repositorioUsuarioMock = new RepositorioUsuarioImpl(sessionFactoryMock);
-        when(sessionFactoryMock.getCurrentSession()).thenReturn(sessionMock);
-        when(sessionMock.createCriteria(any(Class.class))).thenReturn(criteriaMock);
-        when(criteriaMock.add(any())).thenReturn(criteriaMock);
-
-
-        alumnoMock = mock(Alumno.class);
-        when(alumnoMock.getEmail()).thenReturn("alumno@unlam.com");
-        when(alumnoMock.getNombre()).thenReturn("Nombre");
-        when(alumnoMock.getApellido()).thenReturn("Apellido");
-        when(alumnoMock.getPassword()).thenReturn("123456");
-
-        profesorMock = mock(Profesor.class);
-        when(profesorMock.getEmail()).thenReturn("profesor@unlam.com");
-        when(profesorMock.getNombre()).thenReturn("Profesor");
-        when(profesorMock.getApellido()).thenReturn("Apellido");
-        when(profesorMock.getPassword()).thenReturn("123456");
-
-        usuarioMock = mock(Usuario.class);
-        when(usuarioMock.getEmail()).thenReturn("usuario@unlam.com");
-        when(usuarioMock.getPassword()).thenReturn("contra123");
-
-    }
-
-    @Test
-    public void buscarUsuarioConEmailYPasswordCorrectosDeberiaRetornarUsuario() {
-        repositorioUsuarioMock.guardar(alumnoMock);
-        when(criteriaMock.uniqueResult()).thenReturn(alumnoMock);
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario("alumno@unlam.com", "123456");
-
-        assertNotNull(usuarioEncontrado);
-        assertEquals("alumno@unlam.com", usuarioEncontrado.getEmail());
-        assertEquals("123456", usuarioEncontrado.getPassword());
-        assertEquals("Nombre", usuarioEncontrado.getNombre());
-        assertEquals("Apellido", usuarioEncontrado.getApellido());
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-    }
-
-    @Test
-    public void buscarUsuarioConEmailYPasswordIncorrectosDeberiaRetornarNull() {
-        String email = "usuario@inexistente.com";
-        String password = "passwordIncorrecto";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void guardarUsuarioDeberiaLlamarSaveEnSession() {
-        repositorioUsuarioMock.guardar(usuarioMock);
-
-        verify(sessionMock, times(1)).save(usuarioMock);
-    }
-
-    @Test
-    public void guardarAlumnoDeberiaLlamarSaveEnSession() {
-        repositorioUsuarioMock.guardar(alumnoMock);
-
-        verify(sessionMock, times(1)).save(alumnoMock);
-    }
-
-    @Test
-    public void guardarProfesorDeberiaLlamarSaveEnSession() {
-        repositorioUsuarioMock.guardar(profesorMock);
-
-        verify(sessionMock, times(1)).save(profesorMock);
-    }
-
-    @Test
-    public void buscarUsuarioPorEmailDeberiaRetornarUsuario() {
-        String email = "usuario@unlam.com";
-        when(criteriaMock.uniqueResult()).thenReturn(usuarioMock);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscar(email);
-
-        assertNotNull(usuarioEncontrado);
-        assertEquals(usuarioMock, usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarUsuarioPorEmailInexistenteDeberiaRetornarNull() {
-        String email = "inexistente@unlam.com";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscar(email);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void modificarUsuarioDeberiaLlamarUpdateEnSession() {
-        repositorioUsuarioMock.modificar(usuarioMock);
-
-        verify(sessionMock, times(1)).update(usuarioMock);
-    }
-
-    @Test
-    public void modificarAlumnoDeberiaLlamarUpdateEnSession() {
-        repositorioUsuarioMock.modificar(alumnoMock);
-
-        verify(sessionMock, times(1)).update(alumnoMock);
-    }
-
-    @Test
-    public void modificarProfesorDeberiaLlamarUpdateEnSession() {
-        repositorioUsuarioMock.modificar(profesorMock);
-
-        verify(sessionMock, times(1)).update(profesorMock);
-    }
-
-    @Test
-    public void buscarPorTipoProfesoresDeberiaRetornarListaDeProfesores() {
-        Profesor profesor1 = mock(Profesor.class);
-        Profesor profesor2 = mock(Profesor.class);
-        List<Usuario> profesoresEsperados = Arrays.asList(profesor1, profesor2);
-
-        when(criteriaMock.list()).thenReturn(profesoresEsperados);
-        List<Usuario> profesoresObtenidos = repositorioUsuarioMock.buscarPorTipo(Profesor.class);
-        assertNotNull(profesoresObtenidos);
-        assertEquals(2, profesoresObtenidos.size());
-        assertThat(profesoresObtenidos, containsInAnyOrder(profesor1, profesor2));
-        verify(sessionMock, times(1)).createCriteria(Profesor.class);
-        verify(criteriaMock, times(1)).list();
-    }
-
-    @Test
-    public void buscarPorTipoAlumnosDeberiaRetornarListaDeAlumnos() {
-        Alumno alumno1 = mock(Alumno.class);
-        Alumno alumno2 = mock(Alumno.class);
-        List<Usuario> alumnosEsperados = Arrays.asList(alumno1, alumno2);
-        when(criteriaMock.list()).thenReturn(alumnosEsperados);
-        List<Usuario> alumnosObtenidos = repositorioUsuarioMock.buscarPorTipo(Alumno.class);
-
-        assertNotNull(alumnosObtenidos);
-        assertEquals(2, alumnosObtenidos.size());
-        assertThat(alumnosObtenidos, containsInAnyOrder(alumno1, alumno2));
-        verify(sessionMock, times(1)).createCriteria(Alumno.class);
-        verify(criteriaMock, times(1)).list();
-    }
-
-    @Test
-    public void buscarPorTipoSinResultadosDeberiaRetornarListaVacia() {
-        List<Usuario> listaVacia = Arrays.asList();
-        when(criteriaMock.list()).thenReturn(listaVacia);
-        List<Usuario> profesoresObtenidos = repositorioUsuarioMock.buscarPorTipo(Profesor.class);
-
-        assertNotNull(profesoresObtenidos);
-        assertEquals(0, profesoresObtenidos.size());
-        assertEquals(listaVacia, profesoresObtenidos);
-        verify(sessionMock, times(1)).createCriteria(Profesor.class);
-        verify(criteriaMock, times(1)).list();
-    }
-
-    @Test
-    public void buscarUsuarioConEmailNullDeberiaRetornarNull() {
-        String email = null;
-        String password = "123456";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarUsuarioConPasswordNullDeberiaRetornarNull() {
-        String email = "usuario@unlam.com";
-        String password = null;
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarUsuarioConEmailVacioDeberiaRetornarNull() {
-        String email = "";
-        String password = "123456";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarUsuarioConPasswordVaciaDeberiaRetornarNull() {
-        String email = "usuario@unlam.com";
-        String password = "";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarPorEmailNullDeberiaRetornarNull() {
-        String email = null;
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscar(email);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarPorEmailVacioDeberiaRetornarNull() {
-        String email = "";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscar(email);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarProfesorConCredencialesCorrectasDeberiaRetornarProfesor() {
-        String email = "profesor@unlam.com";
-        String password = "123456";
-        when(criteriaMock.uniqueResult()).thenReturn(profesorMock);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNotNull(usuarioEncontrado);
-        assertEquals(profesorMock, usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarPorTipoConUnSoloProfesorDeberiaRetornarListaConUnElemento() {
-        List<Usuario> profesoresEsperados = Arrays.asList(profesorMock);
-        when(criteriaMock.list()).thenReturn(profesoresEsperados);
-
-        List<Usuario> profesoresObtenidos = repositorioUsuarioMock.buscarPorTipo(Profesor.class);
-
-        assertNotNull(profesoresObtenidos);
-        assertEquals(1, profesoresObtenidos.size());
-        assertEquals(profesorMock, profesoresObtenidos.get(0));
-        verify(sessionMock, times(1)).createCriteria(Profesor.class);
-        verify(criteriaMock, times(1)).list();
-    }
-
-
-}
+ @ExtendWith(SpringExtension.class)
+    @ContextConfiguration(classes = {HibernateInfraestructuraTestConfig.class})
+    @Transactional
+    public class RepositorioTemaImplTest {
+
+        @Autowired
+        private SessionFactory sessionFactory;
+        private RepositorioTema repositorioTema;
+
+        @BeforeEach
+        public void init() {
+            this.repositorioTema = new RepositorioTemaImpl(this.sessionFactory);
+        }
+
+        @Test
+        @Rollback
+        public void cuandoBuscoPorIdExistenteEntoncesRetornaElTema() {
+
+            Tema tema = new Tema();
+            tema.setNombre("Matemáticas");
+            sessionFactory.getCurrentSession().save(tema);
+
+            sessionFactory.getCurrentSession().flush();
+            Long idGuardado = tema.getId();
+
+            Tema temaEncontrado = repositorioTema.buscarPorId(idGuardado);
+
+            assertNotNull(temaEncontrado);
+            assertEquals(idGuardado, temaEncontrado.getId());
+            assertEquals("Matemáticas", temaEncontrado.getNombre());
+        }
+
+        @Test
+        @Rollback
+        public void cuandoBuscoPorIdInexistenteEntoncesRetornaNulo() {
+
+            Tema temaEncontrado = repositorioTema.buscarPorId(999L);
+
+            assertNull(temaEncontrado);
+        }
+
+        @Test
+        @Rollback
+        public void cuandoObtiengoTodosLosTemasEntoncesRetornaListaCompleta() {
+
+            Tema tema1 = new Tema();
+            tema1.setNombre("Física");
+            sessionFactory.getCurrentSession().save(tema1);
+
+            Tema tema2 = new Tema();
+            tema2.setNombre("Química");
+            sessionFactory.getCurrentSession().save(tema2);
+
+            Tema tema3 = new Tema();
+            tema3.setNombre("Biología");
+            sessionFactory.getCurrentSession().save(tema3);
+
+            List<Tema> temasObtenidos = repositorioTema.obtenerTodos();
+
+            assertNotNull(temasObtenidos);
+            assertEquals(3, temasObtenidos.size());
+            assertThat(temasObtenidos, hasItems(tema1, tema2, tema3));
+
+            List<String> nombresObtenidos = temasObtenidos.stream()
+                    .map(Tema::getNombre)
+                    .collect(java.util.stream.Collectors.toList());
+            assertThat(nombresObtenidos, containsInAnyOrder("Física", "Química", "Biología"));
+        }
+
+        @Test
+        @Rollback
+        public void cuandoNoHayTemasEntoncesObtenerTodosRetornaListaVacia() {
+
+            List<Tema> temasObtenidos = repositorioTema.obtenerTodos();
+
+
+            assertNotNull(temasObtenidos);
+            assertEquals(0, temasObtenidos.size());
+            assertTrue(temasObtenidos.isEmpty());
+        }
+
+        @Test
+        @Rollback
+        public void cuandoGuardoUnTemaYLuegoBuscoPorIdEntoncesLoEncuentroCorrectamente() {
+
+            Tema tema = new Tema();
+            tema.setNombre("Historia");
+
+            sessionFactory.getCurrentSession().save(tema);
+            sessionFactory.getCurrentSession().flush();
+
+            Tema temaEncontrado = repositorioTema.buscarPorId(tema.getId());
+
+            assertNotNull(temaEncontrado);
+            assertEquals("Historia", temaEncontrado.getNombre());
+            assertEquals(tema.getId(), temaEncontrado.getId());
+        }
+
+        @Test
+        @Rollback
+        public void cuandoHayUnSoloTemaEntoncesObtenerTodosRetornaListaConUnElemento() {
+
+            Tema tema = new Tema();
+            tema.setNombre("Literatura");
+            sessionFactory.getCurrentSession().save(tema);
+
+            List<Tema> temasObtenidos = repositorioTema.obtenerTodos();
+
+            assertNotNull(temasObtenidos);
+
+            assertEquals(1, temasObtenidos.size());
+            assertEquals("Literatura", temasObtenidos.get(0).getNombre());
+            assertEquals(tema, temasObtenidos.get(0));
+
+        }
+
+        @Test
+        @Rollback
+        public void verificarQueLosDatosSeGuardanCorrectamenteEnLaBaseDeDatos() {
+
+            Tema tema = new Tema();
+            tema.setNombre("Programación Java");
+            sessionFactory.getCurrentSession().save(tema);
+            sessionFactory.getCurrentSession().flush();
+
+            String hql = "FROM Tema WHERE nombre = :nombre";
+            Query query = sessionFactory.getCurrentSession().createQuery(hql);
+            query.setParameter("nombre", "Programación Java");
+            Tema temaVerificado = (Tema) query.getSingleResult();
+
+            assertNotNull(temaVerificado);
+            assertEquals("Programación Java", temaVerificado.getNombre());
+            assertNotNull(temaVerificado.getId());
+            Tema temaDesdeRepositorio = repositorioTema.buscarPorId(temaVerificado.getId());
+            assertEquals(temaVerificado, temaDesdeRepositorio);
+        }
+        }
+

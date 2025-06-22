@@ -3,7 +3,7 @@ package com.tallerwebi.presentacion;
 import com.tallerwebi.dominio.servicios.ServicioDisponibilidadProfesor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Profesor;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Clase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -53,14 +53,14 @@ public class ControladorDisponibilidad {
         configurarFechasEnModelo(modelo, fechaInicioSemana);
 
         try {
-            List<disponibilidadProfesor> disponibilidades =
+            List<Clase> disponibilidades =
                     servicioDisponibilidadProfesor.obtenerDisponibilidadProfesorPorSemana(
                             profesor, fechaInicioSemana);
 
             List<String> disponibilidadesKeys = new ArrayList<>();
             Map<String, String> estadosMap = new HashMap<>();
 
-            for (disponibilidadProfesor disp : disponibilidades) {
+            for (Clase disp : disponibilidades) {
                 String key = disp.getDiaSemana() + "-" + disp.getHora();
                 disponibilidadesKeys.add(key);
                 estadosMap.put(key, disp.getEstado().toString());

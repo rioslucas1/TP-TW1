@@ -27,10 +27,21 @@ public abstract class Usuario {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ModalidadPreferida modalidadPreferida;
+
+    @Lob
+    @Column(name = "foto_perfil")
+    private String fotoPerfil;
+
     private Boolean activo = false;
 
     @Column
     private String rol;
+
+    @Column
+    private String descripcion;
 
     public Long getId() {
         return id;
@@ -99,5 +110,34 @@ public abstract class Usuario {
     public void desactivar() {
         this.activo = false;
     }
+
+
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
+    public ModalidadPreferida getModalidadPreferida() {
+        return modalidadPreferida;
+    }
+
+    public void setModalidadPreferida(ModalidadPreferida modalidadPreferida) {
+        this.modalidadPreferida = modalidadPreferida;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+
+
+
 }
 

@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Clase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -51,14 +51,14 @@ public class ControladorReservaAlumno {
 
         try {
 
-            List<disponibilidadProfesor> disponibilidades =
+            List<Clase> disponibilidades =
                     servicioReservaAlumno.obtenerDisponibilidadProfesorPorSemana(emailProfesor, fechaInicioSemana);
             List<String> disponibilidadesKeys = new ArrayList<>();
             Map<String, String> estadosMap = new HashMap<>();
             Map<String, Long> idsMap = new HashMap<>();
 
 
-            for (disponibilidadProfesor disp : disponibilidades) {
+            for (Clase disp : disponibilidades) {
                 String key = disp.getDiaSemana() + "-" + disp.getHora();
                 disponibilidadesKeys.add(key);
                 estadosMap.put(key, disp.getEstado().toString());
@@ -204,5 +204,13 @@ public class ControladorReservaAlumno {
         }
         return new ModelAndView(redirectUrl);
     }
+
+    @GetMapping("/obtener-link-meet")
+    @ResponseBody
+    public String obtenerLinkMeet(@RequestParam Long disponibilidadId) {
+        Clase disponibilidad = servicioReservaAlumno.obtenerDisponibilidadPorId(disponibilidadId);
+        return disponibilidad != null ? disponibilidad.getEnlace_meet() : null;
+    }
+
 
 }

@@ -2,7 +2,7 @@ package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.RepositorioReservaAlumno;
 import com.tallerwebi.dominio.entidades.Alumno;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Clase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -22,13 +22,13 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
     }
 
     @Override
-    public List<disponibilidadProfesor> obtenerDisponibilidadProfesor(String emailProfesor) {
+    public List<Clase> obtenerDisponibilidadProfesor(String emailProfesor) {
         return repositorioReservaAlumno.buscarPorProfesor(emailProfesor);
     }
 
     @Override
     public void reservarClase(String emailProfesor, String diaSemana, String hora, Alumno alumno) {
-        disponibilidadProfesor disponibilidadExistente = repositorioReservaAlumno
+        Clase disponibilidadExistente = repositorioReservaAlumno
                 .buscarPorProfesorDiaHora(emailProfesor, diaSemana, hora);
 
         if (disponibilidadExistente != null && disponibilidadExistente.isDisponible()) {
@@ -42,7 +42,7 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
 
         @Override
         public void reservarClasePorId(Long disponibilidadId, Alumno alumno) {
-            disponibilidadProfesor disponibilidad = repositorioReservaAlumno.buscarPorId(disponibilidadId);
+            Clase disponibilidad = repositorioReservaAlumno.buscarPorId(disponibilidadId);
 
             if (disponibilidad != null && disponibilidad.isDisponible()) {
                 disponibilidad.marcarComoReservado();
@@ -54,16 +54,16 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
         }
 
         @Override
-        public List<disponibilidadProfesor> obtenerDisponibilidadProfesorPorSemana(
+        public List<Clase> obtenerDisponibilidadProfesorPorSemana(
                 String emailProfesor, LocalDate fechaInicioSemana) {
 
-            List<disponibilidadProfesor> disponibilidadesSemanales = new ArrayList<>();
+            List<Clase> disponibilidadesSemanales = new ArrayList<>();
             String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
             for (int i = 0; i < dias.length; i++) {
                 LocalDate fechaEspecifica = fechaInicioSemana.plusDays(i);
                 String diaSemana = dias[i];
-                List<disponibilidadProfesor> disponibilidadesDia =
+                List<Clase> disponibilidadesDia =
                         repositorioReservaAlumno.buscarPorProfesorDiaFecha(
                                 emailProfesor, diaSemana, fechaEspecifica);
 
@@ -72,7 +72,14 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
 
             return disponibilidadesSemanales;
         }
-      }
+
+    @Override
+    public Clase obtenerDisponibilidadPorId(Long disponibilidadId) {
+        return repositorioReservaAlumno.buscarPorId(disponibilidadId);
+    }
+
+
+}
 
 
 

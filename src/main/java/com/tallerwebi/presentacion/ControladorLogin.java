@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 
 
 import com.tallerwebi.dominio.entidades.Alumno;
+import com.tallerwebi.dominio.entidades.Clase;
 import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class ControladorLogin {
@@ -133,11 +136,22 @@ public class ControladorLogin {
             if(rol.equals("profesor")){
                 Profesor profesor = (Profesor) usuario;
                 modelo.put("temaProfesor", profesor.getTema());
-                modelo.put("clasesProfesor", servicioLogin.obtenerClasesProfesor(profesor.getId()));
+                List<Clase> todasLasClases = servicioLogin.obtenerClasesProfesor(profesor.getId());
+                List<Clase> proximasClases = todasLasClases.stream()
+                        .limit(5)
+                        .collect(Collectors.toList());
+                modelo.put("clasesProfesor", proximasClases);
+
+                modelo.put("clasesReservadas", proximasClases);
             } else if(rol.equals("alumno")){
                 Alumno alumno = (Alumno) usuario;
-                modelo.put("listaProfesores", servicioLogin.obtenerProfesores());
-                modelo.put("clasesReservadas", servicioLogin.obtenerClasesAlumno(alumno.getId()));
+                modelo.put("listaProfesores", servicioLogin.obtenerProfesoresDeAlumno(alumno.getId()));
+                List<Clase> todasLasClases = servicioLogin.obtenerClasesAlumno(alumno.getId());
+                List<Clase> proximasClases = todasLasClases.stream()
+                        .limit(5)
+                        .collect(Collectors.toList());
+
+                modelo.put("clasesReservadas", proximasClases);
             }
 
         }
@@ -207,10 +221,6 @@ public class ControladorLogin {
     public ModelAndView cerrarSesion(HttpServletRequest request) {
         request.getSession().invalidate();
         return new ModelAndView("redirect:/home");
-    }
-    @RequestMapping("/verPerfil")
-    public String verPerfil() {
-        return "verPerfil";
     }
 
     private String validarEmail(String email) {

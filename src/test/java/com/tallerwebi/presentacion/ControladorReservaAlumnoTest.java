@@ -85,9 +85,9 @@ public class ControladorReservaAlumnoTest {
 
 	@Test
 	public void deberiaCargarCalendarioConDisponibilidadesDelProfesor() {
-		List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00", diaLunes, EstadoDisponibilidad.DISPONIBLE),
-				new disponibilidadProfesor(usuarioProfesorMock, "Martes", "10:00", diaLunes.plusDays(1), EstadoDisponibilidad.DISPONIBLE)
+		List<Clase> disponibilidades = Arrays.asList(
+				new Clase(usuarioProfesorMock, "Lunes", "09:00", diaLunes, EstadoDisponibilidad.DISPONIBLE),
+				new Clase(usuarioProfesorMock, "Martes", "10:00", diaLunes.plusDays(1), EstadoDisponibilidad.DISPONIBLE)
 		);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
 		when(servicioReservaAlumnoMock.obtenerDisponibilidadProfesorPorSemana(eq(emailProfesor), any(LocalDate.class)))
@@ -133,10 +133,10 @@ public class ControladorReservaAlumnoTest {
 
 	@Test
 	public void deberiaCargarEstadosMapCorrectamente() {
-		List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00", EstadoDisponibilidad.DISPONIBLE),
-				new disponibilidadProfesor(usuarioProfesorMock, "Martes", "10:00", EstadoDisponibilidad.OCUPADO),
-				new disponibilidadProfesor(usuarioProfesorMock, "Miércoles", "11:00", EstadoDisponibilidad.RESERVADO)
+		List<Clase> disponibilidades = Arrays.asList(
+				new Clase(usuarioProfesorMock, "Lunes", "09:00", EstadoDisponibilidad.DISPONIBLE),
+				new Clase(usuarioProfesorMock, "Martes", "10:00", EstadoDisponibilidad.OCUPADO),
+				new Clase(usuarioProfesorMock, "Miércoles", "11:00", EstadoDisponibilidad.RESERVADO)
 		);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
 		when(servicioReservaAlumnoMock.obtenerDisponibilidadProfesorPorSemana(

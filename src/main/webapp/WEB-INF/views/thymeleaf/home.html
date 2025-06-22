@@ -86,7 +86,12 @@
           <a class="nav-link" th:href="@{/verTutores}" >Ver tutores</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Mi perfil</a>
+          <a class="nav-link"
+             th:href="@{/profesor/perfil}"
+             th:if="${rol == 'profesor'}">Mi perfil</a>
+          <a class="nav-link"
+             th:href="@{/perfil}"
+             th:if="${rol == 'alumno'}">Mi perfil</a>
         </li>
         <li class="nav-item">
           <a class="nav-link"
