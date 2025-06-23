@@ -185,7 +185,7 @@ public class ControladorLoginTest {
 		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
-		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El email y la contraseña son obligatorios"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("La contraseña es obligatoria"));
 	}
 
 	@Test
@@ -198,7 +198,32 @@ public class ControladorLoginTest {
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
 	}
 
+	@Test
+	public void loginConEmailYPasswordNullDeberiaMostrarError() {
+		datosLoginMock = new DatosLogin(null, null);
 
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El email y la contraseña son obligatorios"));
+	}
+
+	@Test
+	public void loginConCamposEnBlancoDeberiaMostrarError() {
+		datosLoginMock = new DatosLogin("   ", "   ");
+
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El email y la contraseña son obligatorios"));
+	}
+
+	@Test
+	public void loginExitosoSinRolDeberiaRedirigirIgualAPorDefecto() {
+		Usuario usuarioSinRol = mock(Usuario.class);
+		when(usuarioSinRol.getRol()).thenReturn(null);
+		when(requestMock.getSession()).thenReturn(sessionMock);
+		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(usuarioSinRol);
 	@Test
 	public void irAHomeConProfesorDeberiaMostrarTemaYClasesDelProfesor() {
 
