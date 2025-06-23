@@ -1,12 +1,17 @@
 package com.tallerwebi.integracion;
 
+import com.tallerwebi.dominio.servicios.ServicioDisponibilidadProfesor;
+import com.tallerwebi.dominio.servicios.ServicioLogin;
+import com.tallerwebi.dominio.servicios.ServicioTema;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.entidades.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -33,10 +38,10 @@ public class ControladorLoginTest {
 
 	private Usuario usuarioMock;
 
+
 	@Autowired
 	private WebApplicationContext wac;
 	private MockMvc mockMvc;
-
 
 	@BeforeEach
 	public void init(){
@@ -72,4 +77,5 @@ public class ControladorLoginTest {
 		assertThat(modelAndView.getModel().get("datosLogin").toString(),  containsString("com.tallerwebi.presentacion.DatosLogin"));
 
 	}
+
 }

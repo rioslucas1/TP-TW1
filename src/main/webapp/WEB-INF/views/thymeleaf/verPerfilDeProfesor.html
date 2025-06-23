@@ -1,0 +1,303 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title th:text="'Perfil de ' + ${profesor.nombre} + ' ' + ${profesor.apellido} + ' - ClasesYa'">Perfil del Profesor - ClasesYa</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/perfil.css}"/>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+</head>
+
+<body>
+<!-- Header -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/verTutores}">Nuestros tutores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex">
+                    <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
+                    <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
+                </div>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/verTutores}">Ver tutores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Mi perfil</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center">
+                    <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
+                    <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Profile Header -->
+<div class="profile-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                <div class="profile-avatar">
+                    <img th:if="${profesor.fotoPerfil != null and !profesor.fotoPerfil.isEmpty()}"
+                         th:src="${profesor.fotoPerfil}"
+                         alt="Foto de perfil" />
+                    <i th:if="${profesor.fotoPerfil == null or profesor.fotoPerfil.isEmpty()}"
+                       class='bx bx-user'></i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h1 class="mb-2" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre del Profesor</h1>
+                <p class="mb-1 text-light" th:text="${profesor.email}">email@ejemplo.com</p>
+                <div class="d-flex align-items-center mb-2" th:if="${profesor.modalidadPreferida != null}">
+                    <span class="modalidad-icon-header"
+                          th:classappend="${profesor.modalidadPreferida.name().toLowerCase() == 'presencial'} ? 'modalidad-presencial' :
+                                         (${profesor.modalidadPreferida.name().toLowerCase() == 'virtual'} ? 'modalidad-virtual' : 'modalidad-ambas')">
+                        <i class='bx'
+                           th:classappend="${profesor.modalidadPreferida.name().toLowerCase() == 'presencial'} ? 'bx-group' :
+                                         (${profesor.modalidadPreferida.name().toLowerCase() == 'virtual'} ? 'bx-desktop' : 'bx-book')"></i>
+                    </span>
+                    <span class="text-light" th:text="${profesor.modalidadPreferida.name() == 'PRESENCIAL'} ? 'Presencial' :
+                                          (${profesor.modalidadPreferida.name() == 'VIRTUAL'} ? 'Virtual' : 'Ambas modalidades')">
+                        Modalidad
+                    </span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="stars-rating me-2">
+                        <i th:each="star : ${#numbers.sequence(1, 5)}"
+                           class='bx'
+                           th:classappend="${star <= promedioCalificacion} ? 'bxs-star text-warning' : 'bx-star text-warning'"></i>
+                    </div>
+                    <span class="text-light" th:text="${promedioCalificacion} + ' (' + ${totalResenas} + ' reseñas)'">
+                        Calificación (reseñas)
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-3 text-center text-md-end">
+                <form th:action="@{/suscribirseAProfesor}" method="post" th:if="${!yaSuscripto}">
+                    <input type="hidden" name="profesorId" th:value="${profesor.id}" />
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class='bx bx-plus'></i> Suscribirse
+                    </button>
+                </form>
+
+                <form th:action="@{/desuscribirseDeProfesor}" method="post" th:if="${yaSuscripto}">
+                    <input type="hidden" name="profesorId" th:value="${profesor.id}" />
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class='bx bx-x'></i> Desuscribirse
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Información Personal -->
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class='bx bx-user me-2'></i>
+                        Información Personal
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Nombre completo:</strong></div>
+                        <div class="col-sm-9" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre Apellido</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Email:</strong></div>
+                        <div class="col-sm-9" th:text="${profesor.email}">email@ejemplo.com</div>
+                    </div>
+                    <div class="row mb-3" th:if="${profesor.descripcion != null && !profesor.descripcion.isEmpty()}">
+                        <div class="col-sm-3"><strong>Descripción:</strong></div>
+                        <div class="col-sm-9" th:text="${profesor.descripcion}">Descripción del profesor</div>
+                    </div>
+                    <div class="row mb-3" th:if="${profesor.modalidadPreferida != null}">
+                        <div class="col-sm-3"><strong>Modalidad preferida:</strong></div>
+                        <div class="col-sm-9">
+                            <span class="modalidad-icon"
+                                  th:classappend="${profesor.modalidadPreferida.name().toLowerCase() == 'presencial'} ? 'modalidad-presencial' :
+                                                 (${profesor.modalidadPreferida.name().toLowerCase() == 'virtual'} ? 'modalidad-virtual' : 'modalidad-ambas')">
+                                <i class='bx'
+                                   th:classappend="${profesor.modalidadPreferida.name().toLowerCase() == 'presencial'} ? 'bx-group' :
+                                                 (${profesor.modalidadPreferida.name().toLowerCase() == 'virtual'} ? 'bx-desktop' : 'bx-book')"></i>
+                            </span>
+                            <span th:text="${profesor.modalidadPreferida.name() == 'PRESENCIAL'} ? 'Presencial' :
+                                          (${profesor.modalidadPreferida.name() == 'VIRTUAL'} ? 'Virtual' : 'Ambas modalidades')">
+                                Modalidad
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row mb-3" th:if="${profesor.tema != null}">
+                        <div class="col-sm-3"><strong>Tema que enseña:</strong></div>
+                        <div class="col-sm-9">
+                            <span class="badge bg-secondary" th:text="${profesor.tema.nombre}">Tema</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formación Académica -->
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class='bx bx-graduation me-2'></i>
+                        Formación Académica
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${experiencias != null && !experiencias.isEmpty()}">
+                        <div th:each="experiencia : ${experiencias}"
+                             class="border-start border-primary border-4 ps-3 py-2 mb-3">
+                            <h6 class="mb-1 fw-bold" th:text="${experiencia.institucion}">Institución</h6>
+                            <p class="mb-1 text-muted" th:text="${experiencia.descripcion}">Descripción</p>
+                            <small class="text-muted" th:text="${experiencia.fecha}">Fecha</small>
+                        </div>
+                    </div>
+                    <div th:if="${experiencias == null || experiencias.isEmpty()}"
+                         class="text-muted text-center py-4">
+                        <i class='bx bx-graduation bx-lg'></i>
+                        <p class="mt-2">No hay información de formación académica disponible</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reseñas de Alumnos -->
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class='bx bx-star me-2'></i>
+                        Reseñas de Alumnos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${feedbacks != null && !feedbacks.isEmpty()}">
+                        <div th:each="feedback : ${feedbacks}" class="border rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span class="fw-bold me-2" th:text="${feedback.estudiante.nombre + ' ' + feedback.estudiante.apellido}">Nombre Estudiante</span>
+                                        <div class="stars-rating">
+                                            <i th:each="star : ${#numbers.sequence(1, 5)}"
+                                               class='bx'
+                                               th:classappend="${star <= feedback.calificacion} ? 'bxs-star text-warning' : 'bx-star text-muted'"></i>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted" th:text="${feedback.fecha}">Fecha</small>
+                                </div>
+                            </div>
+                            <p th:if="${feedback.descripcion != null && !feedback.descripcion.isEmpty()}"
+                               class="mb-0 text-muted" th:text="${feedback.descripcion}">Descripción de la reseña</p>
+                        </div>
+                    </div>
+                    <div th:if="${feedbacks == null || feedbacks.isEmpty()}"
+                         class="text-muted text-center py-4">
+                        <i class='bx bx-star bx-lg'></i>
+                        <p class="mt-2">Aún no hay reseñas para este profesor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Estadísticas -->
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class='bx bx-bar-chart me-2'></i>
+                        Estadísticas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="stats-card bg-warning bg-opacity-10">
+                        <div class="stats-number text-warning" th:text="${promedioCalificacion}">4.7</div>
+                        <div class="stats-label">Calificación promedio</div>
+                    </div>
+                    <div class="stats-card bg-success bg-opacity-10">
+                        <div class="stats-number text-success" th:text="${totalResenas}">45</div>
+                        <div class="stats-label">Total de reseñas</div>
+                    </div>
+                    <div class="stats-card bg-primary bg-opacity-10" th:if="${profesor.tema != null}">
+                        <div class="stats-number text-primary">1</div>
+                        <div class="stats-label">Especialidad</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class='bx bx-lightning me-2'></i>
+                        Contactar Profesor
+                    </h5>
+                </div>
+                <div class="card-body d-grid gap-2">
+                    <a href="#" class="btn btn-primary">
+                        <i class='bx bx-message me-2'></i>
+                        Enviar Mensaje
+                    </a>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class='bx bx-calendar me-2'></i>
+                        Solicitar Clase
+                    </a>
+                    <a th:href="'mailto:' + ${profesor.email}" class="btn btn-outline-info">
+                        <i class='bx bx-envelope me-2'></i>
+                        Enviar Email
+                    </a>
+                </div>
+            </div>
+
+            <!-- Volver -->
+            <div class="card profile-card">
+                <div class="card-body text-center">
+                    <a th:href="@{/verTutores}" class="btn btn-outline-secondary">
+                        <i class='bx bx-arrow-back me-2'></i>
+                        Volver a Tutores
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

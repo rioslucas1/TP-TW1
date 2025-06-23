@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Taller Web I</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+  <link rel="stylesheet" th:href="@{/css/calendario.css}"/>
+  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+
+<body class="login-body">
+
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container">
+    <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/home}">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Nuestros tutores</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
+        </li>
+      </ul>
+
+      <div class="d-flex">
+        <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
+        <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
+      </div>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/home}">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Ver tutores</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Mi perfil</a>
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center">
+        <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
+        <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-5">
+  <h2 class="text-center mb-4">Reservar Clase</h2>
+  <p class="text-center mb-4">Selecciona un horario disponible para reservar tu clase</p>
+
+  <div class="week-navigation mb-4">
+    <div class="d-flex justify-content-center align-items-center">
+      <a th:href="@{/calendario-reserva(emailProfesor=${emailProfesor}, semana=${fechaInicioSemana.minusWeeks(1)})}"
+         class="btn btn-outline-primary me-3">
+        Semana Anterior
+      </a>
+
+      <div class="text-center mx-4">
+        <h5 class="mb-0">Semana del
+          <span th:text="${fechaInicioFormateada}"></span>
+          al
+          <span th:text="${fechaFinFormateada}"></span>
+        </h5>
+      </div>
+
+      <a th:href="@{/calendario-reserva(emailProfesor=${emailProfesor}, semana=${fechaInicioSemana.plusWeeks(1)})}"
+         class="btn btn-outline-primary ms-3">
+        Semana Siguiente
+      </a>
+    </div>
+  </div>
+
+
+  <div class="table-wrapper">
+    <table class="table tabla-calendario table-bordered">
+      <tbody>
+      <tr>
+        <td class="horas-calendario"></td>
+        <td class="dia-calendario"
+            th:each="dia : ${'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo'.split(',')}">
+          <span th:text="${dia}"></span>
+        </td>
+      </tr>
+      <tr th:each="hora : ${'06:00,07:00,08:00,09:00,10:00,11:00,12:00,13:00,14:00,15:00,16:00,17:00,18:00,19:00,20:00,21:00,22:00,23:00'.split(',')}">
+        <td class="hour-label" th:text="${hora}"></td>
+        <td th:each="dia : ${'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo'.split(',')}">
+          <div th:with="clave=${dia + '-' + hora}, estado=${estadosMap.get(clave)}, disponibilidadId=${idsMap.get(clave)}, diaPasado=${diasPasados.get(dia)}"
+               th:switch="${estado}">
+            <div th:if="${diaPasado}">
+              <span class="text-muted small"></span>
+            </div>
+            <div th:unless="${diaPasado}">
+
+              <div th:case="'DISPONIBLE'">
+                <form th:action="@{/reservar-clase}" method="post" accept-charset="UTF-8" style="display: inline;">
+                  <input type="hidden" name="disponibilidadId" th:value="${disponibilidadId}"/>
+                  <input type="hidden" name="emailProfesor" th:value="${emailProfesor}"/>
+                  <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
+                  <button type="submit" class="boton-disponible btn btn-success btn-sm">Reservar</button>
+                </form>
+              </div>
+
+              <div th:case="'OCUPADO'">
+                <button class="boton-libre btn btn-secondary btn-sm" disabled></button>
+              </div>
+
+              <div th:case="'RESERVADO'">
+                <button class="boton-reservado btn btn-warning btn-sm" disabled>Reservado</button>
+              </div>
+
+              <div th:case="*">
+                <button class="btn btn-light btn-sm" disabled></button>
+              </div>
+
+            </div>
+
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+</body>
+</html>

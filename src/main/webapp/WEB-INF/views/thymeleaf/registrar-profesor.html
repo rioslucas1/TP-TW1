@@ -11,6 +11,7 @@
 
   <!-- custom style -->
   <link rel="stylesheet" th:href="@{/css/main.css}"/>
+  <link rel="stylesheet" th:href="@{/css/login.css}"/>
 
 </head>
 
@@ -73,7 +74,7 @@
         <img th:src="@{/img/iconoUsuario.png}" alt="iconousuario">
       </div>
       <h3 class="login-title">Registrarse</h3>
-      <form action="#" th:action="@{/registrarprofesor}" method="POST" th:object="${usuario}">
+        <form action="#" th:action="@{/registrarprofesor}" method="POST" th:object="${datosRegistro}">
         <div class="form-contenedor mb-3">
           <label for="nombre">NOMBRE</label>
           <div class="input-contenedor">
@@ -100,7 +101,7 @@
           <label for="tema">TEMA</label>
           <div class="input-contenedor">
             <span class="input-contenedor-text"><i class="fas fa-book"></i></span>
-            <select name="temaId" id="tema" class="form-control" required>
+            <select th:field="*{temaId}" id="tema" class="form-control" required>
               <option value="" disabled selected>Seleccione un tema</option>
               <option th:each="tema : ${temas}" th:value="${tema.id}" th:text="${tema.nombre}"></option>
             </select>
