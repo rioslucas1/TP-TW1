@@ -224,7 +224,8 @@ public class ControladorLoginTest {
 		when(usuarioSinRol.getRol()).thenReturn(null);
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(usuarioSinRol);
-	@Test
+	}
+		@Test
 	public void irAHomeConProfesorDeberiaMostrarTemaYClasesDelProfesor() {
 
 		Long profesorId = 1L;
