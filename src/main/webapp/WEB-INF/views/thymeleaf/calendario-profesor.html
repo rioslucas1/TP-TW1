@@ -83,7 +83,6 @@
     </div>
   </div>
 
-
   <div class="table-wrapper">
     <table class="table tabla-calendario table-bordered">
       <tbody>
@@ -96,57 +95,64 @@
         </td>
       </tr>
 
-
       <tr th:each="hora : ${'06:00,07:00,08:00,09:00,10:00,11:00,12:00,13:00,14:00,15:00,16:00,17:00,18:00,19:00,20:00,21:00,22:00,23:00'.split(',')}">
         <td class="hour-label" th:text="${hora}"></td>
 
-
         <td th:each="dia : ${'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo'.split(',')}">
-          <div th:with="estado=${estadosMap.get(dia + '-' + hora)}" th:switch="${estado}">
 
-            <div th:case="'DISPONIBLE'">
-              <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
-                <input type="hidden" name="diaSemana" th:value="${dia}"/>
-                <input type="hidden" name="hora" th:value="${hora}"/>
-                <input type="hidden" name="fechaEspecifica"
-                       th:value="${diasConFechas[dia]}"/>
-                <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
-                <button type="submit" class="boton-disponible btn btn-success btn-sm">Disponible</button>
-              </form>
+          <div th:with="estado=${estadosMap.get(dia + '-' + hora)}, diaPasado=${diasPasados.get(dia)}"
+               th:switch="${estado}">
+
+
+            <div th:if="${diaPasado}">
+              <span class="text-muted"></span>
             </div>
 
 
-            <div th:case="'OCUPADO'">
-              <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
-                <input type="hidden" name="diaSemana" th:value="${dia}"/>
-                <input type="hidden" name="hora" th:value="${hora}"/>
-                <input type="hidden" name="fechaEspecifica"
-                       th:value="${diasConFechas[dia]}"/>
-                <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
-                <button type="submit" class="boton-libre btn btn-outline-primary btn-sm" >Ocupado</button>
-              </form>
-            </div>
+            <div th:unless="${diaPasado}">
 
-            <div th:case="'RESERVADO'">
-              <button class="boton-reservado btn btn-warning btn-sm" disabled>Reservado</button>
-            </div>
+              <div th:case="'DISPONIBLE'">
+                <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
+                  <input type="hidden" name="diaSemana" th:value="${dia}"/>
+                  <input type="hidden" name="hora" th:value="${hora}"/>
+                  <input type="hidden" name="fechaEspecifica"
+                         th:value="${diasConFechas[dia]}"/>
+                  <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
+                  <button type="submit" class="boton-disponible btn btn-success btn-sm">Disponible</button>
+                </form>
+              </div>
 
-            <div th:case="*">
-              <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
-                <input type="hidden" name="diaSemana" th:value="${dia}"/>
-                <input type="hidden" name="hora" th:value="${hora}"/>
-                <input type="hidden" name="fechaEspecifica"
-                       th:value="${diasConFechas[dia]}"/>
-                <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
-                <button type="submit" class="boton-libre btn btn-outline-primary btn-sm">Ocupado</button>
-              </form>
+              <div th:case="'OCUPADO'">
+                <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
+                  <input type="hidden" name="diaSemana" th:value="${dia}"/>
+                  <input type="hidden" name="hora" th:value="${hora}"/>
+                  <input type="hidden" name="fechaEspecifica"
+                         th:value="${diasConFechas[dia]}"/>
+                  <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
+                  <button type="submit" class="boton-libre btn btn-outline-primary btn-sm">Ocupado</button>
+                </form>
+              </div>
+
+              <div th:case="'RESERVADO'">
+                <button class="boton-reservado btn btn-warning btn-sm" disabled>Reservado</button>
+              </div>
+
+              <div th:case="*">
+                <form th:action="@{/toggle-disponibilidad}" method="post" accept-charset="UTF-8" style="display: inline;">
+                  <input type="hidden" name="diaSemana" th:value="${dia}"/>
+                  <input type="hidden" name="hora" th:value="${hora}"/>
+                  <input type="hidden" name="fechaEspecifica"
+                         th:value="${diasConFechas[dia]}"/>
+                  <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
+                  <button type="submit" class="boton-libre btn btn-outline-primary btn-sm">Ocupado</button>
+                </form>
+              </div>
+
             </div>
 
           </div>
         </td>
       </tr>
-
-      </tbody>
     </table>
   </div>
 </div>

@@ -99,34 +99,39 @@
       <tr th:each="hora : ${'06:00,07:00,08:00,09:00,10:00,11:00,12:00,13:00,14:00,15:00,16:00,17:00,18:00,19:00,20:00,21:00,22:00,23:00'.split(',')}">
         <td class="hour-label" th:text="${hora}"></td>
         <td th:each="dia : ${'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo'.split(',')}">
-          <div th:with="clave=${dia + '-' + hora}, estado=${estadosMap.get(clave)}, disponibilidadId=${idsMap.get(clave)}" th:switch="${estado}">
-            <div th:case="'DISPONIBLE'">
-              <form th:action="@{/reservar-clase}" method="post" accept-charset="UTF-8" style="display: inline;">
-                <input type="hidden" name="disponibilidadId" th:value="${disponibilidadId}"/>
-                <input type="hidden" name="emailProfesor" th:value="${emailProfesor}"/>
-                <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
-                <button type="submit" class="boton-disponible btn btn-success btn-sm">Reservar</button>
-              </form>
+          <div th:with="clave=${dia + '-' + hora}, estado=${estadosMap.get(clave)}, disponibilidadId=${idsMap.get(clave)}, diaPasado=${diasPasados.get(dia)}"
+               th:switch="${estado}">
+            <div th:if="${diaPasado}">
+              <span class="text-muted small"></span>
             </div>
+            <div th:unless="${diaPasado}">
 
-            <div th:case="'OCUPADO'">
-              <button class="boton-libre btn btn-secondary btn-sm" disabled></button>
-            </div>
+              <div th:case="'DISPONIBLE'">
+                <form th:action="@{/reservar-clase}" method="post" accept-charset="UTF-8" style="display: inline;">
+                  <input type="hidden" name="disponibilidadId" th:value="${disponibilidadId}"/>
+                  <input type="hidden" name="emailProfesor" th:value="${emailProfesor}"/>
+                  <input type="hidden" name="semanaActual" th:value="${fechaInicioSemana}"/>
+                  <button type="submit" class="boton-disponible btn btn-success btn-sm">Reservar</button>
+                </form>
+              </div>
 
+              <div th:case="'OCUPADO'">
+                <button class="boton-libre btn btn-secondary btn-sm" disabled></button>
+              </div>
 
-            <div th:case="'RESERVADO'">
-              <button class="boton-reservado btn btn-warning btn-sm" disabled>Reservado</button>
-            </div>
+              <div th:case="'RESERVADO'">
+                <button class="boton-reservado btn btn-warning btn-sm" disabled>Reservado</button>
+              </div>
 
+              <div th:case="*">
+                <button class="btn btn-light btn-sm" disabled></button>
+              </div>
 
-            <div th:case="*">
-              <button class="btn btn-light btn-sm" disabled>-</button>
             </div>
 
           </div>
         </td>
       </tr>
-
       </tbody>
     </table>
   </div>

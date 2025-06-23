@@ -45,6 +45,14 @@ public class ControladorReservaAlumno {
             return new ModelAndView("redirect:/home");
         }
 
+
+        Alumno alumno = (Alumno) usuario;
+        if (!estaSuscritoAProfesor(alumno, emailProfesor)) {
+
+            modelo.put("error", "No tienes acceso al calendario de este profesor");
+            return new ModelAndView("redirect:/home");
+        }
+
         LocalDate fechaInicioSemana = calcularFechaInicioSemana(semanaParam);
         configurarFechasEnModelo(modelo, fechaInicioSemana);
 
@@ -185,9 +193,13 @@ public class ControladorReservaAlumno {
         }
 
         Map<String, String> diasConFechas = new HashMap<>();
+        Map<String, Boolean> diasPasados = new HashMap<>();
+        LocalDate hoy = LocalDate.now();
+
         for (int i = 0; i < 7; i++) {
             LocalDate fechaDia = fechaInicioSemana.plusDays(i);
             diasConFechas.put(DIAS_SEMANA[i], fechaDia.toString());
+            diasPasados.put(DIAS_SEMANA[i], fechaDia.isBefore(hoy));
         }
 
         modelo.put("fechaInicioSemana", fechaInicioSemana);
@@ -195,6 +207,7 @@ public class ControladorReservaAlumno {
         modelo.put("fechaFinFormateada", fechaFinFormateada);
         modelo.put("diasConFecha", diasConFecha);
         modelo.put("diasConFechas", diasConFechas);
+        modelo.put("diasPasados", diasPasados);
     }
 
     private ModelAndView crearRedirectConSemana(String url, String emailProfesor, String semanaActualStr) {
@@ -212,5 +225,18 @@ public class ControladorReservaAlumno {
         return disponibilidad != null ? disponibilidad.getEnlace_meet() : null;
     }
 
+    private boolean estaSuscritoAProfesor(Alumno alumno, String emailProfesor) {
+        try {
+            return alumno.getProfesores().stream()
+                    .anyMatch(profesor -> profesor.getEmail().equals(emailProfesor));
+        } catch (Exception e) {
+            System.err.println("Error al verificar suscripción: " + e.getMessage());
+            return false;
+        }
+
+
+
+
+    }
 
 }

@@ -298,9 +298,13 @@ public class ControladorDisponibilidad {
         }
 
         Map<String, String> diasConFechas = new HashMap<>();
+        Map<String, Boolean> diasPasados = new HashMap<>();
+        LocalDate hoy = LocalDate.now();
+
         for (int i = 0; i < 7; i++) {
             LocalDate fechaDia = fechaInicioSemana.plusDays(i);
             diasConFechas.put(DIAS_SEMANA[i], fechaDia.toString());
+            diasPasados.put(DIAS_SEMANA[i], fechaDia.isBefore(hoy));
         }
 
         modelo.put("fechaInicioSemana", fechaInicioSemana);
@@ -309,6 +313,7 @@ public class ControladorDisponibilidad {
         modelo.put("diasConFecha", diasConFecha);
         modelo.put("fechasSemanales", generarFechasSemanales(fechaInicioSemana));
         modelo.put("diasConFechas", diasConFechas);
+        modelo.put("diasPasados", diasPasados);
     }
 
     private ModelAndView crearRedirectConSemana(String url, String semanaActualStr) {

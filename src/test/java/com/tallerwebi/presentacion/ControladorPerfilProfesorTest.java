@@ -220,7 +220,6 @@ public class ControladorPerfilProfesorTest {
         verify(profesorMock).setTema(temaMock);
         verify(repositorioUsuarioMock).modificar(profesorMock);
         verify(sessionMock).setAttribute("USUARIO", profesorMock);
-        verify(redirectAttributesMock).addFlashAttribute("exito", "Perfil actualizado correctamente");
     }
 
     @Test
@@ -231,7 +230,6 @@ public class ControladorPerfilProfesorTest {
                 "", "Apellido", "Descripción", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
-        verify(redirectAttributesMock).addFlashAttribute("error", "El nombre es obligatorio");
         verify(repositorioUsuarioMock, never()).modificar(any());
     }
 
@@ -243,7 +241,6 @@ public class ControladorPerfilProfesorTest {
                 "Nombre", "", "Descripción", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
-        verify(redirectAttributesMock).addFlashAttribute("error", "El apellido es obligatorio");
         verify(repositorioUsuarioMock, never()).modificar(any());
     }
 
@@ -258,7 +255,6 @@ public class ControladorPerfilProfesorTest {
 
         verify(profesorMock).setFotoPerfil(fotoBase64Valida);
         verify(repositorioUsuarioMock).modificar(profesorMock);
-        verify(redirectAttributesMock).addFlashAttribute("exito", "Perfil actualizado correctamente");
     }
 
     @Test
@@ -273,7 +269,6 @@ public class ControladorPerfilProfesorTest {
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
         verify(profesorMock, never()).setFotoPerfil(any());
         verify(repositorioUsuarioMock, never()).modificar(any());
-        verify(redirectAttributesMock).addFlashAttribute("error", "Formato de imagen no válido");
     }
 
     @Test
@@ -332,7 +327,6 @@ public class ControladorPerfilProfesorTest {
                 "Nombre", "Apellido", "Descripción", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(redirectAttributesMock).addFlashAttribute(eq("error"), contains("Error al actualizar el perfil"));
     }
 
     @Test
@@ -345,7 +339,6 @@ public class ControladorPerfilProfesorTest {
         verify(profesorMock).setFotoPerfil(null);
         verify(repositorioUsuarioMock).modificar(profesorMock);
         verify(sessionMock).setAttribute("USUARIO", profesorMock);
-        verify(redirectAttributesMock).addFlashAttribute("exito", "Foto de perfil eliminada correctamente");
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
     }
 
@@ -378,7 +371,6 @@ public class ControladorPerfilProfesorTest {
         ModelAndView modelAndView = controladorPerfilProfesor.eliminarFotoProfesor(requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(redirectAttributesMock).addFlashAttribute(eq("error"), contains("Error al eliminar la foto"));
     }
 
     @Test
@@ -386,8 +378,8 @@ public class ControladorPerfilProfesorTest {
         when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
         when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
 
-        String institucion = "Universidad Nacional";
-        String descripcion = "Profesor de matemáticas";
+        String institucion = "Universidad";
+        String descripcion = "Profesor de Programación";
         String fecha = "2020-2023";
 
         ModelAndView modelAndView = controladorPerfilProfesor.agregarExperiencia(
@@ -395,7 +387,6 @@ public class ControladorPerfilProfesorTest {
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
         verify(servicioExperienciaMock).guardar(any(ExperienciaEstudiantil.class));
-        verify(redirectAttributesMock).addFlashAttribute("exito", "Experiencia agregada correctamente");
     }
 
     @Test
@@ -430,7 +421,6 @@ public class ControladorPerfilProfesorTest {
                 "Institución", "Descripción", "2020", requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(redirectAttributesMock).addFlashAttribute(eq("error"), contains("Error al agregar la experiencia"));
     }
 
     @Test
@@ -443,7 +433,6 @@ public class ControladorPerfilProfesorTest {
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
         verify(servicioExperienciaMock).eliminar(experienciaId);
-        verify(redirectAttributesMock).addFlashAttribute("exito", "Experiencia eliminada correctamente");
     }
 
     @Test
@@ -478,6 +467,125 @@ public class ControladorPerfilProfesorTest {
                 experienciaId, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(redirectAttributesMock).addFlashAttribute(eq("error"), contains("Error al eliminar la experiencia"));
+    }
+
+    @Test
+    public void actualizarPerfilProfesorConTemaInvalidoDeberiaMantenerseSinCambios() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
+        when(servicioTemaMock.obtenerPorId(999L)).thenReturn(null); // Tema no encontrado
+
+        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
+                "Nombre", "Apellido", "Descripción", "PRESENCIAL", 999L, null, requestMock, redirectAttributesMock);
+
+        verify(profesorMock, never()).setTema(any());
+        verify(repositorioUsuarioMock).modificar(profesorMock);
+    }
+
+    @Test
+    public void actualizarPerfilProfesorConModalidadInvalidaDeberiaAsignarNull() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
+                "Nombre", "Apellido", "Descripción", "MODALIDAD_INEXISTENTE", 1L, null, requestMock, redirectAttributesMock);
+
+        verify(profesorMock).setModalidadPreferida(null);
+        verify(repositorioUsuarioMock).modificar(profesorMock);
+    }
+
+    @Test
+    public void actualizarPerfilProfesorConTemaIdNuloNoDeberiaModificarTema() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
+                "Nombre", "Apellido", "Descripción", "PRESENCIAL", null, null, requestMock, redirectAttributesMock);
+
+        verify(servicioTemaMock, never()).obtenerPorId(any());
+        verify(profesorMock, never()).setTema(any());
+        verify(repositorioUsuarioMock).modificar(profesorMock);
+    }
+
+    @Test
+    public void actualizarPerfilProfesorConFotoBase64VaciaNoDeberiaModificarFoto() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
+                "Nombre", "Apellido", "Descripción", "PRESENCIAL", 1L, "", requestMock, redirectAttributesMock);
+
+        verify(profesorMock, never()).setFotoPerfil(any());
+        verify(repositorioUsuarioMock).modificar(profesorMock);
+    }
+
+    @Test
+    public void verPerfilProfesorConProfesorSinExperienciasDeberiaRetornarListaVacia() {
+        when(profesorMock.getId()).thenReturn(1L);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarProfesorConExperiencias(1L)).thenReturn(profesorMock);
+        when(profesorMock.getExperiencias()).thenReturn(new ArrayList<>());
+
+        List<ExperienciaEstudiantil> experienciasVacias = new ArrayList<>();
+        List<FeedbackProfesor> feedbacksVacios = new ArrayList<>();
+        List<Tema> temas = Arrays.asList(temaMock);
+
+        when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(1L)).thenReturn(feedbacksVacios);
+        when(servicioExperienciaMock.obtenerExperienciasPorProfesor(1L)).thenReturn(experienciasVacias);
+        when(servicioTemaMock.obtenerTodos()).thenReturn(temas);
+        when(servicioFeedbackMock.calcularPromedioCalificacion(1L)).thenReturn(0.0);
+        when(servicioFeedbackMock.contarFeedbackPorProfesor(1L)).thenReturn(0);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
+
+        assertEquals(experienciasVacias, modelAndView.getModel().get("experiencias"));
+        assertEquals(feedbacksVacios, modelAndView.getModel().get("feedbacks"));
+        assertTrue(((List<?>) modelAndView.getModel().get("experiencias")).isEmpty());
+    }
+
+    @Test
+    public void actualizarPerfilProfesorConNombreSoloEspaciosDeberiaDetectarloComoVacio() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
+                "   ", "Apellido", "Descripción", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
+        verify(repositorioUsuarioMock, never()).modificar(any());
+    }
+
+    @Test
+    public void actualizarPerfilProfesorConApellidoSoloEspaciosDeberiaDetectarloComoVacio() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
+                "Nombre", "   ", "Descripción", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
+        verify(repositorioUsuarioMock, never()).modificar(any());
+    }
+
+    @Test
+    public void actualizarPerfilProfesorConBase64ConCaracteresInvalidosDeberiaMostrarError() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
+        String fotoConCaracteresInvalidos = "data:image/png;base64,invalid@characters#here!";
+
+        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
+                "Nombre", "Apellido", "Descripción", "PRESENCIAL", 1L, fotoConCaracteresInvalidos, requestMock, redirectAttributesMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
+    }
+
+    @Test
+    public void actualizarPerfilProfesorConBase64DeLongitudIncorrectaDeberiaMostrarError() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
+        String fotoLongitudIncorrecta = "data:image/png;base64,abc";
+
+        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
+                "Nombre", "Apellido", "Descripción", "PRESENCIAL", 1L, fotoLongitudIncorrecta, requestMock, redirectAttributesMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
     }
 }

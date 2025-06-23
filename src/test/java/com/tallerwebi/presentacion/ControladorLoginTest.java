@@ -164,7 +164,7 @@ public class ControladorLoginTest {
 
 	@Test
 	public void registrarAlumnoConEmailInvalidoDeberiaVolverAFormularioConError() {
-		datosRegistroMock = new DatosRegistro("email-invalido", "123456", "Juan", "Perez");
+		datosRegistroMock = new DatosRegistro("emailerror", "123456", "nombre", "apellido");
 		ModelAndView modelAndView = controladorLogin.registrarme(datosRegistroMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El formato del email es inválido"));
@@ -226,27 +226,25 @@ public class ControladorLoginTest {
 
 	@Test
 	public void irAHomeConAlumnoDeberiaMostrarProfesoresYClasesReservadas() {
-		// Given
+
 		Long alumnoId = 2L;
 		when(alumnoMock.getId()).thenReturn(alumnoId);
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+		List<Profesor> profesoresSuscritos = Arrays.asList(profesorMock);
 
-		List<Usuario> profesores = Arrays.asList(profesorMock);
-		when(servicioLoginMock.obtenerProfesores()).thenReturn(profesores);
+		when(servicioLoginMock.obtenerProfesoresDeAlumno(alumnoId)).thenReturn(profesoresSuscritos);
 
 		List<Clase> clasesReservadas = Arrays.asList(
 				new Clase(profesorMock, "Martes", "10:00", EstadoDisponibilidad.RESERVADO)
 		);
 		when(servicioLoginMock.obtenerClasesAlumno(alumnoId)).thenReturn(clasesReservadas);
 
-		// When
 		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
 
-		// Then
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("home"));
 		assertThat(modelAndView.getModel().get("rol").toString(), equalToIgnoringCase("alumno"));
-//		assertEquals(modelAndView.getModel().get("listaProfesores"), profesores);
+		assertEquals(modelAndView.getModel().get("listaProfesores"), profesoresSuscritos);
 		assertEquals(modelAndView.getModel().get("clasesReservadas"), clasesReservadas);
 
 		verify(servicioLoginMock, times(1)).obtenerProfesoresDeAlumno(alumnoId);
@@ -256,14 +254,10 @@ public class ControladorLoginTest {
 
 	@Test
 	public void irAHomeConUsuarioNuloDeberiaRetornarHomeVacio() {
-		// Given
+
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
-
-		// When
 		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
-
-		// Then
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("home"));
 		assertNull(modelAndView.getModel().get("nombreUsuario"));
 		assertNull(modelAndView.getModel().get("rol"));
@@ -330,27 +324,22 @@ public class ControladorLoginTest {
 
 	@Test
 	public void irAHomeConProfesorSinClasesDeberiaRetornarListaVacia() {
-		// Given
+
 		Long profesorId = 1L;
 		when(profesorMock.getId()).thenReturn(profesorId);
 		when(profesorMock.getTema()).thenReturn(temaMock);
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-
 		List<Clase> clasesVacias = Arrays.asList();
 		when(servicioLoginMock.obtenerClasesProfesor(profesorId)).thenReturn(clasesVacias);
-
-		// When
 		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
-
-		// Then
 		assertEquals(modelAndView.getModel().get("clasesProfesor"), clasesVacias);
 		assertEquals(0, ((List<?>) modelAndView.getModel().get("clasesProfesor")).size());
 	}
 
 	@Test
 	public void irAHomeConAlumnoSinClasesReservadasDeberiaRetornarListaVacia() {
-		// Given
+
 		Long alumnoId = 2L;
 		when(alumnoMock.getId()).thenReturn(alumnoId);
 		when(requestMock.getSession()).thenReturn(sessionMock);
@@ -360,13 +349,166 @@ public class ControladorLoginTest {
 
 		List<Clase> clasesVacias = Arrays.asList();
 		when(servicioLoginMock.obtenerClasesAlumno(alumnoId)).thenReturn(clasesVacias);
-
-		// When
 		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
-
-		// Then
 		assertEquals(modelAndView.getModel().get("clasesReservadas"), clasesVacias);
 		assertEquals(0, ((List<?>) modelAndView.getModel().get("clasesReservadas")).size());
+	}
+
+	@Test
+	public void irAHomeConAlumnoSinProfesoresSuscritosDeberiaRetornarListaVacia() {
+		Long alumnoId = 2L;
+		when(alumnoMock.getId()).thenReturn(alumnoId);
+		when(requestMock.getSession()).thenReturn(sessionMock);
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+
+		List<Profesor> profesoresVacios = Arrays.asList();
+		when(servicioLoginMock.obtenerProfesoresDeAlumno(alumnoId)).thenReturn(profesoresVacios);
+
+		List<Clase> clasesVacias = Arrays.asList();
+		when(servicioLoginMock.obtenerClasesAlumno(alumnoId)).thenReturn(clasesVacias);
+
+		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
+
+		assertEquals(modelAndView.getModel().get("listaProfesores"), profesoresVacios);
+		assertEquals(0, ((List<?>) modelAndView.getModel().get("listaProfesores")).size());
+		assertEquals(modelAndView.getModel().get("clasesReservadas"), clasesVacias);
+		assertEquals(0, ((List<?>) modelAndView.getModel().get("clasesReservadas")).size());
+	}
+
+	@Test
+	public void irALoginDeberiaRetornarVistaLoginConModelo() {
+		ModelAndView modelAndView = controladorLogin.irALogin();
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("datosLogin"), notNullValue());
+	}
+
+	@Test
+	public void inicioDeberiaRedirigirALogin() {
+		ModelAndView modelAndView = controladorLogin.inicio();
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
+	}
+
+	@Test
+	public void mostrarFormularioProfesorDeberiaRetornarVistaConTemasYModelo() {
+		List<Tema> temasMock = Arrays.asList(temaMock);
+		when(servicioTemaMock.obtenerTodos()).thenReturn(temasMock);
+
+		ModelAndView modelAndView = controladorLogin.mostrarFormularioProfesor();
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("registrar-profesor"));
+		assertThat(modelAndView.getModel().get("datosRegistro"), notNullValue());
+		assertThat(modelAndView.getModel().get("temas"), notNullValue());
+		assertEquals(modelAndView.getModel().get("temas"), temasMock);
+	}
+
+	@Test
+	public void procesarRegistroProfesorConDatosValidosDeberiaRegistrarYRedirigirALogin() throws UsuarioExistente {
+		DatosRegistroProfesor datosProfesor = new DatosRegistroProfesor("Profesor", "apellido", "profesor@test.com", "12345", 1L);
+		Long temaId = 1L;
+
+		when(servicioTemaMock.obtenerPorId(temaId)).thenReturn(temaMock);
+
+		ModelAndView modelAndView = controladorLogin.procesarRegistroProfesor(datosProfesor, temaId);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
+		verify(servicioLoginMock, times(1)).registrar(any(Profesor.class));
+		verify(servicioTemaMock, times(1)).obtenerPorId(temaId);
+	}
+
+	@Test
+	public void procesarRegistroProfesorConCamposVaciosDeberiaVolverAFormularioConError() {
+		DatosRegistroProfesor datosProfesor = new DatosRegistroProfesor("", "", "", "", null);
+		List<Tema> temasMock = Arrays.asList(temaMock);
+		when(servicioTemaMock.obtenerTodos()).thenReturn(temasMock);
+
+		ModelAndView modelAndView = controladorLogin.procesarRegistroProfesor(datosProfesor, null);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("registrar-profesor"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Todos los campos son obligatorios"));
+		assertThat(modelAndView.getModel().get("temas"), notNullValue());
+	}
+
+	@Test
+	public void procesarRegistroProfesorConEmailInvalidoDeberiaVolverAFormularioConError() {
+		DatosRegistroProfesor datosProfesor = new DatosRegistroProfesor("Profesor", "apellido", "profetest.com", "12345", 1L);
+		datosProfesor.setTemaId(1L);
+		List<Tema> temasMock = Arrays.asList(temaMock);
+		when(servicioTemaMock.obtenerTodos()).thenReturn(temasMock);
+
+		ModelAndView modelAndView = controladorLogin.procesarRegistroProfesor(datosProfesor, 1L);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("registrar-profesor"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("El formato del email es inválido"));
+		assertThat(modelAndView.getModel().get("temas"), notNullValue());
+	}
+
+	@Test
+	public void procesarRegistroProfesorConUsuarioExistenteDeberiaVolverAFormularioConError() throws UsuarioExistente {
+		DatosRegistroProfesor datosProfesor = new DatosRegistroProfesor("Profesor", "apellido", "profesor@test.com", "12345", 1L);
+		datosProfesor.setTemaId(1L);
+		List<Tema> temasMock = Arrays.asList(temaMock);
+
+		when(servicioTemaMock.obtenerTodos()).thenReturn(temasMock);
+		when(servicioTemaMock.obtenerPorId(1L)).thenReturn(temaMock);
+		doThrow(UsuarioExistente.class).when(servicioLoginMock).registrar(any(Profesor.class));
+
+		ModelAndView modelAndView = controladorLogin.procesarRegistroProfesor(datosProfesor, 1L);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("registrar-profesor"));
+		assertThat(modelAndView.getModel().get("temas"), notNullValue());
+	}
+
+
+	@Test
+	public void irAHomeConProfesorDeberiaLimitarClasesACinco() {
+		Long profesorId = 1L;
+		when(profesorMock.getId()).thenReturn(profesorId);
+		when(profesorMock.getTema()).thenReturn(temaMock);
+		when(requestMock.getSession()).thenReturn(sessionMock);
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+		List<Clase> muchasClases = Arrays.asList(
+				new Clase(profesorMock, "Lunes", "09:00"),
+				new Clase(profesorMock, "Martes", "10:00"),
+				new Clase(profesorMock, "Miércoles", "11:00"),
+				new Clase(profesorMock, "Jueves", "12:00"),
+				new Clase(profesorMock, "Viernes", "13:00"),
+				new Clase(profesorMock, "Sábado", "14:00"),
+				new Clase(profesorMock, "Domingo", "15:00")
+		);
+		when(servicioLoginMock.obtenerClasesProfesor(profesorId)).thenReturn(muchasClases);
+
+		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
+
+		List<Clase> clasesEnModelo = (List<Clase>) modelAndView.getModel().get("clasesProfesor");
+		assertEquals(5, clasesEnModelo.size());
+	}
+
+	@Test
+	public void irAHomeConAlumnoDeberiaLimitarClasesACinco() {
+		Long alumnoId = 2L;
+		when(alumnoMock.getId()).thenReturn(alumnoId);
+		when(requestMock.getSession()).thenReturn(sessionMock);
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+
+		when(servicioLoginMock.obtenerProfesoresDeAlumno(alumnoId)).thenReturn(Arrays.asList(profesorMock));
+
+		List<Clase> muchasClases = Arrays.asList(
+				new Clase(profesorMock, "Lunes", "09:00"),
+				new Clase(profesorMock, "Martes", "10:00"),
+				new Clase(profesorMock, "Miércoles", "11:00"),
+				new Clase(profesorMock, "Jueves", "12:00"),
+				new Clase(profesorMock, "Viernes", "13:00"),
+				new Clase(profesorMock, "Sábado", "14:00"),
+				new Clase(profesorMock, "Domingo", "15:00")
+		);
+		when(servicioLoginMock.obtenerClasesAlumno(alumnoId)).thenReturn(muchasClases);
+
+		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
+
+		List<Clase> clasesEnModelo = (List<Clase>) modelAndView.getModel().get("clasesReservadas");
+		assertEquals(5, clasesEnModelo.size());
 	}
 
 

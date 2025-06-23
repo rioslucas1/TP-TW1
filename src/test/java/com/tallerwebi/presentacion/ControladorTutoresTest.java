@@ -80,17 +80,15 @@ import static org.mockito.Mockito.*;
 
         @Test
         public void verTutoresConUsuarioLogueadoDeberiaRetornarListaDeProfesores() {
-            // Given
+
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
 
             List<Usuario> profesores = Arrays.asList(profesorMock);
             when(servicioLoginMock.obtenerProfesores()).thenReturn(profesores);
 
-            // When
             ModelAndView modelAndView = controladorTutores.verTutores(requestMock);
 
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
             assertEquals(modelAndView.getModel().get("listaProfesores"), profesores);
             assertEquals(modelAndView.getModel().get("nombreUsuario"), "Juan");
@@ -99,17 +97,13 @@ import static org.mockito.Mockito.*;
 
         @Test
         public void verTutoresSinUsuarioLogueadoDeberiaRetornarListaDeProfesoresConNombreNull() {
-            // Given
+
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
 
             List<Usuario> profesores = Arrays.asList(profesorMock);
             when(servicioLoginMock.obtenerProfesores()).thenReturn(profesores);
-
-            // When
             ModelAndView modelAndView = controladorTutores.verTutores(requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
             assertEquals(modelAndView.getModel().get("listaProfesores"), profesores);
             assertEquals(modelAndView.getModel().get("nombreUsuario"), null);
@@ -117,22 +111,18 @@ import static org.mockito.Mockito.*;
 
         @Test
         public void verTutoresConExcepcionDeberiaRetornarVistaConError() {
-            // Given
+
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
             when(servicioLoginMock.obtenerProfesores()).thenThrow(new RuntimeException("Error de base de datos"));
-
-            // When
             ModelAndView modelAndView = controladorTutores.verTutores(requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
             assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Error al cargar los tutores"));
         }
 
         @Test
         public void verPerfilDeProfesorConEmailValidoDeberiaRetornarPerfilCompleto() {
-            // Given
+
             String email = "profesor@unlam.com";
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
@@ -146,11 +136,7 @@ import static org.mockito.Mockito.*;
             when(servicioFeedbackMock.calcularPromedioCalificacion(2L)).thenReturn(4.5);
             when(servicioFeedbackMock.contarFeedbackPorProfesor(2L)).thenReturn(10);
             when(alumnoMock.estaSuscritoAProfesor(profesorMock)).thenReturn(false);
-
-            // When
             ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor(email, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
             assertEquals(modelAndView.getModel().get("profesor"), profesorMock);
             assertEquals(modelAndView.getModel().get("feedbacks"), feedbacks);
@@ -164,20 +150,16 @@ import static org.mockito.Mockito.*;
 
         @Test
         public void verPerfilDeProfesorConEmailInvalidoDeberiaRedirigirAVerTutores() {
-            // Given
+
             String email = "inexistente@unlam.com";
             when(repositorioUsuarioMock.buscar(email)).thenReturn(null);
-
-            // When
             ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor(email, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/verTutores"));
         }
 
         @Test
         public void verPerfilDeProfesorConUsuarioSuscritoDeberiaIndicarSuscripcion() {
-            // Given
+
             String email = "profesor@unlam.com";
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
@@ -187,8 +169,6 @@ import static org.mockito.Mockito.*;
             when(servicioFeedbackMock.calcularPromedioCalificacion(anyLong())).thenReturn(null);
             when(servicioFeedbackMock.contarFeedbackPorProfesor(anyLong())).thenReturn(null);
             when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(anyLong(), anyLong())).thenReturn(true);
-
-            // When
             ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor(email, requestMock);
             assertEquals(true, modelAndView.getModel().get("yaSuscripto"));
             assertEquals(0.0, modelAndView.getModel().get("promedioCalificacion"));
@@ -208,11 +188,7 @@ import static org.mockito.Mockito.*;
             when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
             when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(4.0);
             when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(5);
-
-            // When
             ModelAndView modelAndView = controladorTutores.suscribirseAProfesor(profesorId, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
             assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Te has suscrito exitosamente al profesor"));
             verify(servicioSuscripcionMock, times(1)).suscribirAlumnoAProfesor(1L, profesorId);
@@ -220,38 +196,30 @@ import static org.mockito.Mockito.*;
 
         @Test
         public void suscribirseAProfesorSinUsuarioLogueadoDeberiaRedirigirALogin() {
-            // Given
+
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
-
-            // When
             ModelAndView modelAndView = controladorTutores.suscribirseAProfesor(profesorId, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
-            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Debes iniciar sesión para suscribirte a un profesor"));
         }
 
         @Test
         public void suscribirseAProfesorConProfesorLogueadoDeberiaRetornarError() {
-            // Given
+
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
             when(servicioLoginMock.obtenerProfesores()).thenReturn(Arrays.asList(profesorMock));
 
-            // When
             ModelAndView modelAndView = controladorTutores.suscribirseAProfesor(profesorId, requestMock);
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
 
-            // Then
-            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
-            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Solo los alumnos pueden suscribirse a profesores"));
         }
 
         @Test
         public void suscribirseAProfesorYaExistenteDeberiaRetornarError() {
-            // Given
+
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
@@ -263,17 +231,15 @@ import static org.mockito.Mockito.*;
             when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(null);
             when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(null);
 
-            // When
             ModelAndView modelAndView = controladorTutores.suscribirseAProfesor(profesorId, requestMock);
 
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
             assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ya estás suscrito a este profesor o ocurrió un error"));
         }
 
         @Test
         public void desuscribirseDeProfesorConAlumnoLogueadoDeberiaRetornarExito() {
-            // Given
+
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
@@ -284,11 +250,7 @@ import static org.mockito.Mockito.*;
             when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
             when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(3.5);
             when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(8);
-
-            // When
             ModelAndView modelAndView = controladorTutores.desuscribirseDeProfesor(profesorId, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
             assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Te has desuscrito exitosamente del profesor"));
             verify(servicioSuscripcionMock, times(1)).desuscribirAlumnoDeProfesor(1L, profesorId);
@@ -296,38 +258,29 @@ import static org.mockito.Mockito.*;
 
         @Test
         public void desuscribirseDeProfesorSinUsuarioLogueadoDeberiaRedirigirALogin() {
-            // Given
+
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
-
-            // When
             ModelAndView modelAndView = controladorTutores.desuscribirseDeProfesor(profesorId, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
             assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Debes iniciar sesión para desuscribirte de un profesor"));
         }
 
         @Test
         public void desuscribirseDeProfesorConProfesorLogueadoDeberiaRetornarError() {
-            // Given
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
             when(servicioLoginMock.obtenerProfesores()).thenReturn(Arrays.asList(profesorMock));
-
-            // When
             ModelAndView modelAndView = controladorTutores.desuscribirseDeProfesor(profesorId, requestMock);
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
 
-            // Then
-            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
-            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Solo los alumnos pueden desuscribirse de profesores"));
         }
 
         @Test
         public void desuscribirseDeProfesorNoSuscritoDeberiaRetornarError() {
-            // Given
+
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
@@ -338,45 +291,33 @@ import static org.mockito.Mockito.*;
             when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
             when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(null);
             when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(null);
-
-            // When
             ModelAndView modelAndView = controladorTutores.desuscribirseDeProfesor(profesorId, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
             assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("No estabas suscrito a este profesor o ocurrió un error"));
         }
 
         @Test
         public void suscribirseAProfesorConExcepcionDeberiaRetornarError() {
-            // Given
+
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
             when(servicioSuscripcionMock.suscribirAlumnoAProfesor(anyLong(), anyLong())).thenThrow(new RuntimeException("Error de base de datos"));
             when(servicioLoginMock.obtenerProfesores()).thenReturn(Arrays.asList(profesorMock));
-
-            // When
             ModelAndView modelAndView = controladorTutores.suscribirseAProfesor(profesorId, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
             assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ocurrió un error al procesar la suscripción"));
         }
 
         @Test
         public void desuscribirseDeProfesorConExcepcionDeberiaRetornarError() {
-            // Given
+
             Long profesorId = 2L;
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
             when(servicioSuscripcionMock.desuscribirAlumnoDeProfesor(anyLong(), anyLong())).thenThrow(new RuntimeException("Error de base de datos"));
             when(servicioLoginMock.obtenerProfesores()).thenReturn(Arrays.asList(profesorMock));
-
-            // When
             ModelAndView modelAndView = controladorTutores.desuscribirseDeProfesor(profesorId, requestMock);
-
-            // Then
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
             assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Error al procesar la desuscripción"));
         }

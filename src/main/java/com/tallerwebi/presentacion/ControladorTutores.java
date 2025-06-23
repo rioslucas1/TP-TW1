@@ -108,16 +108,10 @@ public class ControladorTutores {
         try {
             Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("USUARIO");
 
-            if (usuarioLogueado == null) {
-                modelo.put("error", "Debes iniciar sesión para suscribirte a un profesor");
+            if (usuarioLogueado == null || !(usuarioLogueado instanceof Alumno)) {
+                modelo.put("error", "Debes iniciar sesión para desuscribirte de un profesor");
+                modelo.put("datosLogin", new DatosLogin());
                 return new ModelAndView("login", modelo);
-            }
-
-            if (!(usuarioLogueado instanceof Alumno)) {
-                modelo.put("error", "Solo los alumnos pueden suscribirse a profesores");
-                List<Usuario> listaProfesores = servicioLogin.obtenerProfesores();
-                modelo.put("listaProfesores", listaProfesores);
-                return new ModelAndView("verTutores", modelo);
             }
 
             boolean exito = servicioSuscripcion.suscribirAlumnoAProfesor(usuarioLogueado.getId(), profesorId);
@@ -160,17 +154,12 @@ public class ControladorTutores {
         try {
             Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("USUARIO");
 
-            if (usuarioLogueado == null) {
+            if (usuarioLogueado == null || !(usuarioLogueado instanceof Alumno)) {
                 modelo.put("error", "Debes iniciar sesión para desuscribirte de un profesor");
+                modelo.put("datosLogin", new DatosLogin());
                 return new ModelAndView("login", modelo);
             }
 
-            if (!(usuarioLogueado instanceof Alumno)) {
-                modelo.put("error", "Solo los alumnos pueden desuscribirse de profesores");
-                List<Usuario> listaProfesores = servicioLogin.obtenerProfesores();
-                modelo.put("listaProfesores", listaProfesores);
-                return new ModelAndView("verTutores", modelo);
-            }
 
             boolean exito = servicioSuscripcion.desuscribirAlumnoDeProfesor(usuarioLogueado.getId(), profesorId);
             Profesor profesor = (Profesor) repositorioUsuario.buscarPorId(profesorId);

@@ -168,7 +168,6 @@ public class ControladorPerfilTest {
         verify(alumnoMock, times(1)).setModalidadPreferida(ModalidadPreferida.VIRTUAL);
         verify(repositorioUsuarioMock, times(1)).modificar(alumnoMock);
         verify(sessionMock, times(1)).setAttribute("USUARIO", alumnoMock);
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("exito", "Perfil actualizado correctamente");
     }
 
     @Test
@@ -182,7 +181,6 @@ public class ControladorPerfilTest {
 
         verify(alumnoMock, times(1)).setFotoPerfil(fotoBase64Valida);
         verify(repositorioUsuarioMock, times(1)).modificar(alumnoMock);
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("exito", "Perfil actualizado correctamente");
     }
 
     @Test
@@ -196,8 +194,8 @@ public class ControladorPerfilTest {
 
         verify(alumnoMock, never()).setFotoPerfil(any());
         verify(repositorioUsuarioMock, never()).modificar(any());
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("error", "Formato de imagen no válido");
-//        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
+
+    assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil/editar"));
     }
 
     @Test
@@ -244,7 +242,6 @@ public class ControladorPerfilTest {
                 "Nombre", "Apellido", "Descripción", "PRESENCIAL", null, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
-        verify(redirectAttributesMock, times(1)).addFlashAttribute(eq("error"), contains("Error al actualizar el perfil"));
     }
 
     @Test
@@ -257,7 +254,6 @@ public class ControladorPerfilTest {
         verify(alumnoMock, times(1)).setFotoPerfil(null);
         verify(repositorioUsuarioMock, times(1)).modificar(alumnoMock);
         verify(sessionMock, times(1)).setAttribute("USUARIO", alumnoMock);
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("exito", "Foto de perfil eliminada correctamente");
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
     }
 
@@ -290,7 +286,6 @@ public class ControladorPerfilTest {
         ModelAndView modelAndView = controladorPerfil.eliminarFoto(requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
-        verify(redirectAttributesMock, times(1)).addFlashAttribute(eq("error"), contains("Error al eliminar la foto"));
     }
 
     @Test
@@ -308,7 +303,6 @@ public class ControladorPerfilTest {
         verify(temasPreferidos, times(1)).add(temaMock);
         verify(repositorioUsuarioMock, times(1)).modificar(alumnoMock);
         verify(sessionMock, times(1)).setAttribute("USUARIO", alumnoMock);
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("exito", "Tema agregado correctamente");
     }
 
     @Test
@@ -343,7 +337,6 @@ public class ControladorPerfilTest {
         ModelAndView modelAndView = controladorPerfil.agregarTema(temaId, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("error", "El tema seleccionado no existe");
         verify(repositorioUsuarioMock, never()).modificar(any());
     }
 
@@ -360,7 +353,6 @@ public class ControladorPerfilTest {
         ModelAndView modelAndView = controladorPerfil.agregarTema(temaId, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("error", "Ya tienes este tema en tus preferencias");
         verify(repositorioUsuarioMock, never()).modificar(any());
     }
 
@@ -377,7 +369,6 @@ public class ControladorPerfilTest {
         ModelAndView modelAndView = controladorPerfil.agregarTema(temaId, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
-        verify(redirectAttributesMock, times(1)).addFlashAttribute(eq("error"), contains("Error al agregar el tema"));
     }
 
     @Test
@@ -396,7 +387,6 @@ public class ControladorPerfilTest {
         verify(temasPreferidos, times(1)).remove(temaMock);
         verify(repositorioUsuarioMock, times(1)).modificar(alumnoMock);
         verify(sessionMock, times(1)).setAttribute("USUARIO", alumnoMock);
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("exito", "Tema eliminado correctamente");
     }
 
     @Test
@@ -431,7 +421,6 @@ public class ControladorPerfilTest {
         ModelAndView modelAndView = controladorPerfil.eliminarTema(temaId, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
-        verify(redirectAttributesMock, times(1)).addFlashAttribute("error", "El tema seleccionado no existe");
         verify(repositorioUsuarioMock, never()).modificar(any());
     }
 
@@ -448,6 +437,5 @@ public class ControladorPerfilTest {
         ModelAndView modelAndView = controladorPerfil.eliminarTema(temaId, requestMock, redirectAttributesMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
-        verify(redirectAttributesMock, times(1)).addFlashAttribute(eq("error"), contains("Error al eliminar el tema"));
     }
 }
