@@ -3,7 +3,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-public class disponibilidadProfesor {
+public class Clase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,24 +27,27 @@ public class disponibilidadProfesor {
     private LocalDate fechaEspecifica;
 
 
+    @Column(name = "enlace_meet")
+    private String enlace_meet;
+
 
     @Enumerated(EnumType.STRING)
     private EstadoDisponibilidad estado = EstadoDisponibilidad.DISPONIBLE;
-    public disponibilidadProfesor(Profesor profesor, String diaSemana, String hora) {
+    public Clase(Profesor profesor, String diaSemana, String hora) {
         this.profesor = profesor;
         this.diaSemana = diaSemana;
         this.hora = hora;
         this.estado = EstadoDisponibilidad.DISPONIBLE;
     }
 
-    public disponibilidadProfesor(Profesor profesor, String diaSemana, String hora, EstadoDisponibilidad estado) {
+    public Clase(Profesor profesor, String diaSemana, String hora, EstadoDisponibilidad estado) {
         this.profesor = profesor;
         this.diaSemana = diaSemana;
         this.hora = hora;
         this.estado = estado;
     }
 
-    public disponibilidadProfesor(Profesor profesor, String diaSemana, String hora, LocalDate fechaEspecifica, EstadoDisponibilidad estado) {
+    public Clase(Profesor profesor, String diaSemana, String hora, LocalDate fechaEspecifica, EstadoDisponibilidad estado) {
         this.profesor = profesor;
         this.diaSemana = diaSemana;
         this.hora = hora;
@@ -52,10 +55,18 @@ public class disponibilidadProfesor {
         this.estado = estado;
     }
 
-    public disponibilidadProfesor() {
+    public Clase() {
 
     }
 
+
+    public String getEnlace_meet() {
+        return enlace_meet;
+    }
+
+    public void setEnlace_meet(String enlace_meet) {
+        this.enlace_meet = enlace_meet;
+    }
 
     public Long getId() {
         return id;

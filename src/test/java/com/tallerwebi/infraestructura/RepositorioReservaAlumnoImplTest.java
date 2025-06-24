@@ -1,255 +1,298 @@
 package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.RepositorioReservaAlumno;
-import com.tallerwebi.dominio.RepositorioUsuario;
-import com.tallerwebi.dominio.entidades.Alumno;
-import com.tallerwebi.dominio.entidades.Profesor;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.infraestructura.config.HibernateInfraestructuraTestConfig;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {HibernateInfraestructuraTestConfig.class})
+@Transactional
 public class RepositorioReservaAlumnoImplTest {
 
-    private SessionFactory sessionFactoryMock;
-    private Session sessionMock;
-    private Criteria criteriaMock;
+    @Autowired
+    private SessionFactory sessionFactory;
+
     private RepositorioReservaAlumno repositorioReservaAlumno;
-    private disponibilidadProfesor disponibilidadMock;
-    private Profesor profesorMock;
+    private Profesor profesor;
+    private Alumno alumno;
+    private Tema tema;
+    private static LocalDate diaLunes = LocalDate.of(2025, 6, 9);
+    private static LocalDate diaDomingo = LocalDate.of(2025, 6, 15);
 
     @BeforeEach
     public void init() {
-        sessionFactoryMock = mock(SessionFactory.class);
-        sessionMock = mock(Session.class);
-        criteriaMock = mock(Criteria.class);
-        repositorioReservaAlumno = new RepositorioReservaAlumnoImpl(sessionFactoryMock);
+        this.repositorioReservaAlumno = new RepositorioReservaAlumnoImpl(this.sessionFactory);
 
-        when(sessionFactoryMock.getCurrentSession()).thenReturn(sessionMock);
-        when(sessionMock.createCriteria(disponibilidadProfesor.class)).thenReturn(criteriaMock);
-        when(criteriaMock.createAlias("profesor", "p")).thenReturn(criteriaMock);
-        when(criteriaMock.add(any())).thenReturn(criteriaMock);
+        tema = new Tema();
+        tema.setNombre("Matemáticas");
+        sessionFactory.getCurrentSession().save(tema);
 
-        profesorMock = mock(Profesor.class);
-        when(profesorMock.getEmail()).thenReturn("profesor@unlam.com");
+        profesor = new Profesor();
+        profesor.setEmail("profesor@unlam.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Carlos");
+        profesor.setApellido("Rodriguez");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
 
-        disponibilidadMock = mock(disponibilidadProfesor.class);
-        when(disponibilidadMock.getId()).thenReturn(1L);
-        when(disponibilidadMock.getEmailProfesor()).thenReturn("profesor@unlam.com");
-        when(disponibilidadMock.getDiaSemana()).thenReturn("LUNES");
-        when(disponibilidadMock.getHora()).thenReturn("09:00");
-        when(disponibilidadMock.getProfesor()).thenReturn(profesorMock);
+        alumno = new Alumno();
+        alumno.setEmail("alumno@unlam.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("Maria");
+        alumno.setApellido("Garcia");
+        sessionFactory.getCurrentSession().save(alumno);
     }
 
     @Test
-    public void buscarPorProfesorDeberiaRetornarListaDeDisponibilidades() {
-        String emailProfesor = "profesor@unlam.com";
-        disponibilidadProfesor disponibilidad1 = mock(disponibilidadProfesor.class);
-        disponibilidadProfesor disponibilidad2 = mock(disponibilidadProfesor.class);
-        List<disponibilidadProfesor> disponibilidadesEsperadas = Arrays.asList(disponibilidad1, disponibilidad2);
+    @Rollback
+    public void dadoQueExistenDisponibilidadesDeProfesorCuandoBuscoPorProfesorEntoncesRetornaListaDeDisponibilidades() {
 
-        when(criteriaMock.list()).thenReturn(disponibilidadesEsperadas);
+        Clase disponibilidad1 = new Clase();
+        disponibilidad1.setProfesor(profesor);
+        disponibilidad1.setDiaSemana("LUNES");
+        disponibilidad1.setHora("09:00");
+        disponibilidad1.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad1);
 
-        List<disponibilidadProfesor> disponibilidadesObtenidas = repositorioReservaAlumno.buscarPorProfesor(emailProfesor);
+        Clase disponibilidad2 = new Clase();
+        disponibilidad2.setProfesor(profesor);
+        disponibilidad2.setDiaSemana("MARTES");
+        disponibilidad2.setHora("14:00");
+        disponibilidad2.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad2);
 
+        List<Clase> disponibilidadesObtenidas =
+                repositorioReservaAlumno.buscarPorProfesor(profesor.getEmail());
+
+        // Then
         assertNotNull(disponibilidadesObtenidas);
         assertEquals(2, disponibilidadesObtenidas.size());
-        assertThat(disponibilidadesObtenidas, containsInAnyOrder(disponibilidad1, disponibilidad2));
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).createAlias("profesor", "p");
-        verify(criteriaMock, times(1)).list();
+        assertThat(disponibilidadesObtenidas, hasItems(disponibilidad1, disponibilidad2));
     }
 
     @Test
-    public void buscarPorProfesorInexistenteDeberiaRetornarListaVacia() {
-        String emailProfesor = "inexistente@unlam.com";
-        List<disponibilidadProfesor> listaVacia = Arrays.asList();
+    @Rollback
+    public void cuandoBuscoPorProfesorInexistenteEntoncesRetornaListaVacia() {
 
-        when(criteriaMock.list()).thenReturn(listaVacia);
-
-        List<disponibilidadProfesor> disponibilidadesObtenidas = repositorioReservaAlumno.buscarPorProfesor(emailProfesor);
-
+        String emailInexistente = "inexistente@unlam.com";
+        List<Clase> disponibilidadesObtenidas =
+                repositorioReservaAlumno.buscarPorProfesor(emailInexistente);
         assertNotNull(disponibilidadesObtenidas);
         assertEquals(0, disponibilidadesObtenidas.size());
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).createAlias("profesor", "p");
-        verify(criteriaMock, times(1)).list();
     }
 
     @Test
-    public void buscarPorProfesorDiaHoraDeberiaRetornarDisponibilidad() {
-        String emailProfesor = "profesor@unlam.com";
-        String diaSemana = "LUNES";
-        String hora = "09:00";
+    @Rollback
+    public void dadoQueExisteDisponibilidadCuandoBuscoPorIdEntoncesRetornaLaDisponibilidad() {
 
-        when(criteriaMock.uniqueResult()).thenReturn(disponibilidadMock);
-
-        disponibilidadProfesor disponibilidadObtenida = repositorioReservaAlumno.buscarPorProfesorDiaHora(emailProfesor, diaSemana, hora);
-
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("MIERCOLES");
+        disponibilidad.setHora("10:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad);
+        Long idDisponibilidad = disponibilidad.getId();
+        Clase disponibilidadObtenida =
+                repositorioReservaAlumno.buscarPorId(idDisponibilidad);
         assertNotNull(disponibilidadObtenida);
-        assertEquals(disponibilidadMock, disponibilidadObtenida);
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).uniqueResult();
+
+        assertEquals(idDisponibilidad, disponibilidadObtenida.getId());
+        assertEquals(profesor, disponibilidadObtenida.getProfesor());
+        assertEquals("MIERCOLES", disponibilidadObtenida.getDiaSemana());
+        assertEquals("10:00", disponibilidadObtenida.getHora());
     }
 
     @Test
-    public void buscarPorProfesorDiaHoraInexistenteDeberiaRetornarNull() {
-        String emailProfesor = "profesor@unlam.com";
-        String diaSemana = "MARTES";
-        String hora = "15:00";
+    @Rollback
+    public void cuandoBuscoPorIdInexistenteEntoncesRetornaNulo() {
 
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        disponibilidadProfesor disponibilidadObtenida = repositorioReservaAlumno.buscarPorProfesorDiaHora(emailProfesor, diaSemana, hora);
-
+        Long idInexistente = 999L;
+        Clase disponibilidadObtenida =
+                repositorioReservaAlumno.buscarPorId(idInexistente);
         assertNull(disponibilidadObtenida);
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).uniqueResult();
     }
 
     @Test
-    public void buscarPorIdDeberiaRetornarDisponibilidad() {
-        Long id = 1L;
+    @Rollback
+    public void cuandoGuardoUnaDisponibilidadEntoncesSeGuardaCorrectamenteEnLaBaseDeDatos() {
 
-        when(sessionMock.get(disponibilidadProfesor.class, id)).thenReturn(disponibilidadMock);
+        Clase nuevaDisponibilidad = new Clase();
+        nuevaDisponibilidad.setProfesor(profesor);
+        nuevaDisponibilidad.setDiaSemana("JUEVES");
+        nuevaDisponibilidad.setHora("16:00");
+        nuevaDisponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        repositorioReservaAlumno.guardar(nuevaDisponibilidad);
+        Long idGuardado = nuevaDisponibilidad.getId();
+        assertNotNull(idGuardado);
+        Clase disponibilidadGuardada =
+                repositorioReservaAlumno.buscarPorId(idGuardado);
+        assertNotNull(disponibilidadGuardada);
 
-        disponibilidadProfesor disponibilidadObtenida = repositorioReservaAlumno.buscarPorId(id);
-
-        assertNotNull(disponibilidadObtenida);
-        assertEquals(disponibilidadMock, disponibilidadObtenida);
-        verify(sessionMock, times(1)).get(disponibilidadProfesor.class, id);
+        assertEquals(profesor, disponibilidadGuardada.getProfesor());
+        assertEquals("JUEVES", disponibilidadGuardada.getDiaSemana());
+        assertEquals("16:00", disponibilidadGuardada.getHora());
+        assertEquals(EstadoDisponibilidad.DISPONIBLE, disponibilidadGuardada.getEstado());
     }
 
     @Test
-    public void buscarPorIdInexistenteDeberiaRetornarNull() {
-        Long id = 999L;
+    @Rollback
+    public void cuandoModificoUnaDisponibilidadExistenteEntoncesSeActualizaCorrectamente() {
 
-        when(sessionMock.get(disponibilidadProfesor.class, id)).thenReturn(null);
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("VIERNES");
+        disponibilidad.setHora("11:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad);
 
-        disponibilidadProfesor disponibilidadObtenida = repositorioReservaAlumno.buscarPorId(id);
+        Long idDisponibilidad = disponibilidad.getId();
+        disponibilidad.setAlumno(alumno);
+        disponibilidad.setEstado(EstadoDisponibilidad.RESERVADO);
+        repositorioReservaAlumno.guardar(disponibilidad);
 
-        assertNull(disponibilidadObtenida);
-        verify(sessionMock, times(1)).get(disponibilidadProfesor.class, id);
+
+        Clase disponibilidadModificada =
+                repositorioReservaAlumno.buscarPorId(idDisponibilidad);
+        assertNotNull(disponibilidadModificada);
+        assertEquals(alumno, disponibilidadModificada.getAlumno());
+        assertEquals(EstadoDisponibilidad.RESERVADO, disponibilidadModificada.getEstado());
     }
 
     @Test
-    public void guardarDisponibilidadDeberiaLlamarSaveOrUpdateEnSession() {
-        repositorioReservaAlumno.guardar(disponibilidadMock);
+    @Rollback
+    public void dadoQueExistenDisponibilidadesEnFechaEspecificaCuandoBuscoPorProfesorDiaFechaEntoncesRetornaDisponibilidades() {
 
-        verify(sessionMock, times(1)).saveOrUpdate(disponibilidadMock);
-    }
+        Clase disponibilidad1 = new Clase();
+        disponibilidad1.setProfesor(profesor);
+        disponibilidad1.setDiaSemana("LUNES");
+        disponibilidad1.setHora("09:00");
+        disponibilidad1.setFechaEspecifica(diaLunes);
+        disponibilidad1.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad1);
 
-    @Test
-    public void buscarPorProfesorDiaFechaDeberiaRetornarListaDeDisponibilidades() {
-        String emailProfesor = "profesor@unlam.com";
-        String diaSemana = "LUNES";
-        LocalDate fechaEspecifica = LocalDate.of(2024, 12, 16);
+        Clase disponibilidad2 = new Clase();
+        disponibilidad2.setProfesor(profesor);
+        disponibilidad2.setDiaSemana("LUNES");
+        disponibilidad2.setHora("14:00");
+        disponibilidad2.setFechaEspecifica(diaLunes);
+        disponibilidad2.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad2);
 
-        disponibilidadProfesor disponibilidad1 = mock(disponibilidadProfesor.class);
-        disponibilidadProfesor disponibilidad2 = mock(disponibilidadProfesor.class);
-        List<disponibilidadProfesor> disponibilidadesEsperadas = Arrays.asList(disponibilidad1, disponibilidad2);
-
-        when(criteriaMock.list()).thenReturn(disponibilidadesEsperadas);
-
-        List<disponibilidadProfesor> disponibilidadesObtenidas = repositorioReservaAlumno.buscarPorProfesorDiaFecha(
-                emailProfesor, diaSemana, fechaEspecifica);
-
+        List<Clase> disponibilidadesObtenidas =
+                repositorioReservaAlumno.buscarPorProfesorDiaFecha(
+                        profesor.getEmail(), "LUNES", diaLunes);
         assertNotNull(disponibilidadesObtenidas);
         assertEquals(2, disponibilidadesObtenidas.size());
-        assertThat(disponibilidadesObtenidas, containsInAnyOrder(disponibilidad1, disponibilidad2));
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).list();
+        assertThat(disponibilidadesObtenidas, hasItems(disponibilidad1, disponibilidad2));
     }
 
     @Test
-    public void buscarPorProfesorDiaFechaSinResultadosDeberiaRetornarListaVacia() {
-        String emailProfesor = "profesor@unlam.com";
-        String diaSemana = "DOMINGO";
-        LocalDate fechaEspecifica = LocalDate.of(2024, 12, 22);
-        List<disponibilidadProfesor> listaVacia = Arrays.asList();
+    @Rollback
+    public void cuandoBuscoPorProfesorDiaFechaSinResultadosEntoncesRetornaListaVacia() {
 
-        when(criteriaMock.list()).thenReturn(listaVacia);
-
-        List<disponibilidadProfesor> disponibilidadesObtenidas = repositorioReservaAlumno.buscarPorProfesorDiaFecha(
-                emailProfesor, diaSemana, fechaEspecifica);
+        List<Clase> disponibilidadesObtenidas =
+                repositorioReservaAlumno.buscarPorProfesorDiaFecha(
+                        profesor.getEmail(), "DOMINGO", diaDomingo);
 
         assertNotNull(disponibilidadesObtenidas);
         assertEquals(0, disponibilidadesObtenidas.size());
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).list();
     }
 
     @Test
-    public void buscarPorProfesorConEmailNullDeberiaFuncionar() {
-        String emailProfesor = null;
-        List<disponibilidadProfesor> listaVacia = Arrays.asList();
+    @Rollback
+    public void dadoQueExisteDisponibilidadConEmailProfesorCuandoBuscoPorProfesorDiaHoraEntoncesRetornaDisponibilidad() {
+        // Given
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("LUNES");
+        disponibilidad.setHora("09:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad);
 
-        when(criteriaMock.list()).thenReturn(listaVacia);
+        Clase disponibilidadObtenida =
+                repositorioReservaAlumno.buscarPorProfesorDiaHora(
+                        profesor.getEmail(), "LUNES", "09:00");
 
-        List<disponibilidadProfesor> disponibilidadesObtenidas = repositorioReservaAlumno.buscarPorProfesor(emailProfesor);
+        assertNotNull(disponibilidadObtenida);
+
+        assertEquals(profesor, disponibilidadObtenida.getProfesor());
+        assertEquals("LUNES", disponibilidadObtenida.getDiaSemana());
+        assertEquals("09:00", disponibilidadObtenida.getHora());
+
+    }
+
+    @Test
+    @Rollback
+    public void cuandoBuscoPorProfesorDiaHoraInexistenteEntoncesRetornaNulo() {
+
+        Clase disponibilidadObtenida =
+                repositorioReservaAlumno.buscarPorProfesorDiaHora(
+                        profesor.getEmail(), "DOMINGO", "23:00");
+        assertNull(disponibilidadObtenida);
+    }
+
+    @Test
+    @Rollback
+    public void dadoQueExistenVariasDisponibilidadesCuandoBuscoPorProfesorEntoncesRetornaTodasLasDisponibilidades() {
+
+        Clase disponibilidad1 = new Clase();
+        disponibilidad1.setProfesor(profesor);
+        disponibilidad1.setDiaSemana("LUNES");
+        disponibilidad1.setHora("08:00");
+        disponibilidad1.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad1);
+
+        Clase disponibilidad2 = new Clase();
+        disponibilidad2.setProfesor(profesor);
+        disponibilidad2.setDiaSemana("LUNES");
+        disponibilidad2.setHora("10:00");
+        disponibilidad2.setEstado(EstadoDisponibilidad.RESERVADO);
+        disponibilidad2.setAlumno(alumno);
+        sessionFactory.getCurrentSession().save(disponibilidad2);
+
+        Clase disponibilidad3 = new Clase();
+        disponibilidad3.setProfesor(profesor);
+        disponibilidad3.setDiaSemana("MARTES");
+        disponibilidad3.setHora("14:00");
+        disponibilidad3.setEstado(EstadoDisponibilidad.OCUPADO);
+        sessionFactory.getCurrentSession().save(disponibilidad3);
+
+
+        List<Clase> disponibilidadesObtenidas =
+                repositorioReservaAlumno.buscarPorProfesor(profesor.getEmail());
+
 
         assertNotNull(disponibilidadesObtenidas);
-        assertEquals(0, disponibilidadesObtenidas.size());
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).createAlias("profesor", "p");
-        verify(criteriaMock, times(1)).list();
+        assertEquals(3, disponibilidadesObtenidas.size());
+        assertThat(disponibilidadesObtenidas, hasItems(disponibilidad1, disponibilidad2, disponibilidad3));
     }
 
     @Test
-    public void buscarPorProfesorDiaHoraConParametrosNullDeberiaRetornarNull() {
-        String emailProfesor = null;
-        String diaSemana = null;
-        String hora = null;
+    @Rollback
+    public void cuandoBuscoConParametrosNulosEntoncesNoLanzaExcepcion() {
 
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        disponibilidadProfesor disponibilidadObtenida = repositorioReservaAlumno.buscarPorProfesorDiaHora(emailProfesor, diaSemana, hora);
-
-        assertNull(disponibilidadObtenida);
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).uniqueResult();
+        List<Clase> resultado1 = repositorioReservaAlumno.buscarPorProfesor(null);
+        Clase resultado2 = repositorioReservaAlumno.buscarPorProfesorDiaHora(null, null, null);
+        Clase resultado3 = repositorioReservaAlumno.buscarPorId(null);
+        List<Clase> resultado4 = repositorioReservaAlumno.buscarPorProfesorDiaFecha(null, null, null);
+        assertNotNull(resultado1);
+        assertNotNull(resultado4);
     }
-
-    @Test
-    public void buscarPorIdConIdNullDeberiaRetornarNull() {
-        Long id = null;
-
-        when(sessionMock.get(disponibilidadProfesor.class, id)).thenReturn(null);
-
-        disponibilidadProfesor disponibilidadObtenida = repositorioReservaAlumno.buscarPorId(id);
-
-        assertNull(disponibilidadObtenida);
-        verify(sessionMock, times(1)).get(disponibilidadProfesor.class, id);
-    }
-
-    @Test
-    public void buscarPorProfesorConUnSoloResultadoDeberiaRetornarListaConUnElemento() {
-        String emailProfesor = "profesor@unlam.com";
-        List<disponibilidadProfesor> disponibilidadesEsperadas = Arrays.asList(disponibilidadMock);
-
-        when(criteriaMock.list()).thenReturn(disponibilidadesEsperadas);
-
-        List<disponibilidadProfesor> disponibilidadesObtenidas = repositorioReservaAlumno.buscarPorProfesor(emailProfesor);
-
-        assertNotNull(disponibilidadesObtenidas);
-        assertEquals(1, disponibilidadesObtenidas.size());
-        assertEquals(disponibilidadMock, disponibilidadesObtenidas.get(0));
-        verify(sessionMock, times(1)).createCriteria(disponibilidadProfesor.class);
-        verify(criteriaMock, times(1)).createAlias("profesor", "p");
-        verify(criteriaMock, times(1)).list();
-    }
-
 }

@@ -2,6 +2,7 @@ package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Alumno;
+import com.tallerwebi.dominio.entidades.Clase;
 import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
@@ -255,6 +256,132 @@ public class ServicioLoginImplTest {
 		verify(repositorioUsuarioMock, times(1)).buscarPorTipo(Profesor.class);
 	}
 
+	@Test
+	public void obtenerProfesoresDeAlumnoConAlumnoValidoDeberiaRetornarListaDeProfesores() {
+		Long alumnoId = 1L;
+		Profesor profesor1 = mock(Profesor.class);
+		Profesor profesor2 = mock(Profesor.class);
+		List<Profesor> profesoresEsperados = Arrays.asList(profesor1, profesor2);
 
+		when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumnoId)).thenReturn(profesoresEsperados);
 
+		List<Profesor> profesoresObtenidos = servicioLogin.obtenerProfesoresDeAlumno(alumnoId);
+
+		assertNotNull(profesoresObtenidos);
+		assertEquals(2, profesoresObtenidos.size());
+		assertThat(profesoresObtenidos, containsInAnyOrder(profesor1, profesor2));
+		verify(repositorioUsuarioMock, times(1)).obtenerProfesoresDeAlumno(alumnoId);
 	}
+
+	@Test
+	public void obtenerProfesoresDeAlumnoConAlumnoSinProfesoresDeberiaRetornarListaVacia() {
+		Long alumnoId = 1L;
+		List<Profesor> listaVacia = Arrays.asList();
+
+		when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumnoId)).thenReturn(listaVacia);
+
+		List<Profesor> profesoresObtenidos = servicioLogin.obtenerProfesoresDeAlumno(alumnoId);
+
+		assertNotNull(profesoresObtenidos);
+		assertEquals(0, profesoresObtenidos.size());
+		verify(repositorioUsuarioMock, times(1)).obtenerProfesoresDeAlumno(alumnoId);
+	}
+
+	@Test
+	public void obtenerProfesoresDeAlumnoConIdNuloDeberiaLlamarRepositorio() {
+		Long alumnoId = null;
+
+		when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumnoId)).thenReturn(Arrays.asList());
+
+		List<Profesor> profesoresObtenidos = servicioLogin.obtenerProfesoresDeAlumno(alumnoId);
+
+		assertNotNull(profesoresObtenidos);
+		verify(repositorioUsuarioMock, times(1)).obtenerProfesoresDeAlumno(alumnoId);
+	}
+
+	@Test
+	public void obtenerClasesProfesorConProfesorValidoDeberiaRetornarListaDeClases() {
+		Long profesorId = 1L;
+		Clase clase1 = mock(Clase.class);
+		Clase clase2 = mock(Clase.class);
+		List<Clase> clasesEsperadas = Arrays.asList(clase1, clase2);
+
+		when(repositorioUsuarioMock.obtenerClasesProfesor(profesorId)).thenReturn(clasesEsperadas);
+
+		List<Clase> clasesObtenidas = servicioLogin.obtenerClasesProfesor(profesorId);
+
+		assertNotNull(clasesObtenidas);
+		assertEquals(2, clasesObtenidas.size());
+		assertThat(clasesObtenidas, containsInAnyOrder(clase1, clase2));
+		verify(repositorioUsuarioMock, times(1)).obtenerClasesProfesor(profesorId);
+	}
+
+	@Test
+	public void obtenerClasesProfesorConProfesorSinClasesDeberiaRetornarListaVacia() {
+		Long profesorId = 1L;
+		List<Clase> listaVacia = Arrays.asList();
+
+		when(repositorioUsuarioMock.obtenerClasesProfesor(profesorId)).thenReturn(listaVacia);
+
+		List<Clase> clasesObtenidas = servicioLogin.obtenerClasesProfesor(profesorId);
+
+		assertNotNull(clasesObtenidas);
+		assertEquals(0, clasesObtenidas.size());
+		verify(repositorioUsuarioMock, times(1)).obtenerClasesProfesor(profesorId);
+	}
+
+	@Test
+	public void obtenerClasesProfesorConIdNuloDeberiaLlamarRepositorio() {
+		Long profesorId = null;
+
+		when(repositorioUsuarioMock.obtenerClasesProfesor(profesorId)).thenReturn(Arrays.asList());
+
+		List<Clase> clasesObtenidas = servicioLogin.obtenerClasesProfesor(profesorId);
+
+		assertNotNull(clasesObtenidas);
+		verify(repositorioUsuarioMock, times(1)).obtenerClasesProfesor(profesorId);
+	}
+
+	@Test
+	public void obtenerClasesAlumnoConAlumnoValidoDeberiaRetornarListaDeClases() {
+		Long alumnoId = 1L;
+		Clase clase1 = mock(Clase.class);
+		Clase clase2 = mock(Clase.class);
+		List<Clase> clasesEsperadas = Arrays.asList(clase1, clase2);
+
+		when(repositorioUsuarioMock.obtenerClasesAlumno(alumnoId)).thenReturn(clasesEsperadas);
+
+		List<Clase> clasesObtenidas = servicioLogin.obtenerClasesAlumno(alumnoId);
+
+		assertNotNull(clasesObtenidas);
+		assertEquals(2, clasesObtenidas.size());
+		assertThat(clasesObtenidas, containsInAnyOrder(clase1, clase2));
+		verify(repositorioUsuarioMock, times(1)).obtenerClasesAlumno(alumnoId);
+	}
+
+	@Test
+	public void obtenerClasesAlumnoConAlumnoSinClasesDeberiaRetornarListaVacia() {
+		Long alumnoId = 1L;
+		List<Clase> listaVacia = Arrays.asList();
+
+		when(repositorioUsuarioMock.obtenerClasesAlumno(alumnoId)).thenReturn(listaVacia);
+
+		List<Clase> clasesObtenidas = servicioLogin.obtenerClasesAlumno(alumnoId);
+
+		assertNotNull(clasesObtenidas);
+		assertEquals(0, clasesObtenidas.size());
+		verify(repositorioUsuarioMock, times(1)).obtenerClasesAlumno(alumnoId);
+	}
+
+	@Test
+	public void obtenerClasesAlumnoConIdNuloDeberiaLlamarRepositorio() {
+		Long alumnoId = null;
+
+		when(repositorioUsuarioMock.obtenerClasesAlumno(alumnoId)).thenReturn(Arrays.asList());
+
+		List<Clase> clasesObtenidas = servicioLogin.obtenerClasesAlumno(alumnoId);
+
+		assertNotNull(clasesObtenidas);
+		verify(repositorioUsuarioMock, times(1)).obtenerClasesAlumno(alumnoId);
+	}
+}

@@ -1,16 +1,16 @@
 package com.tallerwebi.dominio;
 
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Clase;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface RepositorioReservaAlumno {
-    List<disponibilidadProfesor> buscarPorProfesor(String emailProfesor);
-    disponibilidadProfesor buscarPorProfesorDiaHora(String emailProfesor, String diaSemana, String hora);
-    void guardar(disponibilidadProfesor disponibilidadExistente);
+    List<Clase> buscarPorProfesor(String emailProfesor);
+    Clase buscarPorProfesorDiaHora(String emailProfesor, String diaSemana, String hora);
+    void guardar(Clase disponibilidadExistente);
 
-    disponibilidadProfesor buscarPorId(Long disponibilidadId);
+    Clase buscarPorId(Long disponibilidadId);
 
-    List<disponibilidadProfesor> buscarPorProfesorDiaFecha(String emailProfesor, String diaSemana, LocalDate fechaEspecifica);
+    List<Clase> buscarPorProfesorDiaFecha(String emailProfesor, String diaSemana, LocalDate fechaEspecifica);
 }

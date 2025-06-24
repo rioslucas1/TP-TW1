@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Clase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -45,20 +45,28 @@ public class ControladorReservaAlumno {
             return new ModelAndView("redirect:/home");
         }
 
+
+        Alumno alumno = (Alumno) usuario;
+        if (!estaSuscritoAProfesor(alumno, emailProfesor)) {
+
+            modelo.put("error", "No tienes acceso al calendario de este profesor");
+            return new ModelAndView("redirect:/home");
+        }
+
         LocalDate fechaInicioSemana = calcularFechaInicioSemana(semanaParam);
         configurarFechasEnModelo(modelo, fechaInicioSemana);
 
 
         try {
 
-            List<disponibilidadProfesor> disponibilidades =
+            List<Clase> disponibilidades =
                     servicioReservaAlumno.obtenerDisponibilidadProfesorPorSemana(emailProfesor, fechaInicioSemana);
             List<String> disponibilidadesKeys = new ArrayList<>();
             Map<String, String> estadosMap = new HashMap<>();
             Map<String, Long> idsMap = new HashMap<>();
 
 
-            for (disponibilidadProfesor disp : disponibilidades) {
+            for (Clase disp : disponibilidades) {
                 String key = disp.getDiaSemana() + "-" + disp.getHora();
                 disponibilidadesKeys.add(key);
                 estadosMap.put(key, disp.getEstado().toString());
@@ -185,9 +193,13 @@ public class ControladorReservaAlumno {
         }
 
         Map<String, String> diasConFechas = new HashMap<>();
+        Map<String, Boolean> diasPasados = new HashMap<>();
+        LocalDate hoy = LocalDate.now();
+
         for (int i = 0; i < 7; i++) {
             LocalDate fechaDia = fechaInicioSemana.plusDays(i);
             diasConFechas.put(DIAS_SEMANA[i], fechaDia.toString());
+            diasPasados.put(DIAS_SEMANA[i], fechaDia.isBefore(hoy));
         }
 
         modelo.put("fechaInicioSemana", fechaInicioSemana);
@@ -195,6 +207,7 @@ public class ControladorReservaAlumno {
         modelo.put("fechaFinFormateada", fechaFinFormateada);
         modelo.put("diasConFecha", diasConFecha);
         modelo.put("diasConFechas", diasConFechas);
+        modelo.put("diasPasados", diasPasados);
     }
 
     private ModelAndView crearRedirectConSemana(String url, String emailProfesor, String semanaActualStr) {
@@ -203,6 +216,27 @@ public class ControladorReservaAlumno {
             redirectUrl += "&semana=" + semanaActualStr;
         }
         return new ModelAndView(redirectUrl);
+    }
+
+    @GetMapping("/obtener-link-meet")
+    @ResponseBody
+    public String obtenerLinkMeet(@RequestParam Long disponibilidadId) {
+        Clase disponibilidad = servicioReservaAlumno.obtenerDisponibilidadPorId(disponibilidadId);
+        return disponibilidad != null ? disponibilidad.getEnlace_meet() : null;
+    }
+
+    private boolean estaSuscritoAProfesor(Alumno alumno, String emailProfesor) {
+        try {
+            return alumno.getProfesores().stream()
+                    .anyMatch(profesor -> profesor.getEmail().equals(emailProfesor));
+        } catch (Exception e) {
+            System.err.println("Error al verificar suscripción: " + e.getMessage());
+            return false;
+        }
+
+
+
+
     }
 
 }

@@ -3,7 +3,7 @@ package com.tallerwebi.dominio.servicios;
 import com.tallerwebi.dominio.RepositorioDisponibilidadProfesor;
 import com.tallerwebi.dominio.entidades.EstadoDisponibilidad;
 import com.tallerwebi.dominio.entidades.Profesor;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Clase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class ServicioDisponibilidadProfesorImpl implements ServicioDisponibilida
 
     @Override
     public void toggleDisponibilidad(Profesor profesor, String diaSemana, String hora) {
-        disponibilidadProfesor disponibilidadExistente = repositorioDisponibilidadProfesor
+        Clase disponibilidadExistente = repositorioDisponibilidadProfesor
                 .buscarPorProfesorDiaHora(profesor, diaSemana, hora);
 
         if (disponibilidadExistente != null) {
@@ -36,7 +36,7 @@ public class ServicioDisponibilidadProfesorImpl implements ServicioDisponibilida
             }
             repositorioDisponibilidadProfesor.guardar(disponibilidadExistente);
         } else {
-            disponibilidadProfesor nuevaDisponibilidad = new disponibilidadProfesor(
+            Clase nuevaDisponibilidad = new Clase(
                     profesor, diaSemana, hora, EstadoDisponibilidad.DISPONIBLE);
             repositorioDisponibilidadProfesor.guardar(nuevaDisponibilidad);
         }
@@ -45,13 +45,13 @@ public class ServicioDisponibilidadProfesorImpl implements ServicioDisponibilida
     @Override
     public void cambiarEstadoDisponibilidad(Profesor profesor, String diaSemana, String hora,
                                             EstadoDisponibilidad nuevoEstado) {
-        disponibilidadProfesor disponibilidadExistente = repositorioDisponibilidadProfesor
+        Clase disponibilidadExistente = repositorioDisponibilidadProfesor
                 .buscarPorProfesorDiaHora(profesor, diaSemana, hora);
         if (disponibilidadExistente != null) {
             disponibilidadExistente.setEstado(nuevoEstado);
             repositorioDisponibilidadProfesor.guardar(disponibilidadExistente);
         } else {
-            disponibilidadProfesor nuevaDisponibilidad = new disponibilidadProfesor(
+            Clase nuevaDisponibilidad = new Clase(
                     profesor, diaSemana, hora, nuevoEstado);
             repositorioDisponibilidadProfesor.guardar(nuevaDisponibilidad);
         }
@@ -68,12 +68,12 @@ public class ServicioDisponibilidadProfesorImpl implements ServicioDisponibilida
     }
 
     @Override
-    public List<disponibilidadProfesor> obtenerDisponibilidadProfesor(Profesor profesor) {
+    public List<Clase> obtenerDisponibilidadProfesor(Profesor profesor) {
         return repositorioDisponibilidadProfesor.buscarPorProfesor(profesor);
     }
 
     @Override
-    public disponibilidadProfesor obtenerDisponibilidadEspecifica(Profesor profesor, String diaSemana, String hora) {
+    public Clase obtenerDisponibilidadEspecifica(Profesor profesor, String diaSemana, String hora) {
         return repositorioDisponibilidadProfesor.buscarPorProfesorDiaHora(profesor, diaSemana, hora);
     }
 
@@ -83,16 +83,16 @@ public class ServicioDisponibilidadProfesorImpl implements ServicioDisponibilida
     }
 
     @Override
-    public List<disponibilidadProfesor> obtenerDisponibilidadProfesorPorSemana(
+    public List<Clase> obtenerDisponibilidadProfesorPorSemana(
             Profesor profesor, LocalDate fechaInicioSemana) {
 
-        List<disponibilidadProfesor> disponibilidadesSemanales = new ArrayList<>();
+        List<Clase> disponibilidadesSemanales = new ArrayList<>();
         String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
         for (int i = 0; i < dias.length; i++) {
             LocalDate fechaEspecifica = fechaInicioSemana.plusDays(i);
             String diaSemana = dias[i];
-            List<disponibilidadProfesor> disponibilidadesDia =
+            List<Clase> disponibilidadesDia =
                     repositorioDisponibilidadProfesor.buscarPorProfesorDiaFecha(
                             profesor, diaSemana, fechaEspecifica);
             disponibilidadesSemanales.addAll(disponibilidadesDia);
@@ -103,7 +103,7 @@ public class ServicioDisponibilidadProfesorImpl implements ServicioDisponibilida
     @Override
     public void toggleDisponibilidadConFecha(Profesor profesor, String diaSemana,
                                              String hora, LocalDate fechaEspecifica) {
-        disponibilidadProfesor disponibilidadExistente = repositorioDisponibilidadProfesor
+        Clase disponibilidadExistente = repositorioDisponibilidadProfesor
                 .buscarPorProfesorDiaHoraFecha(profesor, diaSemana, hora, fechaEspecifica);
 
         if (disponibilidadExistente != null) {
@@ -114,7 +114,7 @@ public class ServicioDisponibilidadProfesorImpl implements ServicioDisponibilida
             }
             repositorioDisponibilidadProfesor.guardar(disponibilidadExistente);
         } else {
-            disponibilidadProfesor nuevaDisponibilidad = new disponibilidadProfesor(
+            Clase nuevaDisponibilidad = new Clase(
                     profesor, diaSemana, hora, fechaEspecifica, EstadoDisponibilidad.DISPONIBLE);
             repositorioDisponibilidadProfesor.guardar(nuevaDisponibilidad);
         }
