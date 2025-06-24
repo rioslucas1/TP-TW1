@@ -9,11 +9,19 @@ public class disponibilidadProfesor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public String emailProfesor;
+
     public String diaSemana;
     public String hora;
 
-    public String mailAlumno;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profesor_id")
+    private Profesor profesor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "alumno_id")
+    private Alumno alumno;
 
     @Column(name = "fecha_especifica")
     private LocalDate fechaEspecifica;
@@ -22,29 +30,32 @@ public class disponibilidadProfesor {
 
     @Enumerated(EnumType.STRING)
     private EstadoDisponibilidad estado = EstadoDisponibilidad.DISPONIBLE;
-    public disponibilidadProfesor() {}
-
-    public disponibilidadProfesor(String emailProfesor, String diaSemana, String hora) {
-        this.emailProfesor = emailProfesor;
+    public disponibilidadProfesor(Profesor profesor, String diaSemana, String hora) {
+        this.profesor = profesor;
         this.diaSemana = diaSemana;
         this.hora = hora;
         this.estado = EstadoDisponibilidad.DISPONIBLE;
     }
 
-    public disponibilidadProfesor(String emailProfesor, String diaSemana, String hora, EstadoDisponibilidad estado) {
-        this.emailProfesor = emailProfesor;
+    public disponibilidadProfesor(Profesor profesor, String diaSemana, String hora, EstadoDisponibilidad estado) {
+        this.profesor = profesor;
         this.diaSemana = diaSemana;
         this.hora = hora;
         this.estado = estado;
     }
 
-    public disponibilidadProfesor(String emailProfesor, String diaSemana, String hora, LocalDate fechaEspecifica, EstadoDisponibilidad estado) {
-        this.emailProfesor = emailProfesor;
+    public disponibilidadProfesor(Profesor profesor, String diaSemana, String hora, LocalDate fechaEspecifica, EstadoDisponibilidad estado) {
+        this.profesor = profesor;
         this.diaSemana = diaSemana;
         this.hora = hora;
         this.fechaEspecifica = fechaEspecifica;
         this.estado = estado;
     }
+
+    public disponibilidadProfesor() {
+
+    }
+
 
     public Long getId() {
         return id;
@@ -52,14 +63,6 @@ public class disponibilidadProfesor {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getEmailProfesor() {
-        return emailProfesor;
-    }
-
-    public void setEmailProfesor(String emailProfesor) {
-        this.emailProfesor = emailProfesor;
     }
 
     public String getDiaSemana() {
@@ -118,12 +121,28 @@ public class disponibilidadProfesor {
         this.fechaEspecifica = fechaEspecifica;
     }
 
-    public String getMailAlumno() {
-        return mailAlumno;
+    public Alumno getAlumno() {
+        return alumno;
     }
 
-    public void setMailAlumno(String mailAlumno) {
-        this.mailAlumno = mailAlumno;
+    public void setAlumno(Alumno alumno) {
+        this.alumno = alumno;
+    }
+
+    public Profesor getProfesor() {
+        return profesor;
+    }
+
+    public void setProfesor(Profesor profesor) {
+        this.profesor = profesor;
+    }
+
+    public String getEmailProfesor() {
+        return profesor != null ? profesor.getEmail() : null;
+    }
+
+    public String getMailAlumno() {
+        return alumno != null ? alumno.getEmail() : null;
     }
 
 }

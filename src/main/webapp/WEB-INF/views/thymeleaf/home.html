@@ -38,7 +38,7 @@
     </nav>
 
     <div class="mt-auto">
-      <a th:href="@{/home}" href="" class="nav-link-custom"><i class='bx bx-log-out'></i> Cerrar sesión</a>
+      <a th:href="@{/logout}" href="" class="nav-link-custom"><i class='bx bx-log-out'></i> Cerrar sesión</a>
     </div>
   </div>
 
@@ -89,7 +89,11 @@
           <a class="nav-link" href="#">Mi perfil</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/calendario-profesor}">Calendario</a>
+          <a class="nav-link"
+             th:href="@{/calendario-profesor}"
+             th:if="${nombreUsuario != null and rol == 'profesor'}">
+            Calendario
+          </a>
         </li>
       </ul>
       <div class="d-flex align-items-center">
@@ -222,7 +226,7 @@
 </section>
 
 </section>
-<section class="main-section logged-in" th:if="${nombreUsuario} != null">
+  <section class="main-section logged-in" th:if="${nombreUsuario} != null and ${rol} == 'alumno'">
   <div class="container">
     <div class="header-inicio">
       <h2>Bienvenido, <span class="text-white" th:text="${nombreUsuario}">Estudiante</span></h2>
@@ -233,16 +237,19 @@
       <div class="col-md-4">
         <div class="card h-100 dashboard-card">
           <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-calendar3"></i> Próximas Clases</h5>
-            <div class="dashboard-item">
-              <div><strong>Programación</strong></div>
-              <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 1</small>
-              <small class="d-block"><i class="bi bi-clock"></i> Hoy, 15:00 - 16:30</small>
+            <h5 class="card-title"><i class="bi bi-calendar3"></i> Mis clases Reservadas</h5>
+            <div th:if="${clasesReservadas != null and !clasesReservadas.isEmpty()}">
+              <div class="dashboard-item" th:each="clase : ${clasesReservadas}">
+                <div><strong th:text="${clase.profesor.tema != null ? clase.profesor.tema.nombre : 'Sin tema'}">Materia</strong></div>
+                <small class="d-block"><i class="bi bi-person"></i> <span th:text="${clase.profesor.nombre + ' ' + clase.profesor.apellido}">Profesor</span></small>
+                <small class="d-block"><i class="bi bi-clock"></i> <span th:text="${clase.diaSemana + ', ' + clase.hora}">Horario</span></small>
+                <small class="d-block" th:if="${clase.fechaEspecifica != null}">
+                  <i class="bi bi-calendar"></i> <span th:text="${clase.fechaEspecifica}">Fecha</span>
+                </small>
+              </div>
             </div>
-            <div class="dashboard-item">
-              <div><strong>Diseño de Interfaces</strong></div>
-              <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 2</small>
-              <small class="d-block"><i class="bi bi-clock"></i> Mañana, 10:00 - 11:30</small>
+            <div th:if="${clasesReservadas == null or clasesReservadas.isEmpty()}">
+              <p class="text-muted">No tenes clases reservadas</p>
             </div>
             <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
           </div>
@@ -299,7 +306,7 @@
             <div class="profesor-avatar rounded-circle mx-auto">
               <i class="bi bi-person"></i>
             </div>
-            <h6 th:text="${profesor.nombre}">Profesor 1</h6>
+            <h6 th:text="${profesor.nombre + ' ' + profesor.apellido}">Profesor</h6>
             <div class="rating">
               <i class="bi bi-star-fill"></i>
               <i class="bi bi-star-fill"></i>
@@ -311,13 +318,72 @@
               <span class="badge-tema" th:if="${profesor.tema != null}" th:text="${profesor.tema.nombre}">Tema</span>
               <span class="badge-tema" th:if="${profesor.tema == null}">Sin tema asignado</span>
             </div>
-              <a class="nav-link" th:href="@{/calendario-reserva(emailProfesor=${profesor.email})}">Calendario</a>
+            <a class="nav-link" th:href="@{/calendario-reserva(emailProfesor=${profesor.email})}">Ver Calendario</a>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+  <section class="main-section logged-in" th:if="${nombreUsuario} != null and ${rol} == 'profesor'">
+    <div class="container">
+      <div class="header-inicio">
+        <h2>Bienvenido Profesor, <span class="text-white" th:text="${nombreUsuario}">Profesor</span></h2>
+        <p class="text-white">Gestiona tus clases y horarios disponibles.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100 dashboard-card">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-calendar3"></i> Mis clases Programadas</h5>
+              <div th:if="${clasesProfesor != null and !clasesProfesor.isEmpty()}">
+                <div class="dashboard-item" th:each="clase : ${clasesProfesor}">
+                  <div><strong th:text="${temaProfesor != null ? temaProfesor.nombre : 'Sin tema'}">Materia</strong></div>
+                  <small class="d-block" th:if="${clase.alumno != null}">
+                    <i class="bi bi-person"></i> <span th:text="${clase.alumno.nombre + ' ' + clase.alumno.apellido}">Alumno</span>
+                  </small>
+                  <small class="d-block"><i class="bi bi-clock"></i> <span th:text="${clase.diaSemana + ', ' + clase.hora}">Horario</span></small>
+                  <small class="d-block" th:if="${clase.fechaEspecifica != null}">
+                    <i class="bi bi-calendar"></i> <span th:text="${clase.fechaEspecifica}">Fecha</span>
+                  </small>
+                </div>
+              </div>
+              <div th:if="${clasesProfesor == null or clasesProfesor.isEmpty()}">
+                <p class="text-muted">No tenes clases programadas</p>
+              </div>
+              <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100 dashboard-card">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-book"></i> Especialidad elegida</h5>
+              <div class="dashboard-item">
+                <div><strong th:text="${temaProfesor != null ? temaProfesor.nombre : 'Sin tema asignado'}">Especialidad</strong></div>
+              </div>
+              <a href="#" class="btn btn-outline-primary w-100 mt-3">Editar perfil</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100 dashboard-card">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-clock-history"></i> Disponibilidad</h5>
+              <div class="dashboard-item">
+                <div><strong>Gestionar Horarios</strong></div>
+                <small class="d-block">Configura tu disponibilidad semanal</small>
+              </div>
+              <a th:href="@{/calendario-profesor}" class="btn btn-outline-primary w-100 mt-3">Gestionar calendario</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <footer class="footer text-white py-4 mt-5">
     <div class="container text-center">

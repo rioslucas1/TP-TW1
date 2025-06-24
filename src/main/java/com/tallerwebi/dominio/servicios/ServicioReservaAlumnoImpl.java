@@ -1,6 +1,7 @@
 package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.RepositorioReservaAlumno;
+import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,13 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
     }
 
     @Override
-    public void reservarClase(String emailProfesor, String diaSemana, String hora, String emailAlumno) {
+    public void reservarClase(String emailProfesor, String diaSemana, String hora, Alumno alumno) {
         disponibilidadProfesor disponibilidadExistente = repositorioReservaAlumno
                 .buscarPorProfesorDiaHora(emailProfesor, diaSemana, hora);
 
         if (disponibilidadExistente != null && disponibilidadExistente.isDisponible()) {
             disponibilidadExistente.marcarComoReservado();
-            disponibilidadExistente.setMailAlumno(emailAlumno);
+            disponibilidadExistente.setAlumno(alumno);
             repositorioReservaAlumno.guardar(disponibilidadExistente);
         } else {
             throw new RuntimeException("El horario no está disponible para reservar");
@@ -40,25 +41,23 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
     }
 
         @Override
-        public void reservarClasePorId(Long disponibilidadId, String emailAlumno) {
-
+        public void reservarClasePorId(Long disponibilidadId, Alumno alumno) {
             disponibilidadProfesor disponibilidad = repositorioReservaAlumno.buscarPorId(disponibilidadId);
 
             if (disponibilidad != null && disponibilidad.isDisponible()) {
-
-            disponibilidad.marcarComoReservado();
-            disponibilidad.setMailAlumno(emailAlumno);
-            repositorioReservaAlumno.guardar(disponibilidad);
-        } else {
+                disponibilidad.marcarComoReservado();
+                disponibilidad.setAlumno(alumno);
+                repositorioReservaAlumno.guardar(disponibilidad);
+            } else {
                 throw new RuntimeException("El horario no está disponible para reservar");
             }
         }
+
         @Override
         public List<disponibilidadProfesor> obtenerDisponibilidadProfesorPorSemana(
                 String emailProfesor, LocalDate fechaInicioSemana) {
 
             List<disponibilidadProfesor> disponibilidadesSemanales = new ArrayList<>();
-
             String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
             for (int i = 0; i < dias.length; i++) {
@@ -73,7 +72,7 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
 
             return disponibilidadesSemanales;
         }
-        }
+      }
 
 
 

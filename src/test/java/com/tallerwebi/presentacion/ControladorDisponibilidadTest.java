@@ -26,8 +26,8 @@ public class ControladorDisponibilidadTest {
 
 
 	private ControladorLogin controladorLogin;
-	private Usuario usuarioProfesorMock;
-	private Usuario usuarioEstudianteMock;
+	private Profesor usuarioProfesorMock;
+	private Alumno usuarioEstudianteMock;
 	private ControladorDisponibilidad controladorDisponibilidad;
 	private ServicioDisponibilidadProfesor servicioDisponibilidadProfesorMock;
 	private DatosLogin datosLoginMock;
@@ -66,13 +66,13 @@ public class ControladorDisponibilidadTest {
     public void deberiaCargarCalendarioConDisponibilidadesDelProfesor() {
 
         List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-                new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", diaLunes, EstadoDisponibilidad.DISPONIBLE),
-                new disponibilidadProfesor("profesor@test.com", "Martes", "10:00", diaMartes, EstadoDisponibilidad.DISPONIBLE)
+                new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00", diaLunes, EstadoDisponibilidad.DISPONIBLE),
+                new disponibilidadProfesor(usuarioProfesorMock, "Martes", "10:00", diaMartes, EstadoDisponibilidad.DISPONIBLE)
         );
 
         when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
-				eq("profesor@test.com"), eq(diaLunes)))
+				eq(usuarioProfesorMock), eq(diaLunes)))
 				.thenReturn(disponibilidades);
 
 
@@ -89,7 +89,7 @@ public class ControladorDisponibilidadTest {
         assertNotNull(modelAndView.getModel().get("diasConFechas"));
 
 		verify(servicioDisponibilidadProfesorMock)
-				.obtenerDisponibilidadProfesorPorSemana(eq("profesor@test.com"), eq(diaLunes));
+				.obtenerDisponibilidadProfesorPorSemana(eq(usuarioProfesorMock), eq(diaLunes));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ControladorDisponibilidadTest {
 
         when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
-				"profesor@test.com", diaLunes))
+				usuarioProfesorMock, diaLunes))
 				.thenReturn(Arrays.asList());
 
         ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(diaLunes.toString(), requestMock);
@@ -105,7 +105,7 @@ public class ControladorDisponibilidadTest {
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-profesor"));
         verify(servicioDisponibilidadProfesorMock)
-                .obtenerDisponibilidadProfesorPorSemana("profesor@test.com", diaLunes);
+                .obtenerDisponibilidadProfesorPorSemana(usuarioProfesorMock, diaLunes);
     }
 
 
@@ -118,7 +118,7 @@ public class ControladorDisponibilidadTest {
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
-		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(usuarioProfesorMock);
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class ControladorDisponibilidadTest {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
-		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(usuarioProfesorMock);
 	}
 
 	@Test
@@ -138,7 +138,7 @@ public class ControladorDisponibilidadTest {
 		ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad("Lunes", "09:00", null, null, requestMock);
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock).toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"),
+		verify(servicioDisponibilidadProfesorMock).toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Lunes"),
 				eq("09:00"), eq(fechaEsperadaLunes)
 				);
 	}
@@ -150,7 +150,7 @@ public class ControladorDisponibilidadTest {
                 "Lunes", "09:00", diaLunes.toString(), null, requestMock);
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
         verify(servicioDisponibilidadProfesorMock)
-                .toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"),
+                .toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Lunes"),
 						eq("09:00"), eq(diaLunes));
     }
 
@@ -161,7 +161,7 @@ public class ControladorDisponibilidadTest {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
 		ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad("Lunes", "09:00", null, null, requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
-		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class ControladorDisponibilidadTest {
 		ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad("Lunes", "09:00", null, null, requestMock);
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
-		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -178,7 +178,7 @@ public class ControladorDisponibilidadTest {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		ModelAndView modelAndView = controladorDisponibilidad.toggleDisponibilidad(null, "09:00", null, null, requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).toggleDisponibilidad(any(Profesor.class), anyString(), anyString());
 	}
 
 
@@ -187,7 +187,7 @@ public class ControladorDisponibilidadTest {
 
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
-				"profesor@test.com", diaLunes)).thenReturn(Arrays.asList());
+				usuarioProfesorMock, diaLunes)).thenReturn(Arrays.asList());
 
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-profesor"));
@@ -200,7 +200,7 @@ public class ControladorDisponibilidadTest {
 	public void deberiaPermitirReservarPrimerHorario() {
 
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
-		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor("profesor@test.com"))
+		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor(usuarioProfesorMock))
 				.thenReturn(Arrays.asList());
 
 
@@ -208,50 +208,50 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
         verify(servicioDisponibilidadProfesorMock, times(1))
-                .toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), any(LocalDate.class));
+                .toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Lunes"), eq("09:00"), any(LocalDate.class));
 	}
 
 	@Test
 	public void deberiaPermitirReservarMultiplesHorariosConsecutivos() {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		List<disponibilidadProfesor> disponibilidadesExistentes = Arrays.asList(
-				new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00")
+				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00")
 		);
-		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor("profesor@test.com"))
+		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor(usuarioProfesorMock))
 				.thenReturn(disponibilidadesExistentes);
 
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad("Lunes", "10:00", null, null, requestMock);
 
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
         verify(servicioDisponibilidadProfesorMock, times(1))
-                .toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("10:00"), any(LocalDate.class));
+                .toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Lunes"), eq("10:00"), any(LocalDate.class));
 	}
 
 	@Test
 	public void deberiaPermitirReservarHastaCuatroHorarios() {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		List<disponibilidadProfesor> disponibilidadesExistentes = Arrays.asList(
-				new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00"),
-				new disponibilidadProfesor("profesor@test.com", "Lunes", "10:00"),
-				new disponibilidadProfesor("profesor@test.com", "Martes", "09:00")
+				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00"),
+				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "10:00"),
+				new disponibilidadProfesor(usuarioProfesorMock, "Martes", "09:00")
 		);
-		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor("profesor@test.com"))
+		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor(usuarioProfesorMock))
 				.thenReturn(disponibilidadesExistentes);
 
 
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad("Martes", "10:00", null, null, requestMock);
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Martes"), eq("10:00"), any(LocalDate.class));
+				.toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Martes"), eq("10:00"), any(LocalDate.class));
 	}
 
 	@Test
 	public void deberiaPermitirDesmarcarHorarioExistente() {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		List<disponibilidadProfesor> disponibilidadesExistentes = Arrays.asList(
-				new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00")
+				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00")
 		);
-		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor("profesor@test.com"))
+		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesor(usuarioProfesorMock))
 				.thenReturn(disponibilidadesExistentes);
 
 
@@ -260,7 +260,7 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), any(LocalDate.class));
+				.toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Lunes"), eq("09:00"), any(LocalDate.class));
 	}
 
 	@Test
@@ -270,7 +270,7 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Miércoles"), eq("09:00"), any(LocalDate.class));
+				.toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Miércoles"), eq("09:00"), any(LocalDate.class));
 	}
 
 	@Test
@@ -282,7 +282,7 @@ public class ControladorDisponibilidadTest {
 
 
 		verify(servicioDisponibilidadProfesorMock, times(1))
-		.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), eq("09:00"), eq(diaLunes));
+		.toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Lunes"), eq("09:00"), eq(diaLunes));
 	}
 
 	@Test
@@ -298,7 +298,7 @@ public class ControladorDisponibilidadTest {
 
 
 		verify(servicioDisponibilidadProfesorMock, times(7))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), anyString(), eq("09:00"), any(LocalDate.class));
+				.toggleDisponibilidadConFecha(eq(usuarioProfesorMock), anyString(), eq("09:00"), any(LocalDate.class));
 	}
 
 	@Test
@@ -316,7 +316,7 @@ public class ControladorDisponibilidadTest {
 
 
 		verify(servicioDisponibilidadProfesorMock, times(18))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), eq("Lunes"), anyString(), any(LocalDate.class));
+				.toggleDisponibilidadConFecha(eq(usuarioProfesorMock), eq("Lunes"), anyString(), any(LocalDate.class));
 	}
 
 	@Test
@@ -332,7 +332,7 @@ public class ControladorDisponibilidadTest {
 		ModelAndView resultado3 = controladorDisponibilidad.toggleDisponibilidad("Martes", "09:00", null, null, requestMock);
 		assertThat(resultado3.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(3))
-				.toggleDisponibilidadConFecha(eq("profesor@test.com"), anyString(), anyString(), any(LocalDate.class));
+				.toggleDisponibilidadConFecha(eq(usuarioProfesorMock), anyString(), anyString(), any(LocalDate.class));
 	}
 
 	@Test
@@ -342,7 +342,7 @@ public class ControladorDisponibilidadTest {
 				"Miércoles", "14:00", null, requestMock);
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock)
-				.reservarHorario("profesor@test.com", "Miércoles", "14:00");
+				.reservarHorario(usuarioProfesorMock, "Miércoles", "14:00");
 	}
 
 	@Test
@@ -353,7 +353,7 @@ public class ControladorDisponibilidadTest {
 				"Jueves", "16:00", null, requestMock);
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock)
-				.desagendarHorario("profesor@test.com", "Jueves", "16:00");
+				.desagendarHorario(usuarioProfesorMock, "Jueves", "16:00");
 	}
 
 
@@ -367,7 +367,7 @@ public class ControladorDisponibilidadTest {
 
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -380,7 +380,7 @@ public class ControladorDisponibilidadTest {
 
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -393,7 +393,7 @@ public class ControladorDisponibilidadTest {
 
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -405,7 +405,7 @@ public class ControladorDisponibilidadTest {
 		ModelAndView modelAndView = controladorDisponibilidad.desagendarHorario("Lunes", "", null, requestMock);
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -419,7 +419,7 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.reservarHorario("profesor@test.com", "Miércoles", "14:00");
+				.reservarHorario(usuarioProfesorMock, "Miércoles", "14:00");
 	}
 
 	@Test
@@ -433,7 +433,7 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.desagendarHorario("profesor@test.com", "Jueves", "16:00");
+				.desagendarHorario(usuarioProfesorMock, "Jueves", "16:00");
 	}
 
 	@Test
@@ -446,7 +446,7 @@ public class ControladorDisponibilidadTest {
 
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -458,7 +458,7 @@ public class ControladorDisponibilidadTest {
 		ModelAndView modelAndView = controladorDisponibilidad.reservarHorario("Lunes", "25:00", null, requestMock);
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -471,7 +471,7 @@ public class ControladorDisponibilidadTest {
 
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
-		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(anyString(), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(any(Profesor.class), anyString(), anyString());
 	}
 
 	@Test
@@ -480,7 +480,7 @@ public class ControladorDisponibilidadTest {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		doThrow(new RuntimeException("Error en base de datos"))
 				.when(servicioDisponibilidadProfesorMock)
-				.reservarHorario("profesor@test.com", "Lunes", "09:00");
+				.reservarHorario(usuarioProfesorMock, "Lunes", "09:00");
 
 
 		ModelAndView modelAndView = controladorDisponibilidad.reservarHorario("Lunes", "09:00", null, requestMock);
@@ -488,7 +488,7 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.reservarHorario("profesor@test.com", "Lunes", "09:00");
+				.reservarHorario(usuarioProfesorMock, "Lunes", "09:00");
 	}
 
 	@Test
@@ -497,7 +497,7 @@ public class ControladorDisponibilidadTest {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		doThrow(new RuntimeException("Error en base de datos"))
 				.when(servicioDisponibilidadProfesorMock)
-				.desagendarHorario("profesor@test.com", "Lunes", "09:00");
+				.desagendarHorario(usuarioProfesorMock, "Lunes", "09:00");
 
 
 		ModelAndView modelAndView = controladorDisponibilidad.desagendarHorario("Lunes", "09:00", null, requestMock);
@@ -505,21 +505,21 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.desagendarHorario("profesor@test.com", "Lunes", "09:00");
+				.desagendarHorario(usuarioProfesorMock, "Lunes", "09:00");
 	}
 
 	@Test
 	public void deberiaCargarEstadosMapCorrectamenteEnCalendario() {
 
 		List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-				new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", EstadoDisponibilidad.DISPONIBLE),
-				new disponibilidadProfesor("profesor@test.com", "Martes", "10:00", EstadoDisponibilidad.OCUPADO),
-				new disponibilidadProfesor("profesor@test.com", "Miércoles", "11:00", EstadoDisponibilidad.RESERVADO)
+				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00", EstadoDisponibilidad.DISPONIBLE),
+				new disponibilidadProfesor(usuarioProfesorMock, "Martes", "10:00", EstadoDisponibilidad.OCUPADO),
+				new disponibilidadProfesor(usuarioProfesorMock, "Miércoles", "11:00", EstadoDisponibilidad.RESERVADO)
 		);
 
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioProfesorMock);
 		when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
-				eq("profesor@test.com"), eq(diaLunes)))
+				eq(usuarioProfesorMock), eq(diaLunes)))
 				.thenReturn(disponibilidades);
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null, requestMock);
 
@@ -541,10 +541,10 @@ public class ControladorDisponibilidadTest {
 
 		for (EstadoDisponibilidad estado : estados) {
 			List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-					new disponibilidadProfesor("profesor@test.com", "Lunes", "09:00", fechaInicio, estado)
+					new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00", fechaInicio, estado)
 			);
 			when(servicioDisponibilidadProfesorMock.obtenerDisponibilidadProfesorPorSemana(
-					eq("profesor@test.com"), any(LocalDate.class)))
+					eq(usuarioProfesorMock), any(LocalDate.class)))
 					.thenReturn(disponibilidades);
 
 			ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null,requestMock);
@@ -561,7 +561,7 @@ public class ControladorDisponibilidadTest {
 		when(requestMock.getSession()).thenReturn(null);
 		ModelAndView modelAndView = controladorDisponibilidad.irACalendarioProfesor(null,requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
-		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).obtenerDisponibilidadProfesor(usuarioProfesorMock);
 	}
 
 
@@ -572,7 +572,7 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
 		verify(servicioDisponibilidadProfesorMock, never())
-				.obtenerDisponibilidadProfesorPorSemana(anyString(), any(LocalDate.class));
+				.obtenerDisponibilidadProfesorPorSemana(any(Profesor.class), any(LocalDate.class));
 	}
 
 
@@ -591,9 +591,9 @@ public class ControladorDisponibilidadTest {
 		assertThat(modelAndView3.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 
 		verify(servicioDisponibilidadProfesorMock, never())
-				.toggleDisponibilidadConFecha(anyString(), anyString(), anyString(), any(LocalDate.class));
-		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(anyString(), anyString(), anyString());
-		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(anyString(), anyString(), anyString());
+				.toggleDisponibilidadConFecha(any(Profesor.class), anyString(), anyString(), any(LocalDate.class));
+		verify(servicioDisponibilidadProfesorMock, never()).reservarHorario(any(Profesor.class), anyString(), anyString());
+		verify(servicioDisponibilidadProfesorMock, never()).desagendarHorario(any(Profesor.class), anyString(), anyString());
 	}
 
 
@@ -612,7 +612,7 @@ public class ControladorDisponibilidadTest {
 
 		assertThat(resultado.getViewName(), equalToIgnoringCase("redirect:/calendario-profesor"));
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha("profesor@test.com", "Lunes", "10:00", fechaSemanasiguiente);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Lunes", "10:00", fechaSemanasiguiente);
 	}
 
 	@Test
@@ -629,7 +629,7 @@ public class ControladorDisponibilidadTest {
 			 controladorDisponibilidad.toggleDisponibilidad(
 					dia, "10:00", null, diaLunes.toString(), requestMock);
 			verify(servicioDisponibilidadProfesorMock)
-					.toggleDisponibilidadConFecha("profesor@test.com", dia, "10:00", fechaEsperada);
+					.toggleDisponibilidadConFecha(usuarioProfesorMock, dia, "10:00", fechaEsperada);
 		}
 	}
 
@@ -644,7 +644,7 @@ public class ControladorDisponibilidadTest {
 
 
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha("profesor@test.com", "Lunes", "09:00", diaLunes);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Lunes", "09:00", diaLunes);
 	}
 
 	@Test
@@ -659,7 +659,7 @@ public class ControladorDisponibilidadTest {
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad(
 				"Lunes", "09:00", null, null, requestMock);
 		verify(servicioDisponibilidadProfesorMock, times(1))
-				.toggleDisponibilidadConFecha("profesor@test.com", "Lunes", "09:00", fechaEsperadaLunes);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Lunes", "09:00", fechaEsperadaLunes);
 	}
 
 	@Test
@@ -689,10 +689,10 @@ public class ControladorDisponibilidadTest {
 
 
 		verify(servicioDisponibilidadProfesorMock)
-				.toggleDisponibilidadConFecha("profesor@test.com", "Miércoles", "14:00", miercolesSiguiente);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Miércoles", "14:00", miercolesSiguiente);
 
 		verify(servicioDisponibilidadProfesorMock)
-				.toggleDisponibilidadConFecha("profesor@test.com", "Viernes", "16:00", viernesSiguiente);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Viernes", "16:00", viernesSiguiente);
 	}
 
 	@Test
@@ -709,7 +709,7 @@ public class ControladorDisponibilidadTest {
 
 
 		verify(servicioDisponibilidadProfesorMock)
-				.toggleDisponibilidadConFecha("profesor@test.com", "Domingo", "20:00", domingo);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Domingo", "20:00", domingo);
 	}
 
 	@Test
@@ -727,7 +727,7 @@ public class ControladorDisponibilidadTest {
 
 
 		verify(servicioDisponibilidadProfesorMock)
-				.toggleDisponibilidadConFecha("profesor@test.com", "Jueves", "11:00", juevesActual);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Jueves", "11:00", juevesActual);
 	}
 
 	@Test
@@ -745,7 +745,7 @@ public class ControladorDisponibilidadTest {
 				"Sábado", "15:00", null, semanaInvalida, requestMock);
 
 		verify(servicioDisponibilidadProfesorMock)
-				.toggleDisponibilidadConFecha("profesor@test.com", "Sábado", "15:00", sabadoActual);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Sábado", "15:00", sabadoActual);
 	}
 
 	@Test
@@ -757,7 +757,7 @@ public class ControladorDisponibilidadTest {
 		ModelAndView resultado = controladorDisponibilidad.toggleDisponibilidad(
 				"Jueves", "13:00", fechaEspecifica.toString(), semanaActual.toString(), requestMock);
 		verify(servicioDisponibilidadProfesorMock)
-				.toggleDisponibilidadConFecha("profesor@test.com", "Jueves", "13:00", fechaEspecifica);
+				.toggleDisponibilidadConFecha(usuarioProfesorMock, "Jueves", "13:00", fechaEspecifica);
 	}
 
 

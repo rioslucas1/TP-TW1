@@ -25,7 +25,8 @@ public class RepositorioReservaAlumnoImpl implements RepositorioReservaAlumno {
     public List<disponibilidadProfesor> buscarPorProfesor(String emailProfesor) {
         final Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(disponibilidadProfesor.class)
-                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .createAlias("profesor", "p")
+                .add(Restrictions.eq("p.email", emailProfesor))
                 .list();
     }
 
@@ -53,13 +54,14 @@ public class RepositorioReservaAlumnoImpl implements RepositorioReservaAlumno {
     @Override
     public List<disponibilidadProfesor> buscarPorProfesorDiaFecha(
             String emailProfesor, String diaSemana, LocalDate fechaEspecifica) {
-
         final Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(disponibilidadProfesor.class)
-                .add(Restrictions.eq("emailProfesor", emailProfesor))
+                .createAlias("profesor", "p")
+                .add(Restrictions.eq("p.email", emailProfesor))
                 .add(Restrictions.eq("diaSemana", diaSemana))
                 .add(Restrictions.eq("fechaEspecifica", fechaEspecifica))
                 .list();
     }
+
 
 }

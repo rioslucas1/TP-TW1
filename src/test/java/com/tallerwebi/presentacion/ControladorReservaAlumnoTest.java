@@ -27,8 +27,8 @@ public class ControladorReservaAlumnoTest {
 
 	private ControladorReservaAlumno controladorReservaAlumno;
 	private ControladorLogin controladorLogin;
-	private Usuario usuarioProfesorMock;
-	private Usuario usuarioAlumnoMock;
+	private Profesor usuarioProfesorMock;
+	private Alumno usuarioAlumnoMock;
 	private ControladorDisponibilidad controladorDisponibilidad;
 	private ServicioDisponibilidadProfesor servicioDisponibilidadProfesorMock;
 	private ServicioReservaAlumno servicioReservaAlumnoMock;
@@ -86,8 +86,8 @@ public class ControladorReservaAlumnoTest {
 	@Test
 	public void deberiaCargarCalendarioConDisponibilidadesDelProfesor() {
 		List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-				new disponibilidadProfesor(emailProfesor, "Lunes", "09:00", diaLunes, EstadoDisponibilidad.DISPONIBLE),
-				new disponibilidadProfesor(emailProfesor, "Martes", "10:00", diaLunes.plusDays(1), EstadoDisponibilidad.DISPONIBLE)
+				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00", diaLunes, EstadoDisponibilidad.DISPONIBLE),
+				new disponibilidadProfesor(usuarioProfesorMock, "Martes", "10:00", diaLunes.plusDays(1), EstadoDisponibilidad.DISPONIBLE)
 		);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
 		when(servicioReservaAlumnoMock.obtenerDisponibilidadProfesorPorSemana(eq(emailProfesor), any(LocalDate.class)))
@@ -134,15 +134,15 @@ public class ControladorReservaAlumnoTest {
 	@Test
 	public void deberiaCargarEstadosMapCorrectamente() {
 		List<disponibilidadProfesor> disponibilidades = Arrays.asList(
-				new disponibilidadProfesor(emailProfesor, "Lunes", "09:00", EstadoDisponibilidad.DISPONIBLE),
-				new disponibilidadProfesor(emailProfesor, "Martes", "10:00", EstadoDisponibilidad.OCUPADO),
-				new disponibilidadProfesor(emailProfesor, "Miércoles", "11:00", EstadoDisponibilidad.RESERVADO)
+				new disponibilidadProfesor(usuarioProfesorMock, "Lunes", "09:00", EstadoDisponibilidad.DISPONIBLE),
+				new disponibilidadProfesor(usuarioProfesorMock, "Martes", "10:00", EstadoDisponibilidad.OCUPADO),
+				new disponibilidadProfesor(usuarioProfesorMock, "Miércoles", "11:00", EstadoDisponibilidad.RESERVADO)
 		);
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
 		when(servicioReservaAlumnoMock.obtenerDisponibilidadProfesorPorSemana(
-				eq(emailProfesor), any(LocalDate.class)))
+				eq(usuarioProfesorMock.getEmail()), any(LocalDate.class)))
 				.thenReturn(disponibilidades);
-		ModelAndView modelAndView = controladorReservaAlumno.verCalendarioProfesor(emailProfesor, null, requestMock);
+		ModelAndView modelAndView = controladorReservaAlumno.verCalendarioProfesor(usuarioProfesorMock.getEmail(), null, requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-reserva"));
 		Map<String, String> estadosMap = (Map<String, String>) modelAndView.getModel().get("estadosMap");
 		assertThat(estadosMap.get("Lunes-09:00"), equalToIgnoringCase("DISPONIBLE"));
@@ -154,10 +154,10 @@ public class ControladorReservaAlumnoTest {
 	public void deberiaManejarExcepcionEnCargaDeCalendario() {
 		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
 		when(servicioReservaAlumnoMock.obtenerDisponibilidadProfesorPorSemana(
-				eq(emailProfesor), any(LocalDate.class)))
+				eq(usuarioProfesorMock.getEmail()), any(LocalDate.class)))
 				.thenThrow(new RuntimeException("Error en base de datos"));
 
-		ModelAndView modelAndView = controladorReservaAlumno.verCalendarioProfesor(emailProfesor, null, requestMock);
+		ModelAndView modelAndView = controladorReservaAlumno.verCalendarioProfesor(usuarioProfesorMock.getEmail(), null, requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-reserva"));
 
 		List<String> disponibilidadesKeys = (List<String>) modelAndView.getModel().get("disponibilidadesKeys");
@@ -203,7 +203,7 @@ public class ControladorReservaAlumnoTest {
 				equalToIgnoringCase("redirect:/calendario-reserva?emailProfesor=" + emailProfesor + "&semana=" + diaLunes));
 
 		verify(servicioReservaAlumnoMock, times(1))
-				.reservarClasePorId(disponibilidadId, usuarioAlumnoMock.getEmail());
+				.reservarClasePorId(disponibilidadId, usuarioAlumnoMock);
 	}
 
 	@Test
@@ -215,7 +215,7 @@ public class ControladorReservaAlumnoTest {
 		assertThat(modelAndView.getViewName(),
 				equalToIgnoringCase("redirect:/calendario-reserva?emailProfesor=" + emailProfesor));
 		verify(servicioReservaAlumnoMock, times(1))
-				.reservarClasePorId(disponibilidadId, usuarioAlumnoMock.getEmail());
+				.reservarClasePorId(disponibilidadId, usuarioAlumnoMock);
 	}
 
 	@Test
@@ -224,7 +224,7 @@ public class ControladorReservaAlumnoTest {
 		ModelAndView modelAndView = controladorReservaAlumno.reservarClase(
 				1L, emailProfesor, null, requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
-		verify(servicioReservaAlumnoMock, never()).reservarClasePorId(anyLong(), anyString());
+		verify(servicioReservaAlumnoMock, never()).reservarClasePorId(anyLong(), any(Alumno.class));
 	}
 
 	@Test
@@ -233,7 +233,7 @@ public class ControladorReservaAlumnoTest {
 		ModelAndView modelAndView = controladorReservaAlumno.reservarClase(
 				1L, emailProfesor, null, requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
-		verify(servicioReservaAlumnoMock, never()).reservarClasePorId(anyLong(), anyString());
+		verify(servicioReservaAlumnoMock, never()).reservarClasePorId(anyLong(), any(Alumno.class));
 	}
 
 	@Test
@@ -244,7 +244,7 @@ public class ControladorReservaAlumnoTest {
 		when(usuarioAlumnoMock.getEmail()).thenReturn("alumno@test.com");
 		doThrow(new RuntimeException("Error en base de datos"))
 				.when(servicioReservaAlumnoMock)
-				.reservarClasePorId(disponibilidadId, "alumno@test.com");
+				.reservarClasePorId(disponibilidadId, usuarioAlumnoMock);
 
 		ModelAndView modelAndView = controladorReservaAlumno.reservarClase(
 				disponibilidadId, emailProfesor, null, requestMock);
@@ -252,7 +252,7 @@ public class ControladorReservaAlumnoTest {
 				equalToIgnoringCase("redirect:/calendario-reserva?emailProfesor=" + emailProfesor));
 
 		verify(servicioReservaAlumnoMock, times(1))
-				.reservarClasePorId(disponibilidadId, emailAlumno);
+				.reservarClasePorId(disponibilidadId, usuarioAlumnoMock);
 	}
 
 
@@ -320,7 +320,7 @@ public class ControladorReservaAlumnoTest {
 				equalToIgnoringCase("redirect:/calendario-reserva?emailProfesor=" + emailProfesor + "&semana=" + semanaConEspacios));
 
 		verify(servicioReservaAlumnoMock, times(1))
-				.reservarClasePorId(disponibilidadId, emailAlumno);
+				.reservarClasePorId(disponibilidadId, usuarioAlumnoMock);
 	}
 
 }
