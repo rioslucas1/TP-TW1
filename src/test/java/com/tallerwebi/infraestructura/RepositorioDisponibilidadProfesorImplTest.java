@@ -1,304 +1,305 @@
 package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.RepositorioUsuario;
-import com.tallerwebi.dominio.entidades.Alumno;
-import com.tallerwebi.dominio.entidades.Profesor;
-import com.tallerwebi.dominio.entidades.Usuario;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
+import com.tallerwebi.dominio.RepositorioDisponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.infraestructura.config.HibernateInfraestructuraTestConfig;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {HibernateInfraestructuraTestConfig.class})
+@Transactional
 public class RepositorioDisponibilidadProfesorImplTest {
 
-
-    private SessionFactory sessionFactoryMock;
-    private Session sessionMock;
-    private Criteria criteriaMock;
-    private RepositorioUsuario repositorioUsuarioMock;
-    private Alumno alumnoMock;
-    private Profesor profesorMock;
-    private Usuario usuarioMock;
-
+    @Autowired
+    private SessionFactory sessionFactory;
+    private RepositorioDisponibilidadProfesor repositorioDisponibilidadProfesor;
 
     @BeforeEach
-    public void init(){
-
-        sessionFactoryMock = mock(SessionFactory.class);
-        sessionMock = mock(Session.class);
-        criteriaMock = mock(Criteria.class);
-        repositorioUsuarioMock = new RepositorioUsuarioImpl(sessionFactoryMock);
-        when(sessionFactoryMock.getCurrentSession()).thenReturn(sessionMock);
-        when(sessionMock.createCriteria(any(Class.class))).thenReturn(criteriaMock);
-        when(criteriaMock.add(any())).thenReturn(criteriaMock);
-
-
-        alumnoMock = mock(Alumno.class);
-        when(alumnoMock.getEmail()).thenReturn("alumno@unlam.com");
-        when(alumnoMock.getNombre()).thenReturn("Nombre");
-        when(alumnoMock.getApellido()).thenReturn("Apellido");
-        when(alumnoMock.getPassword()).thenReturn("123456");
-
-        profesorMock = mock(Profesor.class);
-        when(profesorMock.getEmail()).thenReturn("profesor@unlam.com");
-        when(profesorMock.getNombre()).thenReturn("Profesor");
-        when(profesorMock.getApellido()).thenReturn("Apellido");
-        when(profesorMock.getPassword()).thenReturn("123456");
-
-        usuarioMock = mock(Usuario.class);
-        when(usuarioMock.getEmail()).thenReturn("usuario@unlam.com");
-        when(usuarioMock.getPassword()).thenReturn("contra123");
-
+    public void init() {
+        this.repositorioDisponibilidadProfesor = new RepositorioDisponibilidadProfesorImpl(this.sessionFactory);
     }
 
     @Test
-    public void buscarUsuarioConEmailYPasswordCorrectosDeberiaRetornarUsuario() {
-        repositorioUsuarioMock.guardar(alumnoMock);
-        when(criteriaMock.uniqueResult()).thenReturn(alumnoMock);
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario("alumno@unlam.com", "123456");
+    @Rollback
+    public void cuandoGuardoUnaDisponibilidadEntoncesSeGuardaCorrectamenteEnLaBaseDeDatos() {
 
-        assertNotNull(usuarioEncontrado);
-        assertEquals("alumno@unlam.com", usuarioEncontrado.getEmail());
-        assertEquals("123456", usuarioEncontrado.getPassword());
-        assertEquals("Nombre", usuarioEncontrado.getNombre());
-        assertEquals("Apellido", usuarioEncontrado.getApellido());
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
+        Tema tema = new Tema();
+        tema.setNombre("Matemáticas");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Carlos");
+        profesor.setApellido("Rodriguez");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("Lunes");
+        disponibilidad.setHora("10:00");
+        disponibilidad.setFechaEspecifica(LocalDate.now().plusDays(1));
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+
+        repositorioDisponibilidadProfesor.guardar(disponibilidad);
+
+        String hql = "FROM Clase WHERE profesor.id = :profesorId AND diaSemana = :dia";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("profesorId", profesor.getId());
+        query.setParameter("dia", "Lunes");
+        Clase disponibilidadGuardada = (Clase) query.getSingleResult();
+
+        assertNotNull(disponibilidadGuardada);
+        assertEquals("Lunes", disponibilidadGuardada.getDiaSemana());
+        assertEquals("10:00", disponibilidadGuardada.getHora());
+        assertEquals(profesor.getId(), disponibilidadGuardada.getProfesor().getId());
+        assertEquals(EstadoDisponibilidad.DISPONIBLE, disponibilidadGuardada.getEstado());
     }
 
     @Test
-    public void buscarUsuarioConEmailYPasswordIncorrectosDeberiaRetornarNull() {
-        String email = "usuario@inexistente.com";
-        String password = "passwordIncorrecto";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
+    @Rollback
+    public void cuandoBuscoDisponibilidadesPorProfesorEntoncesRetornaLaListaCorrecta() {
 
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
+        Tema tema = new Tema();
+        tema.setNombre("Física");
+        sessionFactory.getCurrentSession().save(tema);
 
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Ana");
+        profesor.setApellido("Lopez");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+
+        Clase disponibilidad1 = new Clase();
+        disponibilidad1.setProfesor(profesor);
+        disponibilidad1.setDiaSemana("Lunes");
+        disponibilidad1.setHora("09:00");
+        disponibilidad1.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad1);
+
+        Clase disponibilidad2 = new Clase();
+        disponibilidad2.setProfesor(profesor);
+        disponibilidad2.setDiaSemana("Martes");
+        disponibilidad2.setHora("14:00");
+        disponibilidad2.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad2);
+
+        List<Clase> disponibilidades = repositorioDisponibilidadProfesor.buscarPorProfesor(profesor);
+
+        assertNotNull(disponibilidades);
+        assertEquals(2, disponibilidades.size());
+        assertThat(disponibilidades, hasItems(disponibilidad1, disponibilidad2));
     }
 
     @Test
-    public void guardarUsuarioDeberiaLlamarSaveEnSession() {
-        repositorioUsuarioMock.guardar(usuarioMock);
+    @Rollback
+    public void cuandoBuscoDisponibilidadPorProfesorDiaYHoraEntoncesRetornaLaDisponibilidadCorrecta() {
 
-        verify(sessionMock, times(1)).save(usuarioMock);
+        Tema tema = new Tema();
+        tema.setNombre("Química");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Pedro");
+        profesor.setApellido("Martinez");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("Miércoles");
+        disponibilidad.setHora("16:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad);
+
+        Clase encontrada = repositorioDisponibilidadProfesor.buscarPorProfesorDiaHora(
+                profesor, "Miércoles", "16:00");
+
+        assertNotNull(encontrada);
+        assertEquals("Miércoles", encontrada.getDiaSemana());
+        assertEquals("16:00", encontrada.getHora());
+        assertEquals(profesor.getId(), encontrada.getProfesor().getId());
     }
 
     @Test
-    public void guardarAlumnoDeberiaLlamarSaveEnSession() {
-        repositorioUsuarioMock.guardar(alumnoMock);
+    @Rollback
+    public void cuandoBuscoDisponibilidadPorProfesorDiaYHoraInexistenteEntoncesRetornaNulo() {
 
-        verify(sessionMock, times(1)).save(alumnoMock);
+        Tema tema = new Tema();
+        tema.setNombre("Historia");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Laura");
+        profesor.setApellido("Gonzalez");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Clase encontrada = repositorioDisponibilidadProfesor.buscarPorProfesorDiaHora(
+                profesor, "Viernes", "20:00");
+
+        assertNull(encontrada);
     }
 
     @Test
-    public void guardarProfesorDeberiaLlamarSaveEnSession() {
-        repositorioUsuarioMock.guardar(profesorMock);
+    @Rollback
+    public void cuandoBuscoDisponibilidadesPorProfesorDiaYFechaEntoncesRetornaLaListaCorrecta() {
+        Tema tema = new Tema();
+        tema.setNombre("Literatura");
+        sessionFactory.getCurrentSession().save(tema);
 
-        verify(sessionMock, times(1)).save(profesorMock);
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Miguel");
+        profesor.setApellido("Herrera");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        LocalDate fechaEspecifica = LocalDate.now().plusDays(3);
+        Clase disponibilidad1 = new Clase();
+        disponibilidad1.setProfesor(profesor);
+        disponibilidad1.setDiaSemana("Jueves");
+        disponibilidad1.setHora("10:00");
+        disponibilidad1.setFechaEspecifica(fechaEspecifica);
+        disponibilidad1.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad1);
+
+        Clase disponibilidad2 = new Clase();
+        disponibilidad2.setProfesor(profesor);
+        disponibilidad2.setDiaSemana("Jueves");
+        disponibilidad2.setHora("15:00");
+        disponibilidad2.setFechaEspecifica(fechaEspecifica);
+        disponibilidad2.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad2);
+        List<Clase> disponibilidades = repositorioDisponibilidadProfesor.buscarPorProfesorDiaFecha(
+                profesor, "Jueves", fechaEspecifica);
+        assertNotNull(disponibilidades);
+        assertEquals(2, disponibilidades.size());
+        assertThat(disponibilidades, hasItems(disponibilidad1, disponibilidad2));
     }
 
     @Test
-    public void buscarUsuarioPorEmailDeberiaRetornarUsuario() {
-        String email = "usuario@unlam.com";
-        when(criteriaMock.uniqueResult()).thenReturn(usuarioMock);
+    @Rollback
+    public void cuandoBuscoDisponibilidadPorProfesorDiaHoraYFechaEntoncesRetornaLaDisponibilidadCorrecta() {
+        Tema tema = new Tema();
+        tema.setNombre("Biología");
+        sessionFactory.getCurrentSession().save(tema);
 
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscar(email);
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Sofia");
+        profesor.setApellido("Ruiz");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
 
-        assertNotNull(usuarioEncontrado);
-        assertEquals(usuarioMock, usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
+        LocalDate fechaEspecifica = LocalDate.now().plusDays(5);
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("Sábado");
+        disponibilidad.setHora("11:00");
+        disponibilidad.setFechaEspecifica(fechaEspecifica);
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad);
+
+        Clase encontrada = repositorioDisponibilidadProfesor.buscarPorProfesorDiaHoraFecha(
+                profesor, "Sábado", "11:00", fechaEspecifica);
+        assertNotNull(encontrada);
+
+        assertEquals("Sábado", encontrada.getDiaSemana());
+        assertEquals("11:00", encontrada.getHora());
+        assertEquals(fechaEspecifica, encontrada.getFechaEspecifica());
+        assertEquals(profesor.getId(), encontrada.getProfesor().getId());
     }
 
     @Test
-    public void buscarUsuarioPorEmailInexistenteDeberiaRetornarNull() {
-        String email = "inexistente@unlam.com";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
+    @Rollback
+    public void cuandoEliminoUnaDisponibilidadEntoncesSeEliminaCorrectamenteDeLaBaseDeDatos() {
 
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscar(email);
+        Tema tema = new Tema();
+        tema.setNombre("Geografía");
+        sessionFactory.getCurrentSession().save(tema);
 
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Ricardo");
+        profesor.setApellido("Morales");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("Domingo");
+        disponibilidad.setHora("13:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad);
+        Clase disponibilidadGuardada = repositorioDisponibilidadProfesor.buscarPorProfesorDiaHora(
+                profesor, "Domingo", "13:00");
+        assertNotNull(disponibilidadGuardada);
+        repositorioDisponibilidadProfesor.eliminar(disponibilidadGuardada);
+        Clase disponibilidadEliminada = repositorioDisponibilidadProfesor.buscarPorProfesorDiaHora(
+                profesor, "Domingo", "13:00");
+        assertNull(disponibilidadEliminada);
     }
 
     @Test
-    public void modificarUsuarioDeberiaLlamarUpdateEnSession() {
-        repositorioUsuarioMock.modificar(usuarioMock);
+    @Rollback
+    public void cuandoModificoUnaDisponibilidadEntoncesSeActualizaCorrectamente() {
 
-        verify(sessionMock, times(1)).update(usuarioMock);
+        Tema tema = new Tema();
+        tema.setNombre("Arte");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Elena");
+        profesor.setApellido("Vega");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("Lunes");
+        disponibilidad.setHora("08:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad);
+        disponibilidad.setHora("09:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.RESERVADO);
+        repositorioDisponibilidadProfesor.guardar(disponibilidad); // saveOrUpdate
+        String hql = "FROM Clase WHERE profesor.id = :profesorId AND diaSemana = :dia";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("profesorId", profesor.getId());
+        query.setParameter("dia", "Lunes");
+        Clase disponibilidadModificada = (Clase) query.getSingleResult();
+
+        assertEquals("09:00", disponibilidadModificada.getHora());
+        assertEquals(EstadoDisponibilidad.RESERVADO, disponibilidadModificada.getEstado());
     }
-
-    @Test
-    public void modificarAlumnoDeberiaLlamarUpdateEnSession() {
-        repositorioUsuarioMock.modificar(alumnoMock);
-
-        verify(sessionMock, times(1)).update(alumnoMock);
-    }
-
-    @Test
-    public void modificarProfesorDeberiaLlamarUpdateEnSession() {
-        repositorioUsuarioMock.modificar(profesorMock);
-
-        verify(sessionMock, times(1)).update(profesorMock);
-    }
-
-    @Test
-    public void buscarPorTipoProfesoresDeberiaRetornarListaDeProfesores() {
-        Profesor profesor1 = mock(Profesor.class);
-        Profesor profesor2 = mock(Profesor.class);
-        List<Usuario> profesoresEsperados = Arrays.asList(profesor1, profesor2);
-
-        when(criteriaMock.list()).thenReturn(profesoresEsperados);
-        List<Usuario> profesoresObtenidos = repositorioUsuarioMock.buscarPorTipo(Profesor.class);
-        assertNotNull(profesoresObtenidos);
-        assertEquals(2, profesoresObtenidos.size());
-        assertThat(profesoresObtenidos, containsInAnyOrder(profesor1, profesor2));
-        verify(sessionMock, times(1)).createCriteria(Profesor.class);
-        verify(criteriaMock, times(1)).list();
-    }
-
-    @Test
-    public void buscarPorTipoAlumnosDeberiaRetornarListaDeAlumnos() {
-        Alumno alumno1 = mock(Alumno.class);
-        Alumno alumno2 = mock(Alumno.class);
-        List<Usuario> alumnosEsperados = Arrays.asList(alumno1, alumno2);
-        when(criteriaMock.list()).thenReturn(alumnosEsperados);
-        List<Usuario> alumnosObtenidos = repositorioUsuarioMock.buscarPorTipo(Alumno.class);
-
-        assertNotNull(alumnosObtenidos);
-        assertEquals(2, alumnosObtenidos.size());
-        assertThat(alumnosObtenidos, containsInAnyOrder(alumno1, alumno2));
-        verify(sessionMock, times(1)).createCriteria(Alumno.class);
-        verify(criteriaMock, times(1)).list();
-    }
-
-    @Test
-    public void buscarPorTipoSinResultadosDeberiaRetornarListaVacia() {
-        List<Usuario> listaVacia = Arrays.asList();
-        when(criteriaMock.list()).thenReturn(listaVacia);
-        List<Usuario> profesoresObtenidos = repositorioUsuarioMock.buscarPorTipo(Profesor.class);
-
-        assertNotNull(profesoresObtenidos);
-        assertEquals(0, profesoresObtenidos.size());
-        assertEquals(listaVacia, profesoresObtenidos);
-        verify(sessionMock, times(1)).createCriteria(Profesor.class);
-        verify(criteriaMock, times(1)).list();
-    }
-
-    @Test
-    public void buscarUsuarioConEmailNullDeberiaRetornarNull() {
-        String email = null;
-        String password = "123456";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarUsuarioConPasswordNullDeberiaRetornarNull() {
-        String email = "usuario@unlam.com";
-        String password = null;
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarUsuarioConEmailVacioDeberiaRetornarNull() {
-        String email = "";
-        String password = "123456";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarUsuarioConPasswordVaciaDeberiaRetornarNull() {
-        String email = "usuario@unlam.com";
-        String password = "";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarPorEmailNullDeberiaRetornarNull() {
-        String email = null;
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscar(email);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarPorEmailVacioDeberiaRetornarNull() {
-        String email = "";
-        when(criteriaMock.uniqueResult()).thenReturn(null);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscar(email);
-
-        assertNull(usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarProfesorConCredencialesCorrectasDeberiaRetornarProfesor() {
-        String email = "profesor@unlam.com";
-        String password = "123456";
-        when(criteriaMock.uniqueResult()).thenReturn(profesorMock);
-
-        Usuario usuarioEncontrado = repositorioUsuarioMock.buscarUsuario(email, password);
-
-        assertNotNull(usuarioEncontrado);
-        assertEquals(profesorMock, usuarioEncontrado);
-        verify(sessionMock, times(1)).createCriteria(Usuario.class);
-        verify(criteriaMock, times(1)).uniqueResult();
-    }
-
-    @Test
-    public void buscarPorTipoConUnSoloProfesorDeberiaRetornarListaConUnElemento() {
-        List<Usuario> profesoresEsperados = Arrays.asList(profesorMock);
-        when(criteriaMock.list()).thenReturn(profesoresEsperados);
-
-        List<Usuario> profesoresObtenidos = repositorioUsuarioMock.buscarPorTipo(Profesor.class);
-
-        assertNotNull(profesoresObtenidos);
-        assertEquals(1, profesoresObtenidos.size());
-        assertEquals(profesorMock, profesoresObtenidos.get(0));
-        verify(sessionMock, times(1)).createCriteria(Profesor.class);
-        verify(criteriaMock, times(1)).list();
-    }
-
-
 }

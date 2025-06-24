@@ -12,13 +12,21 @@ public class Alumno extends Usuario {
     private Double latitud;
     private Double longitud;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "alumno_tema",
+            name = "alumno_temas",
             joinColumns = @JoinColumn(name = "alumno_id"),
             inverseJoinColumns = @JoinColumn(name = "tema_id")
     )
     private List<Tema> temas = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "alumno_profesores",
+            joinColumns = @JoinColumn(name = "alumno_id"),
+            inverseJoinColumns = @JoinColumn(name = "profesor_id")
+    )
+    private List<Profesor> profesores = new ArrayList<>();
 
     public Alumno() {
         super();
@@ -50,14 +58,6 @@ public class Alumno extends Usuario {
         this.longitud = longitud;
     }
 
-    public List<Tema> getTemas() {
-        return temas;
-    }
-
-    public void setTemas(List<Tema> temas) {
-        this.temas = temas != null ? temas : new ArrayList<>();
-    }
-
     public void agregarTema(Tema tema) {
         if (tema != null && !this.temas.contains(tema)) {
             this.temas.add(tema);
@@ -71,4 +71,37 @@ public class Alumno extends Usuario {
     public boolean tieneTema(Tema tema) {
         return this.temas.contains(tema);
     }
+
+
+    public List<Tema> getTemas() {
+        return temas;
+    }
+
+    public void setTemas(List<Tema> temasPreferidos) {
+        this.temas = temasPreferidos;
+    }
+
+    public List<Profesor> getProfesores() {
+        return profesores;
+    }
+
+    public void setProfesores(List<Profesor> profesores) {
+        this.profesores = profesores;
+    }
+
+    public void agregarProfesor(Profesor profesor) {
+        if (profesor != null && !this.profesores.contains(profesor)) {
+            this.profesores.add(profesor);
+        }
+    }
+
+    public void eliminarProfesor(Profesor profesor) {
+        this.profesores.remove(profesor);
+    }
+
+    public boolean estaSuscritoAProfesor(Profesor profesor) {
+        return this.profesores.contains(profesor);
+    }
+
+
 }

@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 
 
 import com.tallerwebi.dominio.entidades.Alumno;
+import com.tallerwebi.dominio.entidades.Clase;
 import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class ControladorLogin {
@@ -43,19 +46,35 @@ public class ControladorLogin {
     @RequestMapping(path = "/validar-login", method = RequestMethod.POST)
     public ModelAndView validarLogin(@ModelAttribute("datosLogin") DatosLogin datosLogin, HttpServletRequest request) {
         ModelMap model = new ModelMap();
-        String errorEmail = validarEmail(datosLogin.getEmail());
+
+        String email = datosLogin.getEmail();
+        String password = datosLogin.getPassword();
+
+        boolean emailVacio = (email == null || email.trim().isEmpty());
+        boolean passwordVacio = (password == null || password.trim().isEmpty());
+
+        if (emailVacio && passwordVacio) {
+            model.put("error", "El email y la contraseña son obligatorios");
+            return new ModelAndView("login", model);
+        }
+
+        if (emailVacio) {
+            model.put("error", "El email es obligatorio");
+            return new ModelAndView("login", model);
+        }
+
+        if (passwordVacio) {
+            model.put("error", "La contraseña es obligatoria");
+            return new ModelAndView("login", model);
+        }
+
+        String errorEmail = validarEmail(email);
         if (errorEmail != null) {
             model.put("error", errorEmail);
             return new ModelAndView("login", model);
         }
 
-        if (datosLogin.getEmail() == null || datosLogin.getEmail().trim().isEmpty() ||
-                datosLogin.getPassword() == null || datosLogin.getPassword().trim().isEmpty()) {
-            model.put("error", "El email y la contraseña son obligatorios");
-            return new ModelAndView("login", model);
-        }
-
-        Usuario usuarioBuscado = servicioLogin.consultarUsuario(datosLogin.getEmail(), datosLogin.getPassword());
+        Usuario usuarioBuscado = servicioLogin.consultarUsuario(email, password);
 
         if (usuarioBuscado != null) {
 
@@ -85,6 +104,7 @@ public class ControladorLogin {
                 datosRegistro.getApellido() == null || datosRegistro.getApellido().trim().isEmpty() ||
                 datosRegistro.getEmail() == null || datosRegistro.getEmail().trim().isEmpty() ||
                 datosRegistro.getPassword() == null || datosRegistro.getPassword().trim().isEmpty()) {
+
             model.put("error", "Todos los campos son obligatorios");
             return new ModelAndView("nuevo-usuario", model);
         }
@@ -106,7 +126,7 @@ public class ControladorLogin {
         } catch (UsuarioExistente e){
             model.put("error", "El usuario ya existe");
             return new ModelAndView("nuevo-usuario", model);
-        } catch (Exception e){
+        } catch (Exception e) {
             model.put("error", "Error al registrar el nuevo usuario");
             return new ModelAndView("nuevo-usuario", model);
         }
@@ -133,11 +153,22 @@ public class ControladorLogin {
             if(rol.equals("profesor")){
                 Profesor profesor = (Profesor) usuario;
                 modelo.put("temaProfesor", profesor.getTema());
-                modelo.put("clasesProfesor", servicioLogin.obtenerClasesProfesor(profesor.getId()));
+                List<Clase> todasLasClases = servicioLogin.obtenerClasesProfesor(profesor.getId());
+                List<Clase> proximasClases = todasLasClases.stream()
+                        .limit(5)
+                        .collect(Collectors.toList());
+                modelo.put("clasesProfesor", proximasClases);
+
+                modelo.put("clasesReservadas", proximasClases);
             } else if(rol.equals("alumno")){
                 Alumno alumno = (Alumno) usuario;
-                modelo.put("listaProfesores", servicioLogin.obtenerProfesores());
-                modelo.put("clasesReservadas", servicioLogin.obtenerClasesAlumno(alumno.getId()));
+                modelo.put("listaProfesores", servicioLogin.obtenerProfesoresDeAlumno(alumno.getId()));
+                List<Clase> todasLasClases = servicioLogin.obtenerClasesAlumno(alumno.getId());
+                List<Clase> proximasClases = todasLasClases.stream()
+                        .limit(5)
+                        .collect(Collectors.toList());
+
+                modelo.put("clasesReservadas", proximasClases);
             }
 
         }
@@ -207,10 +238,6 @@ public class ControladorLogin {
     public ModelAndView cerrarSesion(HttpServletRequest request) {
         request.getSession().invalidate();
         return new ModelAndView("redirect:/home");
-    }
-    @RequestMapping("/verPerfil")
-    public String verPerfil() {
-        return "verPerfil";
     }
 
     private String validarEmail(String email) {

@@ -1,11 +1,10 @@
 package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.RepositorioReservaAlumno;
-import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.disponibilidadProfesor;
+import com.tallerwebi.dominio.entidades.Clase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +24,7 @@ public class ServicioReservaAlumnoImplTest {
 	private Alumno alumnoMock;
 	private Profesor profesorMock;
 	private Usuario usuarioMock;
-	private disponibilidadProfesor disponibilidadMock;
+	private Clase disponibilidadMock;
 
 	@BeforeEach
 	public void init() {
@@ -37,7 +36,7 @@ public class ServicioReservaAlumnoImplTest {
 		when(alumnoMock.getNombre()).thenReturn("Juan");
 		when(alumnoMock.getApellido()).thenReturn("Perez");
 
-		disponibilidadMock = mock(disponibilidadProfesor.class);
+		disponibilidadMock = mock(Clase.class);
 		when(disponibilidadMock.getId()).thenReturn(1L);
 		when(disponibilidadMock.getEmailProfesor()).thenReturn("profesor@unlam.com");
 		when(disponibilidadMock.getDiaSemana()).thenReturn("Lunes");
@@ -48,13 +47,13 @@ public class ServicioReservaAlumnoImplTest {
 	@Test
 	public void obtenerDisponibilidadProfesorDeberiaRetornarListaDeDisponibilidades() {
 		String emailProfesor = "profesor@unlam.com";
-		disponibilidadProfesor disponibilidad1 = mock(disponibilidadProfesor.class);
-		disponibilidadProfesor disponibilidad2 = mock(disponibilidadProfesor.class);
-		List<disponibilidadProfesor> disponibilidadesEsperadas = Arrays.asList(disponibilidad1, disponibilidad2);
+		Clase disponibilidad1 = mock(Clase.class);
+		Clase disponibilidad2 = mock(Clase.class);
+		List<Clase> disponibilidadesEsperadas = Arrays.asList(disponibilidad1, disponibilidad2);
 
 		when(repositorioReservaAlumnoMock.buscarPorProfesor(emailProfesor)).thenReturn(disponibilidadesEsperadas);
 
-		List<disponibilidadProfesor> disponibilidadesObtenidas =
+		List<Clase> disponibilidadesObtenidas =
 				servicioReservaAlumno.obtenerDisponibilidadProfesor(emailProfesor);
 
 		assertNotNull(disponibilidadesObtenidas);
@@ -66,11 +65,11 @@ public class ServicioReservaAlumnoImplTest {
 	@Test
 	public void obtenerDisponibilidadProfesorSinDisponibilidadesDeberiaRetornarListaVacia() {
 		String emailProfesor = "profesor@unlam.com";
-		List<disponibilidadProfesor> listaVacia = Arrays.asList();
+		List<Clase> listaVacia = Arrays.asList();
 
 		when(repositorioReservaAlumnoMock.buscarPorProfesor(emailProfesor)).thenReturn(listaVacia);
 
-		List<disponibilidadProfesor> disponibilidadesObtenidas =
+		List<Clase> disponibilidadesObtenidas =
 				servicioReservaAlumno.obtenerDisponibilidadProfesor(emailProfesor);
 
 		assertNotNull(disponibilidadesObtenidas);
@@ -180,9 +179,9 @@ public class ServicioReservaAlumnoImplTest {
 		String emailProfesor = "profesor@unlam.com";
 		LocalDate fechaInicioSemana = LocalDate.of(2025, 6, 16);
 
-		disponibilidadProfesor disponibilidadLunes = mock(disponibilidadProfesor.class);
-		disponibilidadProfesor disponibilidadMartes = mock(disponibilidadProfesor.class);
-		disponibilidadProfesor disponibilidadMiercoles = mock(disponibilidadProfesor.class);
+		Clase disponibilidadLunes = mock(Clase.class);
+		Clase disponibilidadMartes = mock(Clase.class);
+		Clase disponibilidadMiercoles = mock(Clase.class);
 
 		when(repositorioReservaAlumnoMock.buscarPorProfesorDiaFecha(emailProfesor, "Lunes", fechaInicioSemana))
 				.thenReturn(Arrays.asList(disponibilidadLunes));
@@ -199,7 +198,7 @@ public class ServicioReservaAlumnoImplTest {
 		when(repositorioReservaAlumnoMock.buscarPorProfesorDiaFecha(emailProfesor, "Domingo", fechaInicioSemana.plusDays(6)))
 				.thenReturn(Arrays.asList());
 
-		List<disponibilidadProfesor> disponibilidadesSemanales =
+		List<Clase> disponibilidadesSemanales =
 				servicioReservaAlumno.obtenerDisponibilidadProfesorPorSemana(emailProfesor, fechaInicioSemana);
 
 		assertNotNull(disponibilidadesSemanales);
@@ -227,7 +226,7 @@ public class ServicioReservaAlumnoImplTest {
 					.thenReturn(Arrays.asList());
 		}
 
-		List<disponibilidadProfesor> disponibilidadesSemanales =
+		List<Clase> disponibilidadesSemanales =
 				servicioReservaAlumno.obtenerDisponibilidadProfesorPorSemana(emailProfesor, fechaInicioSemana);
 
 		assertNotNull(disponibilidadesSemanales);
@@ -239,7 +238,7 @@ public class ServicioReservaAlumnoImplTest {
 		String emailProfesor = null;
 		when(repositorioReservaAlumnoMock.buscarPorProfesor(emailProfesor)).thenReturn(Arrays.asList());
 
-		List<disponibilidadProfesor> disponibilidades = servicioReservaAlumno.obtenerDisponibilidadProfesor(emailProfesor);
+		List<Clase> disponibilidades = servicioReservaAlumno.obtenerDisponibilidadProfesor(emailProfesor);
 
 		assertNotNull(disponibilidades);
 		assertEquals(0, disponibilidades.size());
@@ -268,4 +267,3 @@ public class ServicioReservaAlumnoImplTest {
 		assertEquals("El horario no está disponible para reservar", exception.getMessage());
 	}
 }
-

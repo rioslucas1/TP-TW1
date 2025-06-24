@@ -1,0 +1,21 @@
+.tutor-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.tutor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-title {
+    color: #333;
+    font-weight: 600;
+}
+
+.text-warning .bi-star-fill {
+    color: #ffc107;
+}
+
+.text-warning .bi-star {
+    color: #e9ecef;
+}
