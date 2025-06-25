@@ -367,4 +367,65 @@ public class ControladorReservaAlumnoTest {
 		verify(servicioReservaAlumnoMock, times(1))
 				.obtenerDisponibilidadProfesorPorSemana(eq(emailProfesor), any(LocalDate.class));
 	}
+	@Test
+	public void deberiaCargarCalendarioConEmailConCaracteresEspeciales() {
+		String emailEspecial = "profesor+test@unlam.com";
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
+		when(usuarioProfesorMock.getEmail()).thenReturn(emailEspecial);
+		when(usuarioAlumnoMock.getProfesores()).thenReturn(Arrays.asList(usuarioProfesorMock));
+		when(servicioReservaAlumnoMock.obtenerDisponibilidadProfesorPorSemana(eq(emailEspecial), any(LocalDate.class)))
+				.thenReturn(Arrays.asList());
+
+		ModelAndView modelAndView = controladorReservaAlumno.verCalendarioProfesor(emailEspecial, null, requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-reserva"));
+		verify(servicioReservaAlumnoMock, times(1))
+				.obtenerDisponibilidadProfesorPorSemana(eq(emailEspecial), any(LocalDate.class));
+	}
+	@Test
+	public void deberiaCargarDisponibilidadConDiasConTilde() {
+		Clase claseConTilde = new Clase(usuarioProfesorMock, "Miércoles", "14:00", diaMiercoles, EstadoDisponibilidad.DISPONIBLE);
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
+		when(servicioReservaAlumnoMock.obtenerDisponibilidadProfesorPorSemana(eq(emailProfesor), any(LocalDate.class)))
+				.thenReturn(Arrays.asList(claseConTilde));
+		when(usuarioAlumnoMock.getProfesores()).thenReturn(Arrays.asList(usuarioProfesorMock));
+
+		ModelAndView modelAndView = controladorReservaAlumno.verCalendarioProfesor(emailProfesor, null, requestMock);
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("calendario-reserva"));
+		Map<String, String> estadosMap = (Map<String, String>) modelAndView.getModel().get("estadosMap");
+		assertThat(estadosMap.get("Miércoles-14:00"), equalToIgnoringCase("DISPONIBLE"));
+	}
+	@Test
+	public void deberiaIgnorarErroresDeFormatoDeSemanaConCaracteresRaros() {
+		String semana = " 2025/06/09 ";
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
+
+		ModelAndView modelAndView = controladorReservaAlumno.reservarClase(1L, emailProfesor, semana, requestMock);
+
+		String urlEsperada = "redirect:/calendario-reserva?emailProfesor=" + emailProfesor + "&semana=" + semana;
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase(urlEsperada));
+		verify(servicioReservaAlumnoMock).reservarClasePorId(1L, usuarioAlumnoMock);
+	}
+
+	@Test
+	public void deberiaCargarNombreAlumnoConCaracteresEspeciales() {
+		when(usuarioAlumnoMock.getNombre()).thenReturn("Iñaki Gómez");
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
+		when(usuarioAlumnoMock.getProfesores()).thenReturn(Arrays.asList(usuarioProfesorMock));
+		when(servicioReservaAlumnoMock.obtenerDisponibilidadProfesorPorSemana(eq(emailProfesor), any(LocalDate.class)))
+				.thenReturn(Arrays.asList());
+
+		ModelAndView modelAndView = controladorReservaAlumno.verCalendarioProfesor(emailProfesor, null, requestMock);
+		assertThat(modelAndView.getModel().get("nombreUsuario").toString(), equalTo("Iñaki Gómez"));
+	}
+	@Test
+	public void deberiaPermitirReservaConIdNegativoSinExcepcion() {
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioAlumnoMock);
+
+		ModelAndView modelAndView = controladorReservaAlumno.reservarClase(-1L, emailProfesor, null, requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/calendario-reserva?emailProfesor=" + emailProfesor));
+		verify(servicioReservaAlumnoMock).reservarClasePorId(-1L, usuarioAlumnoMock);
+	}
+
 }

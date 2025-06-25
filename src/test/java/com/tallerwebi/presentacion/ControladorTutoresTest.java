@@ -330,4 +330,88 @@ import static org.mockito.Mockito.*;
             ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor(email, requestMock);
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/verTutores"));
         }
-}
+        @Test
+        public void verTutoresConListaVaciaDeberiaRetornarVistaSinErrores() {
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(servicioLoginMock.obtenerProfesores()).thenReturn(Arrays.asList());
+
+            ModelAndView modelAndView = controladorTutores.verTutores(requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
+            assertEquals(modelAndView.getModel().get("listaProfesores"), Arrays.asList());
+        }
+        @Test
+        public void verPerfilDeProfesorConEmailVacioDeberiaRedirigirAVerTutores() {
+            ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor("", requestMock);
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/verTutores"));
+        }
+        @Test
+        public void suscribirseAProfesorConIdNuloDeberiaRedirigirAVerTutores() {
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+
+            ModelAndView modelAndView = controladorTutores.suscribirseAProfesor(null, requestMock);
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
+        }
+        @Test
+        public void desuscribirseDeProfesorConIdNuloDeberiaRedirigirAVerTutores() {
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+
+            ModelAndView modelAndView = controladorTutores.desuscribirseDeProfesor(null, requestMock);
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
+        }
+        @Test
+        public void verPerfilDeProfesorConNombreConTildesYCaracteresEspeciales() {
+            String email = "profesor@unlam.com";
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscar(email)).thenReturn(profesorMock);
+            when(profesorMock.getNombre()).thenReturn("José María Ñandú");
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(anyLong())).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(anyLong())).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(anyLong())).thenReturn(0);
+            when(servicioFeedbackMock.calcularPromedioCalificacion(anyLong())).thenReturn(null);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(anyLong(), anyLong())).thenReturn(false);
+
+            ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor(email, requestMock);
+
+            assertEquals(profesorMock, modelAndView.getModel().get("profesor"));
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+        }
+
+        @Test
+        public void suscribirseAProfesorInexistenteDeberiaRedirigirAVerTutores() {
+            Long profesorId = 99L;
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(null);
+
+            ModelAndView modelAndView = controladorTutores.suscribirseAProfesor(profesorId, requestMock);
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
+        }
+        @Test
+        public void desuscribirseDeProfesorInexistenteDeberiaRedirigirAVerTutores() {
+            Long profesorId = 99L;
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(null);
+
+            ModelAndView modelAndView = controladorTutores.desuscribirseDeProfesor(profesorId, requestMock);
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
+        }
+        @Test
+        public void verPerfilDeProfesorConUsuarioNoAlumnoDeberiaRedirigirAVerTutores() {
+            Usuario usuarioGenerico = mock(Usuario.class);
+            String email = "profesor@unlam.com";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioGenerico);
+
+            ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor(email, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/verTutores"));
+        }
+
+    }

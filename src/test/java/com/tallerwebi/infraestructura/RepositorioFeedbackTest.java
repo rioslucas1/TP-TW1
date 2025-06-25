@@ -324,4 +324,6 @@ public class RepositorioFeedbackTest {
         assertThat(feedbackDesdeBD.getCalificacion(), equalTo(5));
         assertThat(feedbackDesdeBD.getComentario(), equalTo("Comentario actualizado - mucho mejor"));
     }
+
+
 }

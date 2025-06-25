@@ -438,4 +438,146 @@ public class ControladorPerfilTest {
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
     }
+
+    @Test
+    public void actualizarPerfilConModalidadInvalidaDeberiaAsignarNull() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(alumnoMock);
+
+        ModelAndView modelAndView = controladorPerfil.actualizarPerfil(
+                "Nombre", "Apellido", "Descripción", "INVALIDO", null, requestMock, redirectAttributesMock
+        );
+
+        verify(alumnoMock, times(1)).setModalidadPreferida(null);
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
+    }
+    @Test
+    public void verPerfilConUsuarioNullDeberiaRedirigirALogin() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
+
+        ModelAndView modelAndView = controladorPerfil.verPerfil(requestMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
+    }
+
+
+    @Test
+    public void actualizarPerfilConDescripcionNulaDeberiaAsignarNull() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(alumnoMock);
+
+        ModelAndView modelAndView = controladorPerfil.actualizarPerfil(
+                "Nombre", "Apellido", null, "PRESENCIAL", null, requestMock, redirectAttributesMock
+        );
+
+        verify(alumnoMock).setDescripcion(null);
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
+    }
+
+
+    @Test
+    public void eliminarTemaConTemasNulosNoDeberiaRomper() {
+        Long temaId = 1L;
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(alumnoMock);
+        when(servicioTemaMock.obtenerPorId(temaId)).thenReturn(temaMock);
+        when(alumnoMock.getTemas()).thenReturn(null);
+
+        ModelAndView modelAndView = controladorPerfil.eliminarTema(temaId, requestMock, redirectAttributesMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
+        verify(repositorioUsuarioMock, never()).modificar(any());
+    }
+    @Test
+    public void actualizarPerfilConNombreYApellidoVaciosDeberiaMostrarError() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(alumnoMock);
+
+        ModelAndView modelAndView = controladorPerfil.actualizarPerfil(
+                "", "", "Descripción", "PRESENCIAL", null, requestMock, redirectAttributesMock
+        );
+
+        verify(alumnoMock, never()).setNombre(any());
+        verify(alumnoMock, never()).setApellido(any());
+        verify(repositorioUsuarioMock, never()).modificar(any());
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil/editar"));
+    }
+
+
+    @Test
+    public void eliminarFotoSinFotoNoDeberiaRomper() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(alumnoMock);
+        when(alumnoMock.getFotoPerfil()).thenReturn(null);
+
+        ModelAndView modelAndView = controladorPerfil.eliminarFoto(requestMock, redirectAttributesMock);
+
+        verify(alumnoMock).setFotoPerfil(null);
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
+    }
+
+    @Test
+    public void actualizarPerfilConCamposConTildesYCaracteresEspecialesDeberiaActualizarCorrectamente() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(alumnoMock);
+
+        String nombre = "José Ángel";
+        String apellido = "Muñoz-García";
+        String descripcion = "Estudiante de ingeniería & música 🎶";
+        String modalidad = "PRESENCIAL";
+
+        ModelAndView modelAndView = controladorPerfil.actualizarPerfil(
+                nombre, apellido, descripcion, modalidad, null, requestMock, redirectAttributesMock
+        );
+
+        verify(alumnoMock, times(1)).setNombre(nombre);
+        verify(alumnoMock, times(1)).setApellido(apellido);
+        verify(alumnoMock, times(1)).setDescripcion(descripcion);
+        verify(alumnoMock, times(1)).setModalidadPreferida(ModalidadPreferida.PRESENCIAL);
+        verify(repositorioUsuarioMock, times(1)).modificar(alumnoMock);
+        verify(sessionMock, times(1)).setAttribute("USUARIO", alumnoMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
+    }
+    @Test
+    public void actualizarPerfilConEmojisYSignosDeberiaActualizarSinErrores() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(alumnoMock);
+
+        String nombre = "Ana 😊";
+        String apellido = "López ♥️";
+        String descripcion = "Me encanta la biología y los libros 📚";
+
+        ModelAndView modelAndView = controladorPerfil.actualizarPerfil(
+                nombre, apellido, descripcion, "VIRTUAL", null, requestMock, redirectAttributesMock
+        );
+
+        verify(alumnoMock).setNombre(nombre);
+        verify(alumnoMock).setApellido(apellido);
+        verify(alumnoMock).setDescripcion(descripcion);
+        verify(alumnoMock).setModalidadPreferida(ModalidadPreferida.VIRTUAL);
+        verify(repositorioUsuarioMock).modificar(alumnoMock);
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
+    }
+    @Test
+    public void actualizarPerfilConHtmlDeberiaGuardarComoTextoPlano() {
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(alumnoMock);
+
+        String nombre = "<script>alert('hola')</script>";
+        String apellido = "<b>Apellido</b>";
+        String descripcion = "Texto con <i>HTML</i> y etiquetas";
+
+        ModelAndView modelAndView = controladorPerfil.actualizarPerfil(
+                nombre, apellido, descripcion, "PRESENCIAL", null, requestMock, redirectAttributesMock
+        );
+
+        verify(alumnoMock).setNombre(nombre);
+        verify(alumnoMock).setApellido(apellido);
+        verify(alumnoMock).setDescripcion(descripcion);
+        verify(repositorioUsuarioMock).modificar(alumnoMock);
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/perfil"));
+    }
+
 }

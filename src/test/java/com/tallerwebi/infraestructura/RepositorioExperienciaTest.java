@@ -285,4 +285,53 @@ public class RepositorioExperienciaTest {
         assertThat(experienciaDesdeBD.getDescripcion(), equalTo("descripcion"));
         assertThat(experienciaDesdeBD.getTipoExperiencia(), equalTo("Especialización"));
     }
+
+    @Test
+    @Rollback
+    public void cuandoGuardoExperienciaSinProfesorEntoncesLanzaExcepcion() {
+        ExperienciaEstudiantil experiencia = new ExperienciaEstudiantil();
+        experiencia.setInstitucion("SinProfesor");
+        experiencia.setDescripcion("No debería guardarse");
+        experiencia.setFecha("2023-01-01");
+        experiencia.setTipoExperiencia("Error");
+
+        assertThrows(Exception.class, () -> {
+            repositorioExperiencia.guardar(experiencia);
+            sessionFactory.getCurrentSession().flush();
+        });
+    }
+
+    @Test
+    @Rollback
+    public void cuandoActualizoExperienciaConCamposNulosEntoncesSePersisten() {
+        Tema tema = new Tema();
+        tema.setNombre("TestNulls");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setNombre("Null");
+        profesor.setApellido("Campos");
+        profesor.setEmail("null@campos.com");
+        profesor.setPassword("abc123");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        ExperienciaEstudiantil experiencia = new ExperienciaEstudiantil();
+        experiencia.setProfesor(profesor);
+        experiencia.setInstitucion("Instituto");
+        experiencia.setDescripcion("Descripción inicial");
+        experiencia.setFecha("2022-01-01");
+        experiencia.setTipoExperiencia("Curso");
+        sessionFactory.getCurrentSession().save(experiencia);
+
+        experiencia.setDescripcion(null);
+        experiencia.setTipoExperiencia(null);
+        repositorioExperiencia.guardar(experiencia);
+
+        ExperienciaEstudiantil actualizada = repositorioExperiencia.buscarPorId(experiencia.getId());
+
+        assertNull(actualizada.getDescripcion());
+        assertNull(actualizada.getTipoExperiencia());
+    }
+
 }

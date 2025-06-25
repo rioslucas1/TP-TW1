@@ -302,4 +302,62 @@ public class RepositorioDisponibilidadProfesorImplTest {
         assertEquals("09:00", disponibilidadModificada.getHora());
         assertEquals(EstadoDisponibilidad.RESERVADO, disponibilidadModificada.getEstado());
     }
+
+
+
+
+    @Test
+    @Rollback
+    public void buscarPorProfesorDiaFechaConDatosInexistentesDebeRetornarListaVacia() {
+        Tema tema = new Tema();
+        tema.setNombre("Economía");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("sin_disponibilidades@test.com");
+        profesor.setPassword("123");
+        profesor.setNombre("Sin");
+        profesor.setApellido("Datos");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        List<Clase> resultado = repositorioDisponibilidadProfesor.buscarPorProfesorDiaFecha(
+                profesor, "Miércoles", LocalDate.now().plusWeeks(1)
+        );
+
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    @Rollback
+    public void buscarPorProfesorDiaFechaConFechaNulaNoDevuelveResultados() {
+        Tema tema = new Tema();
+        tema.setNombre("Derecho");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("nullfecha@test.com");
+        profesor.setPassword("123");
+        profesor.setNombre("Federico");
+        profesor.setApellido("Null");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Clase clase = new Clase();
+        clase.setProfesor(profesor);
+        clase.setDiaSemana("Viernes");
+        clase.setHora("12:00");
+        clase.setFechaEspecifica(null);
+        clase.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(clase);
+
+        List<Clase> resultado = repositorioDisponibilidadProfesor.buscarPorProfesorDiaFecha(
+                profesor, "Viernes", null
+        );
+
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
+    }
+
 }
