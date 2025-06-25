@@ -1,6 +1,7 @@
 package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.RepositorioReservaAlumno;
+import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Usuario;
@@ -21,6 +22,7 @@ public class ServicioReservaAlumnoImplTest {
 
 	private ServicioReservaAlumno servicioReservaAlumno;
 	private RepositorioReservaAlumno repositorioReservaAlumnoMock;
+	private RepositorioUsuario repositorioUsuarioMock;
 	private Alumno alumnoMock;
 	private Profesor profesorMock;
 	private Usuario usuarioMock;
@@ -29,7 +31,9 @@ public class ServicioReservaAlumnoImplTest {
 	@BeforeEach
 	public void init() {
 		repositorioReservaAlumnoMock = mock(RepositorioReservaAlumno.class);
-		servicioReservaAlumno = new ServicioReservaAlumnoImpl(repositorioReservaAlumnoMock);
+		repositorioUsuarioMock = mock(RepositorioUsuario.class);
+
+		servicioReservaAlumno = new ServicioReservaAlumnoImpl(repositorioReservaAlumnoMock, repositorioUsuarioMock);
 
 		alumnoMock = mock(Alumno.class);
 		when(alumnoMock.getEmail()).thenReturn("alumno@unlam.com");
@@ -266,4 +270,141 @@ public class ServicioReservaAlumnoImplTest {
 
 		assertEquals("El horario no está disponible para reservar", exception.getMessage());
 	}
+
+
+	@Test
+	public void estaSuscritoAProfesorConAlumnoSuscritoDeberiaRetornarTrue() {
+		Long alumnoId = 1L;
+		String emailProfesor = "profesor@unlam.com";
+
+		Profesor profesor = mock(Profesor.class);
+		when(profesor.getEmail()).thenReturn(emailProfesor);
+
+		List<Profesor> profesores = Arrays.asList(profesor);
+		when(alumnoMock.getProfesores()).thenReturn(profesores);
+
+		when(repositorioUsuarioMock.buscarPorId(alumnoId)).thenReturn(alumnoMock);
+
+		boolean resultado = servicioReservaAlumno.estaSuscritoAProfesor(alumnoId, emailProfesor);
+
+		assertTrue(resultado);
+		verify(repositorioUsuarioMock, times(1)).buscarPorId(alumnoId);
+	}
+
+	@Test
+	public void estaSuscritoAProfesorConAlumnoNoSuscritoDeberiaRetornarFalse() {
+		Long alumnoId = 1L;
+		String emailProfesor = "profesor@unlam.com";
+		String emailProfesorDiferente = "otro@unlam.com";
+
+		Profesor profesor = mock(Profesor.class);
+		when(profesor.getEmail()).thenReturn(emailProfesorDiferente);
+
+		List<Profesor> profesores = Arrays.asList(profesor);
+		when(alumnoMock.getProfesores()).thenReturn(profesores);
+
+		when(repositorioUsuarioMock.buscarPorId(alumnoId)).thenReturn(alumnoMock);
+
+		boolean resultado = servicioReservaAlumno.estaSuscritoAProfesor(alumnoId, emailProfesor);
+
+		assertFalse(resultado);
+		verify(repositorioUsuarioMock, times(1)).buscarPorId(alumnoId);
+	}
+
+	@Test
+	public void estaSuscritoAProfesorConAlumnoSinProfesoresDeberiaRetornarFalse() {
+		Long alumnoId = 1L;
+		String emailProfesor = "profesor@unlam.com";
+
+
+		List<Profesor> profesoresVacia = Arrays.asList();
+		when(alumnoMock.getProfesores()).thenReturn(profesoresVacia);
+
+
+		when(repositorioUsuarioMock.buscarPorId(alumnoId)).thenReturn(alumnoMock);
+
+		boolean resultado = servicioReservaAlumno.estaSuscritoAProfesor(alumnoId, emailProfesor);
+
+		assertFalse(resultado);
+		verify(repositorioUsuarioMock, times(1)).buscarPorId(alumnoId);
+	}
+
+	@Test
+	public void estaSuscritoAProfesorConUsuarioQueNoEsAlumnoDeberiaRetornarFalse() {
+		Long usuarioId = 1L;
+		String emailProfesor = "profesor@unlam.com";
+
+		Usuario usuarioNoAlumno = mock(Profesor.class);
+		when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(usuarioNoAlumno);
+
+		boolean resultado = servicioReservaAlumno.estaSuscritoAProfesor(usuarioId, emailProfesor);
+
+		assertFalse(resultado);
+		verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+	}
+
+	@Test
+	public void estaSuscritoAProfesorConUsuarioNuloDeberiaRetornarFalse() {
+		Long usuarioId = 999L;
+		String emailProfesor = "profesor@unlam.com";
+
+		when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(null);
+
+		boolean resultado = servicioReservaAlumno.estaSuscritoAProfesor(usuarioId, emailProfesor);
+
+		assertFalse(resultado);
+		verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+	}
+
+	@Test
+	public void estaSuscritoAProfesorConVariosProfesoresTodosEmailsDiferentesDeberiaRetornarFalse() {
+		Long alumnoId = 1L;
+		String emailProfesorBuscado = "profesor@unlam.com";
+
+		Profesor profesor1 = mock(Profesor.class);
+		when(profesor1.getEmail()).thenReturn("profesor1@unlam.com");
+
+		Profesor profesor2 = mock(Profesor.class);
+		when(profesor2.getEmail()).thenReturn("profesor2@unlam.com");
+
+		Profesor profesor3 = mock(Profesor.class);
+		when(profesor3.getEmail()).thenReturn("profesor3@unlam.com");
+
+		List<Profesor> profesores = Arrays.asList(profesor1, profesor2, profesor3);
+		when(alumnoMock.getProfesores()).thenReturn(profesores);
+
+		when(repositorioUsuarioMock.buscarPorId(alumnoId)).thenReturn(alumnoMock);
+
+		boolean resultado = servicioReservaAlumno.estaSuscritoAProfesor(alumnoId, emailProfesorBuscado);
+
+		assertFalse(resultado);
+		verify(repositorioUsuarioMock, times(1)).buscarPorId(alumnoId);
+	}
+
+	@Test
+	public void estaSuscritoAProfesorConVariosProfesoresTodosYUnoCoincideDeberiaRetornarTrue() {
+		Long alumnoId = 1L;
+		String emailProfesorBuscado = "profesor@unlam.com";
+
+		Profesor profesor1 = mock(Profesor.class);
+		when(profesor1.getEmail()).thenReturn("profesor1@unlam.com");
+
+		Profesor profesor2 = mock(Profesor.class);
+		when(profesor2.getEmail()).thenReturn(emailProfesorBuscado);
+
+		Profesor profesor3 = mock(Profesor.class);
+		when(profesor3.getEmail()).thenReturn("profesor3@unlam.com");
+
+		List<Profesor> profesores = Arrays.asList(profesor1, profesor2, profesor3);
+		when(alumnoMock.getProfesores()).thenReturn(profesores);
+
+		when(repositorioUsuarioMock.buscarPorId(alumnoId)).thenReturn(alumnoMock);
+
+		boolean resultado = servicioReservaAlumno.estaSuscritoAProfesor(alumnoId, emailProfesorBuscado);
+
+		assertTrue(resultado);
+		verify(repositorioUsuarioMock, times(1)).buscarPorId(alumnoId);
+	}
+
+
 }

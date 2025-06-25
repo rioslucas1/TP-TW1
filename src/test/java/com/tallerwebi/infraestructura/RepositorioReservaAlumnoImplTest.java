@@ -295,4 +295,7 @@ public class RepositorioReservaAlumnoImplTest {
         assertNotNull(resultado1);
         assertNotNull(resultado4);
     }
+
+
+
 }
