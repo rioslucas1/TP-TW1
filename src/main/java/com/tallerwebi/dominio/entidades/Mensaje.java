@@ -2,6 +2,7 @@ package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 public class Mensaje {
@@ -10,25 +11,20 @@ public class Mensaje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String emisor;
+    @ManyToOne
+    @JoinColumn(name = "alumno_id")
+    private Alumno alumno;
 
-    private String receptor;
+    @ManyToOne
+    @JoinColumn(name = "profesor_id")
+    private Profesor profesor;
 
     @Column(columnDefinition = "TEXT")
     private String contenido;
 
+    private String emisor; // "ALUMNO" o "PROFESOR"
+
     private LocalDateTime fecha;
-
-    // Getters y Setters
-
-
-    public String getEmisor() {
-        return emisor;
-    }
-
-    public void setEmisor(String emisor) {
-        this.emisor = emisor;
-    }
 
     public Long getId() {
         return id;
@@ -38,12 +34,20 @@ public class Mensaje {
         this.id = id;
     }
 
-    public String getReceptor() {
-        return receptor;
+    public Alumno getAlumno() {
+        return alumno;
     }
 
-    public void setReceptor(String receptor) {
-        this.receptor = receptor;
+    public void setAlumno(Alumno alumno) {
+        this.alumno = alumno;
+    }
+
+    public Profesor getProfesor() {
+        return profesor;
+    }
+
+    public void setProfesor(Profesor profesor) {
+        this.profesor = profesor;
     }
 
     public String getContenido() {
@@ -54,11 +58,28 @@ public class Mensaje {
         this.contenido = contenido;
     }
 
+    public String getEmisor() {
+        return emisor;
+    }
+
+    public void setEmisor(String emisor) {
+        this.emisor = emisor;
+    }
+
     public LocalDateTime getFecha() {
         return fecha;
     }
 
     public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
+    }
+
+    public String getFechaFormateada() {
+        if (fecha == null) return "";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return fecha.format(formatter);
+    }
+
+    public void setReceptor(String receptor) {
     }
 }

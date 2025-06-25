@@ -19,6 +19,7 @@ public interface RepositorioUsuario {
     Usuario buscarPorId(Long id);
     Profesor buscarProfesorConExperiencias(Long id);
     List<Profesor> obtenerProfesoresDeAlumno(Long alumnoId);
+    Usuario buscarPorNombre(String nombre);
 
 
 

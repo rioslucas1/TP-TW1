@@ -33,7 +33,7 @@
                         <strong th:text="${mensaje.emisor} + ':'"></strong>
                         <span th:text="${mensaje.contenido}"></span>
                         <br>
-                        <small th:text="${#dates.format(mensaje.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+                        <small th:text="${mensaje.fechaFormateada}"></small>
                     </p>
                     <hr>
                 </div>

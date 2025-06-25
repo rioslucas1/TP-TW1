@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository("repositorioUsuario")
+@Transactional
 public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
     private SessionFactory sessionFactory;
@@ -126,6 +128,15 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         return sessionFactory.getCurrentSession()
                 .createQuery("SELECT p FROM Profesor p LEFT JOIN FETCH p.experiencias WHERE p.id = :id", Profesor.class)
                 .setParameter("id", id)
+                .uniqueResult();
+    }
+
+    @Override
+    public Usuario buscarPorNombre(String nombre) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM Usuario WHERE nombre = :nombre";
+        return session.createQuery(hql, Usuario.class)
+                .setParameter("nombre", nombre)
                 .uniqueResult();
     }
 
