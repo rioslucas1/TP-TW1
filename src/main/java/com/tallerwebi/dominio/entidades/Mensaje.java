@@ -92,4 +92,8 @@ public class Mensaje {
         }
         return emisor; // fallback
     }
+
+    public String getReceptor() {
+        return "";
+    }
 }

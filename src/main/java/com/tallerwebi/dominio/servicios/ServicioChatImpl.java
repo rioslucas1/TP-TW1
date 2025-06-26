@@ -5,7 +5,6 @@ import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Mensaje;
 import com.tallerwebi.dominio.entidades.Profesor;
-import com.tallerwebi.dominio.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,7 @@ public class ServicioChatImpl implements ServicioChat {
     private final RepositorioUsuario repositorioUsuario;
 
     @Autowired
-    public ServicioChatImpl(RepositorioMensaje repositorioMensaje, RepositorioUsuario repositorioUsuario) {
+    public ServicioChatImpl(RepositorioMensaje repositorioMensaje) {
         this.repositorioMensaje = repositorioMensaje;
         this.repositorioUsuario = repositorioUsuario;
     }
