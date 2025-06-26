@@ -82,4 +82,14 @@ public class Mensaje {
 
     public void setReceptor(String receptor) {
     }
+
+    // Método nuevo para mostrar el nombre real del emisor
+    public String getNombreEmisor() {
+        if ("ALUMNO".equalsIgnoreCase(emisor) && alumno != null) {
+            return alumno.getNombre();
+        } else if ("PROFESOR".equalsIgnoreCase(emisor) && profesor != null) {
+            return profesor.getNombre();
+        }
+        return emisor; // fallback
+    }
 }
