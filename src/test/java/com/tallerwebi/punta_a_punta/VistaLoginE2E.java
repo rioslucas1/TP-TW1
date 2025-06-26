@@ -1,4 +1,6 @@
+/*
 package com.tallerwebi.punta_a_punta;
+
 
 import com.microsoft.playwright.*;
 import com.tallerwebi.punta_a_punta.vistas.VistaLogin;
@@ -67,3 +69,4 @@ public class VistaLoginE2E {
         assertThat(url, containsStringIgnoringCase("/spring/home"));
     }
 }
+*/

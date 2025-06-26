@@ -20,7 +20,7 @@ public class ServicioChatImpl implements ServicioChat {
     private final RepositorioUsuario repositorioUsuario;
 
     @Autowired
-    public ServicioChatImpl(RepositorioMensaje repositorioMensaje) {
+    public ServicioChatImpl(RepositorioMensaje repositorioMensaje, RepositorioUsuario repositorioUsuario) {
         this.repositorioMensaje = repositorioMensaje;
         this.repositorioUsuario = repositorioUsuario;
     }
@@ -34,15 +34,13 @@ public class ServicioChatImpl implements ServicioChat {
         Profesor profesor = repositorioUsuario.buscarProfesorPorNombre(emisorNombre);
 
         if (alumno != null) {
-            // El emisor es alumno, entonces el receptor es profesor:
-            mensaje.setAlumno(alumno);
             Profesor receptorProfesor = repositorioUsuario.buscarProfesorPorNombre(receptorNombre);
+            mensaje.setAlumno(alumno);
             mensaje.setProfesor(receptorProfesor);
             mensaje.setEmisor("ALUMNO");
         } else if (profesor != null) {
-            // El emisor es profesor, receptor es alumno:
-            mensaje.setProfesor(profesor);
             Alumno receptorAlumno = repositorioUsuario.buscarAlumnoPorNombre(receptorNombre);
+            mensaje.setProfesor(profesor);
             mensaje.setAlumno(receptorAlumno);
             mensaje.setEmisor("PROFESOR");
         }

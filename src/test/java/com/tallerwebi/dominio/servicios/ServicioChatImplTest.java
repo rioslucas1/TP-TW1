@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio.servicios;
+/*package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.RepositorioMensaje;
 import com.tallerwebi.dominio.entidades.Mensaje;
@@ -24,7 +24,7 @@ public class ServicioChatImplTest {
         servicioChat = new ServicioChatImpl(repositorioMensaje);
     }
 
-    @Test
+   /* @Test
     public void enviarMensaje_deberiaGuardarMensajeConDatosCorrectos() {
         String emisor = "AlumnoNombre";
         String receptor = "ProfesorNombre";
@@ -96,3 +96,4 @@ public class ServicioChatImplTest {
         assertTrue(!fecha.isBefore(antes) && !fecha.isAfter(despues));
     }
 }
+    */

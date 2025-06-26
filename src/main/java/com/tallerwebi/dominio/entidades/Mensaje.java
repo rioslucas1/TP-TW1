@@ -22,9 +22,12 @@ public class Mensaje {
     @Column(columnDefinition = "TEXT")
     private String contenido;
 
-    private String emisor; // "ALUMNO" o "PROFESOR"
+    private String emisor;   // ejemplo: "juan@unlam.edu.ar"
+    private String receptor; // ejemplo: "laura@unlam.edu.ar"
 
     private LocalDateTime fecha;
+
+    // === Getters y Setters ===
 
     public Long getId() {
         return id;
@@ -66,6 +69,14 @@ public class Mensaje {
         this.emisor = emisor;
     }
 
+    public String getReceptor() {
+        return receptor;
+    }
+
+    public void setReceptor(String receptor) {
+        this.receptor = receptor;
+    }
+
     public LocalDateTime getFecha() {
         return fecha;
     }
@@ -80,20 +91,13 @@ public class Mensaje {
         return fecha.format(formatter);
     }
 
-    public void setReceptor(String receptor) {
-    }
-
-    // Método nuevo para mostrar el nombre real del emisor
+    // Para mostrar el nombre del emisor (si es Alumno o Profesor)
     public String getNombreEmisor() {
         if ("ALUMNO".equalsIgnoreCase(emisor) && alumno != null) {
             return alumno.getNombre();
         } else if ("PROFESOR".equalsIgnoreCase(emisor) && profesor != null) {
             return profesor.getNombre();
         }
-        return emisor; // fallback
-    }
-
-    public String getReceptor() {
-        return "";
+        return emisor;
     }
 }
