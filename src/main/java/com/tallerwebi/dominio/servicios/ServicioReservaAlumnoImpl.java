@@ -1,8 +1,10 @@
 package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.RepositorioReservaAlumno;
+import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Clase;
+import com.tallerwebi.dominio.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -15,10 +17,12 @@ import java.util.List;
 public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
 
     private RepositorioReservaAlumno repositorioReservaAlumno;
+    private RepositorioUsuario repositorioUsuario;
 
     @Autowired
-    public ServicioReservaAlumnoImpl(RepositorioReservaAlumno repositorioReservaAlumno) {;
+    public ServicioReservaAlumnoImpl(RepositorioReservaAlumno repositorioReservaAlumno, RepositorioUsuario repositorioUsuario) {;
         this.repositorioReservaAlumno = repositorioReservaAlumno;
+        this.repositorioUsuario = repositorioUsuario;
     }
 
     @Override
@@ -78,7 +82,17 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
         return repositorioReservaAlumno.buscarPorId(disponibilidadId);
     }
 
+    @Override
+    public boolean estaSuscritoAProfesor(Long alumnoId, String emailProfesor) {
+        Usuario usuario = repositorioUsuario.buscarPorId(alumnoId);
+        if (!(usuario instanceof Alumno)) {
+            return false;
+        }
+        Alumno alumno = (Alumno) usuario;
 
+        return alumno.getProfesores().stream()
+                .anyMatch(profesor -> profesor.getEmail().equals(emailProfesor));
+}
 }
 
 

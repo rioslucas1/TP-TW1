@@ -327,7 +327,354 @@ import static org.mockito.Mockito.*;
 
             String email = "profesor@unlam.com";
             when(repositorioUsuarioMock.buscar(email)).thenThrow(new RuntimeException("Error de base de datos"));
-            ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor(email, requestMock);
+            ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor(email, false, requestMock);
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/verTutores"));
+        }
+
+
+
+
+        // tests para el feedback:
+
+
+
+        @Test
+        public void dejarFeedbackConAlumnoSuscritoDeberiaRetornarExito() {
+            Long profesorId = 2L;
+            Integer calificacion = 5;
+            String comentario = "Excelente profesor, muy didáctico";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(4.5);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(3);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Feedback enviado exitosamente"));
+            verify(servicioFeedbackMock, times(1)).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConTextoLargoDeberiaPermitirlo() {
+            Long profesorId = 2L;
+            Integer calificacion = 4;
+            String comentarioLargo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+                    "Nulla pulvinar posuere vulputate. Etiam ut fermentum elit. Morbi dignissim interdum pretium. Cras aliquet mi nibh, ac imperdiet mi pharetra a. Nam eget ipsum nunc. Vivamus vitae porttitor mi. Vivamus porttitor diam ligula, blandit consectetur odio dictum in. Proin sed metus id justo euismod condimentum sit amet quis felis.\n" +
+                    "\n" +
+                    "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse placerat, lectus sit amet tincidunt tempus, mauris eros dictum elit, sit amet dapibus ipsum ligula id tortor. Ut est lorem, tincidunt vel dui vehicula, commodo molestie metus. Sed in arcu non tellus ornare pulvinar. Etiam placerat sed lectus sed molestie. Vivamus eu aliquet lorem. Vestibulum lacus orci, viverra in sagittis nec, vestibulum in mauris. Ut tincidunt dui sem, id finibus nunc rhoncus id. Pellentesque nisi tortor, pellentesque ac mi non, consequat sollicitudin magna. Sed velit ligula, consequat in nisi pharetra, bibendum laoreet magna. " +
+                    "Donec vitae hendrerit tellus. Praesent a erat nec neque vehicula molestie.";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(4.0);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(1);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentarioLargo, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Feedback enviado exitosamente"));
+            verify(servicioFeedbackMock, times(1)).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConCaracteresEspecialesDeberiaPermitirlo() {
+            Long profesorId = 2L;
+            Integer calificacion = 3;
+            String comentarioConCaracteresEspeciales = "¡Excelente profesor! Muy buenas sus clases 👍. " +
+                    "Símbolos matemáticos: ∑, ∫, π, α, β, γ. " +
+                    "También menciona conceptos como: función f(x) = x² + 2x - 1. " +
+                    "Idiomas: español, inglés, françes, 中文. " +
+                    "Emojis: 📚📖✏️🎓💡⭐";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(3.5);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(2);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentarioConCaracteresEspeciales, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Feedback enviado exitosamente"));
+            verify(servicioFeedbackMock, times(1)).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConComentarioVacioDeberiaPermitirlo() {
+            Long profesorId = 2L;
+            Integer calificacion = 5;
+            String comentarioVacio = "";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(5.0);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(1);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentarioVacio, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Feedback enviado exitosamente"));
+            verify(servicioFeedbackMock, times(1)).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConComentarioSoloEspaciosDeberiaPermitirlo() {
+            Long profesorId = 2L;
+            Integer calificacion = 3;
+            String comentarioEspacios = "   ";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(3.0);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(1);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentarioEspacios, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Feedback enviado exitosamente"));
+            verify(servicioFeedbackMock, times(1)).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConSaltosDeLineaYTabulacionesDeberiaPermitirlo() {
+            Long profesorId = 2L;
+            Integer calificacion = 4;
+            String comentarioConFormato = "Excelente profesor.\n\nSus clases incluyen:\n\t- Teoría clara\n\t- Ejercicios prácticos\n\t- Ejemplos útiles\n\nLo recomiendo ampliamente.";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(4.0);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(1);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentarioConFormato, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Feedback enviado exitosamente"));
+            verify(servicioFeedbackMock, times(1)).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConCalificacionMinimaDeberiaPermitirlo() {
+            Long profesorId = 2L;
+            Integer calificacion = 1;
+            String comentario = "Necesita mejorar sus métodos de enseñanza";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(1.0);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(1);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Feedback enviado exitosamente"));
+            verify(servicioFeedbackMock, times(1)).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConCalificacionMaximaDeberiaPermitirlo() {
+            Long profesorId = 2L;
+            Integer calificacion = 5;
+            String comentario = "Excelente profesor, el mejor que he tenido";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(5.0);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(1);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("mensaje").toString(), equalToIgnoringCase("Feedback enviado exitosamente"));
+            verify(servicioFeedbackMock, times(1)).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConCalificacionCeroDeberiaRetornarError() {
+            Long profesorId = 2L;
+            Integer calificacion = 0;
+            String comentario = "Comentario de prueba";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(null);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(null);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("La calificación debe estar entre 1 y 5 estrellas"));
+            verify(servicioFeedbackMock, never()).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConCalificacionSeisDeberiaRetornarError() {
+            Long profesorId = 2L;
+            Integer calificacion = 6;
+            String comentario = "Comentario de prueba";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(null);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(null);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("La calificación debe estar entre 1 y 5 estrellas"));
+            verify(servicioFeedbackMock, never()).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConAlumnoNoSuscritoDeberiaRetornarError() {
+            Long profesorId = 2L;
+            Integer calificacion = 4;
+            String comentario = "Buen profesor";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(false);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(null);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(null);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Tenes que estar suscrito al profesor para poder dejar una reseña"));
+            verify(servicioFeedbackMock, never()).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConAlumnoQueYaDejoFeedbackDeberiaRetornarError() {
+            Long profesorId = 2L;
+            Integer calificacion = 4;
+            String comentario = "Buen profesor";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(profesorMock);
+            when(servicioSuscripcionMock.estaAlumnoSuscritoAProfesor(1L, profesorId)).thenReturn(true);
+            when(servicioFeedbackMock.alumnoYaDejoFeedback(1L, profesorId)).thenReturn(true);
+
+            when(servicioExperienciaMock.obtenerExperienciasPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(profesorId)).thenReturn(Arrays.asList());
+            when(servicioFeedbackMock.calcularPromedioCalificacion(profesorId)).thenReturn(4.0);
+            when(servicioFeedbackMock.contarFeedbackPorProfesor(profesorId)).thenReturn(1);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("verPerfilDeProfesor"));
+            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ya le dejaste feedback para este profesor."));
+            verify(servicioFeedbackMock, never()).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackSinUsuarioLogueadoDeberiaRedirigirALogin() {
+            Long profesorId = 2L;
+            Integer calificacion = 4;
+            String comentario = "Buen profesor";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Debes iniciar sesión para dejar feedback"));
+            verify(servicioFeedbackMock, never()).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConProfesorLogueadoDeberiaRedirigirALogin() {
+            Long profesorId = 2L;
+            Integer calificacion = 4;
+            String comentario = "Buen profe";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
+
+            assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+            assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Debes iniciar sesión para dejar feedback"));
+            verify(servicioFeedbackMock, never()).guardar(any(FeedbackProfesor.class));
+        }
+
+        @Test
+        public void dejarFeedbackConProfesorInexistenteDeberiaRedirigirAVerTutores() {
+            Long profesorId = 999L;
+            Integer calificacion = 4;
+            String comentario = "Buen profe";
+
+            when(requestMock.getSession()).thenReturn(sessionMock);
+            when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
+            when(repositorioUsuarioMock.buscarPorId(profesorId)).thenReturn(null);
+            ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/verTutores"));
         }
         @Test
@@ -413,5 +760,4 @@ import static org.mockito.Mockito.*;
 
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/verTutores"));
         }
-
-    }
+}

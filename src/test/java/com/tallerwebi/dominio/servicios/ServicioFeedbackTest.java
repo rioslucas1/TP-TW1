@@ -241,4 +241,105 @@ public class ServicioFeedbackTest {
         verify(repositorioFeedbackMock, times(1)).obtenerPorProfesorId(profesorId);
     }
 
+    // feedbacks:
+
+    @Test
+    public void contarFeedbackPorProfesorConFeedbacksValidosDeberiaRetornarCantidadCorrecta() {
+        Long profesorId = 1L;
+        FeedbackProfesor feedback1 = mock(FeedbackProfesor.class);
+        FeedbackProfesor feedback2 = mock(FeedbackProfesor.class);
+        FeedbackProfesor feedback3 = mock(FeedbackProfesor.class);
+        List<FeedbackProfesor> feedbacks = Arrays.asList(feedback1, feedback2, feedback3);
+
+        when(repositorioFeedbackMock.obtenerPorProfesorId(profesorId)).thenReturn(feedbacks);
+
+        Integer cantidad = servicioFeedback.contarFeedbackPorProfesor(profesorId);
+
+        assertNotNull(cantidad);
+        assertEquals(3, cantidad);
+        verify(repositorioFeedbackMock, times(1)).obtenerPorProfesorId(profesorId);
+    }
+
+    @Test
+    public void contarFeedbackPorProfesorSinFeedbacksDeberiaRetornarCero() {
+        Long profesorId = 1L;
+        when(repositorioFeedbackMock.obtenerPorProfesorId(profesorId)).thenReturn(Arrays.asList());
+
+        Integer cantidad = servicioFeedback.contarFeedbackPorProfesor(profesorId);
+
+        assertEquals(0, cantidad);
+        verify(repositorioFeedbackMock, times(1)).obtenerPorProfesorId(profesorId);
+    }
+
+    @Test
+    public void contarFeedbackPorProfesorConListaNullDeberiaRetornarCero() {
+        Long profesorId = 1L;
+        when(repositorioFeedbackMock.obtenerPorProfesorId(profesorId)).thenReturn(null);
+
+        Integer cantidad = servicioFeedback.contarFeedbackPorProfesor(profesorId);
+
+        assertEquals(0, cantidad);
+        verify(repositorioFeedbackMock, times(1)).obtenerPorProfesorId(profesorId);
+    }
+
+    @Test
+    public void alumnoYaDejoFeedbackCuandoExisteFeedbackDeberiaRetornarTrue() {
+        Long alumnoId = 1L;
+        Long profesorId = 2L;
+        when(repositorioFeedbackMock.existeFeedbackDeAlumnoParaProfesor(alumnoId, profesorId)).thenReturn(true);
+
+        boolean resultado = servicioFeedback.alumnoYaDejoFeedback(alumnoId, profesorId);
+
+        assertTrue(resultado);
+        verify(repositorioFeedbackMock, times(1)).existeFeedbackDeAlumnoParaProfesor(alumnoId, profesorId);
+    }
+
+    @Test
+    public void alumnoYaDejoFeedbackCuandoNoExisteFeedbackDeberiaRetornarFalse() {
+        Long alumnoId = 1L;
+        Long profesorId = 2L;
+        when(repositorioFeedbackMock.existeFeedbackDeAlumnoParaProfesor(alumnoId, profesorId)).thenReturn(false);
+
+        boolean resultado = servicioFeedback.alumnoYaDejoFeedback(alumnoId, profesorId);
+
+        assertFalse(resultado);
+        verify(repositorioFeedbackMock, times(1)).existeFeedbackDeAlumnoParaProfesor(alumnoId, profesorId);
+    }
+
+    @Test
+    public void buscarFeedbackDeAlumnoParaProfesorCuandoExisteDeberiaRetornarFeedback() {
+        Long alumnoId = 1L;
+        Long profesorId = 2L;
+        when(repositorioFeedbackMock.buscarPorAlumnoYProfesor(alumnoId, profesorId)).thenReturn(feedbackMock);
+
+        FeedbackProfesor resultado = servicioFeedback.buscarFeedbackDeAlumnoParaProfesor(alumnoId, profesorId);
+
+        assertNotNull(resultado);
+        assertEquals(feedbackMock, resultado);
+        verify(repositorioFeedbackMock, times(1)).buscarPorAlumnoYProfesor(alumnoId, profesorId);
+    }
+
+    @Test
+    public void buscarFeedbackDeAlumnoParaProfesorCuandoNoExisteDeberiaRetornarNull() {
+        Long alumnoId = 1L;
+        Long profesorId = 2L;
+        when(repositorioFeedbackMock.buscarPorAlumnoYProfesor(alumnoId, profesorId)).thenReturn(null);
+
+        FeedbackProfesor resultado = servicioFeedback.buscarFeedbackDeAlumnoParaProfesor(alumnoId, profesorId);
+
+        assertNull(resultado);
+        verify(repositorioFeedbackMock, times(1)).buscarPorAlumnoYProfesor(alumnoId, profesorId);
+    }
+
+    @Test
+    public void calcularPromedioCalificacionConListaNullDeberiaRetornarCero() {
+        Long profesorId = 1L;
+        when(repositorioFeedbackMock.obtenerPorProfesorId(profesorId)).thenReturn(null);
+
+        Double promedio = servicioFeedback.calcularPromedioCalificacion(profesorId);
+
+        assertEquals(0.0, promedio, 0.01);
+        verify(repositorioFeedbackMock, times(1)).obtenerPorProfesorId(profesorId);
+    }
+
 }

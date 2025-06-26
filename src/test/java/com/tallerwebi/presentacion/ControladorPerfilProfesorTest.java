@@ -588,6 +588,176 @@ public class ControladorPerfilProfesorTest {
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
     }
+
+
+    @Test
+    public void verPerfilProfesorConMultiplesFeedbacksDeberiaCalcularPromedioCorrectamente() {
+        when(profesorMock.getId()).thenReturn(1L);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarProfesorConExperiencias(1L)).thenReturn(profesorMock);
+
+        FeedbackProfesor feedback1 = mock(FeedbackProfesor.class);
+        FeedbackProfesor feedback2 = mock(FeedbackProfesor.class);
+        FeedbackProfesor feedback3 = mock(FeedbackProfesor.class);
+
+        List<FeedbackProfesor> feedbacks = Arrays.asList(feedback1, feedback2, feedback3);
+
+        when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(1L)).thenReturn(feedbacks);
+        when(servicioExperienciaMock.obtenerExperienciasPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioTemaMock.obtenerTodos()).thenReturn(new ArrayList<>());
+        when(servicioFeedbackMock.calcularPromedioCalificacion(1L)).thenReturn(4.2);
+        when(servicioFeedbackMock.contarFeedbackPorProfesor(1L)).thenReturn(3);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
+
+        assertEquals(feedbacks, modelAndView.getModel().get("feedbacks"));
+        assertEquals(4.2, modelAndView.getModel().get("promedioCalificacion"));
+        assertEquals(3, modelAndView.getModel().get("totalResenas"));
+    }
+
+    @Test
+    public void verPerfilProfesorConFeedbacksSinFechaDeberiaHandlearFechasNulas() {
+        when(profesorMock.getId()).thenReturn(1L);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarProfesorConExperiencias(1L)).thenReturn(profesorMock);
+
+        FeedbackProfesor feedbackSinFecha = mock(FeedbackProfesor.class);
+        when(feedbackSinFecha.getId()).thenReturn(1L);
+        when(feedbackSinFecha.getFechaCreacion()).thenReturn(null);
+
+        List<FeedbackProfesor> feedbacks = Arrays.asList(feedbackSinFecha);
+
+        when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(1L)).thenReturn(feedbacks);
+        when(servicioExperienciaMock.obtenerExperienciasPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioTemaMock.obtenerTodos()).thenReturn(new ArrayList<>());
+        when(servicioFeedbackMock.calcularPromedioCalificacion(1L)).thenReturn(0.0);
+        when(servicioFeedbackMock.contarFeedbackPorProfesor(1L)).thenReturn(1);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
+
+        Map<Long, String> fechasFormateadas = (Map<Long, String>) modelAndView.getModel().get("fechasFormateadas");
+        assertEquals("", fechasFormateadas.get(1L));
+    }
+
+    @Test
+    public void verPerfilProfesorConFeedbacksConFechaValidaDeberiaFormatearFechaCorrectamente() {
+        when(profesorMock.getId()).thenReturn(1L);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarProfesorConExperiencias(1L)).thenReturn(profesorMock);
+
+        FeedbackProfesor feedbackConFecha = mock(FeedbackProfesor.class);
+        when(feedbackConFecha.getId()).thenReturn(1L);
+        when(feedbackConFecha.getFechaCreacion()).thenReturn(LocalDateTime.of(2025, 6, 25, 10, 30));
+
+        List<FeedbackProfesor> feedbacks = Arrays.asList(feedbackConFecha);
+
+        when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(1L)).thenReturn(feedbacks);
+        when(servicioExperienciaMock.obtenerExperienciasPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioTemaMock.obtenerTodos()).thenReturn(new ArrayList<>());
+        when(servicioFeedbackMock.calcularPromedioCalificacion(1L)).thenReturn(5.0);
+        when(servicioFeedbackMock.contarFeedbackPorProfesor(1L)).thenReturn(1);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
+
+        Map<Long, String> fechasFormateadas = (Map<Long, String>) modelAndView.getModel().get("fechasFormateadas");
+        assertEquals("25/06/2025", fechasFormateadas.get(1L));
+    }
+
+    @Test
+    public void verPerfilProfesorConPromedioNuloDeberiaAsignarCeroComoPromedio() {
+        when(profesorMock.getId()).thenReturn(1L);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarProfesorConExperiencias(1L)).thenReturn(profesorMock);
+
+        when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioExperienciaMock.obtenerExperienciasPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioTemaMock.obtenerTodos()).thenReturn(new ArrayList<>());
+        when(servicioFeedbackMock.calcularPromedioCalificacion(1L)).thenReturn(null);
+        when(servicioFeedbackMock.contarFeedbackPorProfesor(1L)).thenReturn(null);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
+
+        assertEquals(0.0, modelAndView.getModel().get("promedioCalificacion"));
+        assertEquals(0, modelAndView.getModel().get("totalResenas"));
+    }
+
+    @Test
+    public void verPerfilProfesorConFeedbacksVariadosDeberiaIncluirTodasLasFechasFormateadas() {
+        when(profesorMock.getId()).thenReturn(1L);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarProfesorConExperiencias(1L)).thenReturn(profesorMock);
+
+        FeedbackProfesor feedback1 = mock(FeedbackProfesor.class);
+        FeedbackProfesor feedback2 = mock(FeedbackProfesor.class);
+        FeedbackProfesor feedback3 = mock(FeedbackProfesor.class);
+
+        when(feedback1.getId()).thenReturn(1L);
+        when(feedback1.getFechaCreacion()).thenReturn(LocalDateTime.of(2025, 6, 25, 9, 0));
+
+        when(feedback2.getId()).thenReturn(2L);
+        when(feedback2.getFechaCreacion()).thenReturn(null);
+
+        when(feedback3.getId()).thenReturn(3L);
+        when(feedback3.getFechaCreacion()).thenReturn(LocalDateTime.of(2025, 12, 25, 18, 45));
+
+        List<FeedbackProfesor> feedbacks = Arrays.asList(feedback1, feedback2, feedback3);
+
+        when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(1L)).thenReturn(feedbacks);
+        when(servicioExperienciaMock.obtenerExperienciasPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioTemaMock.obtenerTodos()).thenReturn(new ArrayList<>());
+        when(servicioFeedbackMock.calcularPromedioCalificacion(1L)).thenReturn(4.5);
+        when(servicioFeedbackMock.contarFeedbackPorProfesor(1L)).thenReturn(3);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
+
+        Map<Long, String> fechasFormateadas = (Map<Long, String>) modelAndView.getModel().get("fechasFormateadas");
+        assertEquals("25/06/2025", fechasFormateadas.get(1L));
+        assertEquals("", fechasFormateadas.get(2L));
+        assertEquals("25/12/2025", fechasFormateadas.get(3L));
+        assertEquals(3, fechasFormateadas.size());
+    }
+
+    @Test
+    public void verPerfilProfesorConPromedioDecimalDeberiaConservarDecimales() {
+        when(profesorMock.getId()).thenReturn(1L);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarProfesorConExperiencias(1L)).thenReturn(profesorMock);
+
+        when(servicioFeedbackMock.obtenerFeedbacksPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioExperienciaMock.obtenerExperienciasPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioTemaMock.obtenerTodos()).thenReturn(new ArrayList<>());
+        when(servicioFeedbackMock.calcularPromedioCalificacion(1L)).thenReturn(3.75);
+        when(servicioFeedbackMock.contarFeedbackPorProfesor(1L)).thenReturn(8);
+
+        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
+
+        assertEquals(3.75, modelAndView.getModel().get("promedioCalificacion"));
+        assertEquals(8, modelAndView.getModel().get("totalResenas"));
+    }
+
+    @Test
+    public void verPerfilProfesorEnModoEdicionNoDeberiaMostrarFeedbacks() {
+        when(profesorMock.getId()).thenReturn(1L);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
+        when(repositorioUsuarioMock.buscarProfesorConExperiencias(1L)).thenReturn(profesorMock);
+
+        when(servicioExperienciaMock.obtenerExperienciasPorProfesor(1L)).thenReturn(new ArrayList<>());
+        when(servicioTemaMock.obtenerTodos()).thenReturn(new ArrayList<>());
+
+        ModelAndView modelAndView = controladorPerfilProfesor.editarPerfilProfesor(requestMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("verMiPerfilProfesor"));
+        assertTrue((Boolean) modelAndView.getModel().get("esEdicion"));
+        assertNull(modelAndView.getModel().get("feedbacks"));
+        assertNull(modelAndView.getModel().get("promedioCalificacion"));
+        assertNull(modelAndView.getModel().get("totalResenas"));
+        assertNull(modelAndView.getModel().get("fechasFormateadas"));
+
+        verify(servicioFeedbackMock, never()).obtenerFeedbacksPorProfesor(any());
+        verify(servicioFeedbackMock, never()).calcularPromedioCalificacion(any());
+        verify(servicioFeedbackMock, never()).contarFeedbackPorProfesor(any());
+    }
+
     @Test
     public void actualizarPerfilProfesorConTemaNullNoDeberiaModificarTema() {
         when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
@@ -780,6 +950,4 @@ public class ControladorPerfilProfesorTest {
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
         verify(servicioExperienciaMock).eliminar(25L);
     }
-
-
 }

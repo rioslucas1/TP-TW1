@@ -47,9 +47,8 @@ public class ControladorReservaAlumno {
 
 
         Alumno alumno = (Alumno) usuario;
-        if (!estaSuscritoAProfesor(alumno, emailProfesor)) {
-
-            modelo.put("error", "No tienes acceso al calendario de este profesor");
+        if (!servicioReservaAlumno.estaSuscritoAProfesor(alumno.getId(), emailProfesor)) {
+            modelo.put("error", "No tenes acceso al calendario de este profesor");
             return new ModelAndView("redirect:/home");
         }
 
@@ -224,19 +223,5 @@ public class ControladorReservaAlumno {
         Clase disponibilidad = servicioReservaAlumno.obtenerDisponibilidadPorId(disponibilidadId);
         return disponibilidad != null ? disponibilidad.getEnlace_meet() : null;
     }
-
-    private boolean estaSuscritoAProfesor(Alumno alumno, String emailProfesor) {
-        try {
-            return alumno.getProfesores().stream()
-                    .anyMatch(profesor -> profesor.getEmail().equals(emailProfesor));
-        } catch (Exception e) {
-            System.err.println("Error al verificar suscripción: " + e.getMessage());
-            return false;
-        }
-
-
-
-
-    }
-
+    
 }

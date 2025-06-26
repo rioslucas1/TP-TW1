@@ -296,8 +296,6 @@ public class RepositorioReservaAlumnoImplTest {
         assertNotNull(resultado4);
     }
 
-
-
     @Test
     @Rollback
     public void guardarDisponibilidadConFechaEspecificaYRecuperarla() {
@@ -332,5 +330,4 @@ public class RepositorioReservaAlumnoImplTest {
         assertEquals(EstadoDisponibilidad.OCUPADO, actualizada.getEstado());
         assertNull(actualizada.getAlumno());
     }
-
 }
