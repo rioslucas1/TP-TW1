@@ -156,7 +156,9 @@ public class ControladorTutores {
         }
     }
 
+
     @RequestMapping(value = "/editarFeedback", method = RequestMethod.POST)
+    @Transactional
     public ModelAndView editarFeedback(@RequestParam Long profesorId, HttpServletRequest request) {
         try {
             Usuario usuarioLogueado = validarUsuarioLogueado(request);
@@ -223,12 +225,25 @@ public class ControladorTutores {
         }
     }
 
-    @RequestMapping(value = "/cancelarEdicionFeedback", method = RequestMethod.POST)
-    public ModelAndView cancelarEdicionFeedback(@RequestParam Long profesorId) {
-        Profesor profesor = (Profesor) repositorioUsuario.buscarPorId(profesorId);
-        return new ModelAndView("redirect:/verPerfilDeProfesor?email=" + profesor.getEmail());
-    }
 
+    @RequestMapping(value = "/cancelarEdicionFeedback", method = RequestMethod.POST)
+    public ModelAndView cancelarEdicionFeedback(@RequestParam Long profesorId, HttpServletRequest request) {
+        try {
+            Usuario usuarioLogueado = validarUsuarioLogueado(request);
+            if (usuarioLogueado == null) {
+                return redirigirALogin("Debes iniciar sesión para cancelar la edición");
+            }
+            Profesor profesor = (Profesor) repositorioUsuario.buscarPorId(profesorId);
+            if (profesor == null) {
+                return new ModelAndView("redirect:/verTutores");
+            }
+            return construirVistaPerfilProfesor(profesor, usuarioLogueado, false, null, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return manejarErrorYVolverATutores("Error al cancelar la edición del feedback");
+        }
+    }
     @RequestMapping(value = "/borrarFeedback", method = RequestMethod.POST)
     @Transactional
     public ModelAndView borrarFeedback(@RequestParam Long profesorId,
