@@ -432,6 +432,8 @@ public class ControladorLoginTest {
 	@Test
 	public void procesarRegistroProfesorConDatosValidosDeberiaRegistrarYRedirigirALogin() throws UsuarioExistente {
 		DatosRegistroProfesor datosProfesor = new DatosRegistroProfesor("Profesor", "apellido", "profesor@test.com", "12345", 1L);
+		datosProfesor.setLatitud(-34.6);
+		datosProfesor.setLongitud(-58.4);
 		Long temaId = 1L;
 
 		when(servicioTemaMock.obtenerPorId(temaId)).thenReturn(temaMock);
@@ -460,6 +462,8 @@ public class ControladorLoginTest {
 	public void procesarRegistroProfesorConEmailInvalidoDeberiaVolverAFormularioConError() {
 		DatosRegistroProfesor datosProfesor = new DatosRegistroProfesor("Profesor", "apellido", "profetest.com", "12345", 1L);
 		datosProfesor.setTemaId(1L);
+		datosProfesor.setLatitud(-34.6037);
+		datosProfesor.setLongitud(-58.3816);
 		List<Tema> temasMock = Arrays.asList(temaMock);
 		when(servicioTemaMock.obtenerTodos()).thenReturn(temasMock);
 

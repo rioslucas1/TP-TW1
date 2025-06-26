@@ -204,6 +204,13 @@ public class ControladorLogin {
             return new ModelAndView("registrar-profesor", model);
         }
 
+        if (datosRegistroProfesor.getLatitud() == null || datosRegistroProfesor.getLongitud() == null) {
+            model.put("error", "Debe seleccionar una ubicación en el mapa");
+            model.put("temas", servicioTema.obtenerTodos());
+            return new ModelAndView("registrar-profesor", model);
+        }
+
+
         String errorEmail = validarEmail(datosRegistroProfesor.getEmail());
         if (errorEmail != null) {
             model.put("error", errorEmail);
@@ -220,6 +227,9 @@ public class ControladorLogin {
             nuevoProfesor.setPassword(datosRegistroProfesor.getPassword());
             nuevoProfesor.setActivo(true);
             nuevoProfesor.setTema(servicioTema.obtenerPorId(datosRegistroProfesor.getTemaId()));
+            nuevoProfesor.setLatitud(datosRegistroProfesor.getLatitud());
+            nuevoProfesor.setLongitud(datosRegistroProfesor.getLongitud());
+// lo registro con los datos
             servicioLogin.registrar(nuevoProfesor);
         } catch (UsuarioExistente e) {
             model.put("error", "El correo ya está registrado");
