@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository("repositorioUsuario")
+@Transactional
 public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
     private SessionFactory sessionFactory;
@@ -127,6 +129,33 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
                 .createQuery("SELECT p FROM Profesor p LEFT JOIN FETCH p.experiencias WHERE p.id = :id", Profesor.class)
                 .setParameter("id", id)
                 .uniqueResult();
+    }
+
+    @Override
+    public Usuario buscarPorNombre(String nombre) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM Usuario WHERE nombre = :nombre";
+        return session.createQuery(hql, Usuario.class)
+                .setParameter("nombre", nombre)
+                .uniqueResult();
+    }
+
+    @Override
+    public Alumno buscarAlumnoPorNombre(String nombre) {
+        String hql = "FROM Alumno a WHERE a.nombre = :nombre";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("nombre", nombre);
+        List<Alumno> resultados = query.getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
+
+    @Override
+    public Profesor buscarProfesorPorNombre(String nombre) {
+        String hql = "FROM Profesor p WHERE p.nombre = :nombre";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("nombre", nombre);
+        List<Profesor> resultados = query.getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
     }
 
 }
