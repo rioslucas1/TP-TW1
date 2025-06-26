@@ -14,7 +14,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/profesor")
@@ -59,6 +62,17 @@ public class ControladorPerfilProfesor {
         Double promedioCalificacion = servicioFeedback.calcularPromedioCalificacion(profesor.getId());
         Integer totalFeedback = servicioFeedback.contarFeedbackPorProfesor(profesor.getId());
 
+        Map<Long, String> fechasFormateadas = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        for (FeedbackProfesor feedback : feedbacks) {
+            if (feedback.getFechaCreacion() != null) {
+                fechasFormateadas.put(feedback.getId(), feedback.getFechaCreacion().format(formatter));
+            } else {
+                fechasFormateadas.put(feedback.getId(), "");
+            }
+        }
+
         modelo.put("profesor", profesor);
         modelo.put("feedbacks", feedbacks);
         modelo.put("experiencias", experiencias);
@@ -66,6 +80,7 @@ public class ControladorPerfilProfesor {
         modelo.put("promedioCalificacion", promedioCalificacion != null ? promedioCalificacion : 0.0);
         modelo.put("totalResenas", totalFeedback != null ? totalFeedback : 0);
         modelo.put("esEdicion", false);
+        modelo.put("fechasFormateadas", fechasFormateadas);
 
         return new ModelAndView("verMiPerfilProfesor", modelo);
     }
@@ -302,6 +317,8 @@ public class ControladorPerfilProfesor {
             return false;
         }
     }
+
+
 
 
 
