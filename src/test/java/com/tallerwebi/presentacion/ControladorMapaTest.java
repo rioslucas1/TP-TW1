@@ -1,5 +1,6 @@
 package com.tallerwebi.presentacion;
 
+
 import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Tema;
 import com.tallerwebi.dominio.servicios.ServicioMapa;
@@ -118,4 +119,74 @@ public class ControladorMapaTest {
         assertThat(dato.getLongitud(), is(0.0));
         assertThat(dato.getTema(), equalTo("Programación"));
     }
+
+    
+   @Test
+    public void deberiaIgnorarProfesorConApellidoNulo() {
+    Profesor profesor = mock(Profesor.class);
+    Tema temaMock = mock(Tema.class);
+
+    when(profesor.getNombre()).thenReturn("Nombre");
+    when(profesor.getApellido()).thenReturn(null);
+    when(profesor.getTema()).thenReturn(temaMock);
+    when(profesor.getLatitud()).thenReturn(-34.5);
+    when(profesor.getLongitud()).thenReturn(-58.4);
+
+    when(servicioMapaMock.obtenerProfesores()).thenReturn(List.of(profesor));
+
+    ModelAndView modelAndView = controladorMapa.irVerMapa();
+    List<DatosMapa> datosMapa = (List<DatosMapa>) modelAndView.getModel().get("datosProfesores");
+
+    assertThat(datosMapa, hasSize(1));
+    assertThat(datosMapa.get(0).getApellido(), anyOf(isEmptyOrNullString(), nullValue()));
+}
+
+
+
+
+    @Test
+    public void deberiaMostrarCorrectamenteProfesorConCaracteresEspeciales() {
+    Profesor profesor = mock(Profesor.class);
+    Tema temaMock = mock(Tema.class);
+
+    when(profesor.getNombre()).thenReturn("José María");
+    when(profesor.getApellido()).thenReturn("Gómez-Álvarez");
+    when(profesor.getTema()).thenReturn(temaMock);
+    when(profesor.getLatitud()).thenReturn(-34.7);
+    when(profesor.getLongitud()).thenReturn(-58.5);
+
+    when(servicioMapaMock.obtenerProfesores()).thenReturn(List.of(profesor));
+
+    ModelAndView modelAndView = controladorMapa.irVerMapa();
+
+    List<DatosMapa> datos = (List<DatosMapa>) modelAndView.getModel().get("datosProfesores");
+
+    assertThat(datos, hasSize(1));
+    assertThat(datos.get(0).getNombre(), equalTo("José María"));
+    assertThat(datos.get(0).getApellido(), equalTo("Gómez-Álvarez"));
+    }
+
+    @Test
+    public void deberiaIgnorarProfesorConNombreNulo() {
+    Profesor profesor = mock(Profesor.class);
+    Tema temaMock = mock(Tema.class);
+
+    when(profesor.getNombre()).thenReturn(null);
+    when(profesor.getApellido()).thenReturn("Apellido");
+    when(profesor.getTema()).thenReturn(temaMock);
+    when(profesor.getLatitud()).thenReturn(-34.5);
+    when(profesor.getLongitud()).thenReturn(-58.4);
+
+    when(servicioMapaMock.obtenerProfesores()).thenReturn(List.of(profesor));
+
+    ModelAndView modelAndView = controladorMapa.irVerMapa();
+    List<DatosMapa> datosMapa = (List<DatosMapa>) modelAndView.getModel().get("datosProfesores");
+
+    assertThat(datosMapa, hasSize(1));
+    assertThat(datosMapa.get(0).getNombre(), anyOf(isEmptyOrNullString(), nullValue()));
+    }
+
+
+
+
 }

@@ -22,7 +22,8 @@ public class FeedbackProfesor {
     @Column(nullable = false)
     private Integer calificacion;
 
-    @Column
+    @Lob
+    @Column(name = "comentario")
     private String comentario;
 
     @Column(name = "fecha_creacion", nullable = false)

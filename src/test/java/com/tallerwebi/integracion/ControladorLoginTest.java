@@ -78,4 +78,24 @@ public class ControladorLoginTest {
 
 	}
 
+
+	@Test
+	public void siUsuarioDeberiaRedirigirAHome() throws Exception {
+		when(usuarioMock.getRol()).thenReturn("usuario");
+
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
+				.defaultRequest(get("/home").sessionAttr("USUARIO", usuarioMock))
+				.build();
+
+		MvcResult result = this.mockMvc.perform(get("/home"))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ModelAndView modelAndView = result.getModelAndView();
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("home"));
+		assertThat(modelAndView.getModel().get("rol").toString(), equalToIgnoringCase("usuario"));
+	}
+
+
+
 }

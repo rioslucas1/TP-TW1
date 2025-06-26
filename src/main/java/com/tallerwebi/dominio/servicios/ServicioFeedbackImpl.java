@@ -68,4 +68,15 @@ public class ServicioFeedbackImpl implements ServicioFeedback {
         return repositorioFeedback.obtenerTodos();
     }
 
+    @Override
+    public boolean alumnoYaDejoFeedback(Long alumnoId, Long profesorId) {
+        return repositorioFeedback.existeFeedbackDeAlumnoParaProfesor(alumnoId, profesorId);
+    }
+
+    @Override
+    public FeedbackProfesor buscarFeedbackDeAlumnoParaProfesor(Long alumnoId, Long profesorId) {
+        return repositorioFeedback.buscarPorAlumnoYProfesor(alumnoId, profesorId);
+    }
+
+
 }

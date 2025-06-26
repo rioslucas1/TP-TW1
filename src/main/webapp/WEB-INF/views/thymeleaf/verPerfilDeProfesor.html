@@ -65,7 +65,6 @@
     </nav>
 </header>
 
-<!-- Profile Header -->
 <div class="profile-header">
     <div class="container">
         <div class="row align-items-center">
@@ -127,7 +126,6 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-8">
-            <!-- Información Personal -->
             <div class="card profile-card">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -172,8 +170,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Formación Académica -->
             <div class="card profile-card">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -197,8 +193,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Reseñas de Alumnos -->
             <div class="card profile-card">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -207,37 +201,221 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div th:if="${feedbacks != null && !feedbacks.isEmpty()}">
-                        <div th:each="feedback : ${feedbacks}" class="border rounded p-3 mb-3">
+
+                    <!-- Alertas de estado -->
+                    <div th:if="${nombreUsuario != null && yaDejoFeedback}" class="alert alert-info" role="alert">
+                        <i class='bx bx-info-circle me-2'></i>
+                        Ya le dejaste una reseña a este profesor.
+                    </div>
+
+                    <div th:if="${nombreUsuario != null && !yaSuscripto}" class="alert alert-warning" role="alert">
+                        <i class='bx bx-user-plus me-2'></i>
+                        Tenes que estar suscrito al profesor para poder dejar una reseña.
+                        <form th:action="@{/suscribirseAProfesor}" method="post" class="d-inline ms-2">
+                            <input type="hidden" name="profesorId" th:value="${profesor.id}" />
+                            <button type="submit" class="btn btn-sm btn-success">
+                                <i class='bx bx-plus'></i> Suscribirse ahora
+                            </button>
+                        </form>
+                    </div>
+
+                    <div th:if="${nombreUsuario == null}" class="alert alert-warning" role="alert">
+                        <i class='bx bx-user me-2'></i>
+                        <a th:href="@{/login}" class="alert-link">Inicia sesión</a> para dejar una reseña.
+                    </div>
+
+                    <!-- Formulario para crear nuevo feedback -->
+                    <div th:if="${nombreUsuario != null && yaSuscripto && !yaDejoFeedback}" class="card mt-3 border-success">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0">
+                                <i class='bx bx-plus me-2'></i>
+                                Dejar una reseña
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/dejarFeedback}" method="post">
+                                <input type="hidden" name="profesorId" th:value="${profesor.id}" />
+
+                                <div class="mb-3">
+                                    <label for="calificacion" class="form-label">Calificación:</label>
+                                    <div class="rating-input">
+                                        <input type="radio" name="calificacion" value="1" id="star1" required>
+                                        <label for="star1" class="star-label"><i class='bx bxs-star'></i></label>
+
+                                        <input type="radio" name="calificacion" value="2" id="star2" required>
+                                        <label for="star2" class="star-label"><i class='bx bxs-star'></i></label>
+
+                                        <input type="radio" name="calificacion" value="3" id="star3" required>
+                                        <label for="star3" class="star-label"><i class='bx bxs-star'></i></label>
+
+                                        <input type="radio" name="calificacion" value="4" id="star4" required>
+                                        <label for="star4" class="star-label"><i class='bx bxs-star'></i></label>
+
+                                        <input type="radio" name="calificacion" value="5" id="star5" required>
+                                        <label for="star5" class="star-label"><i class='bx bxs-star'></i></label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comentario" class="form-label">Comentario (opcional):</label>
+                                    <textarea name="comentario" id="comentario" class="form-control" rows="3"
+                                              placeholder="Comparte tu experiencia con este profesor..."></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-success">
+                                    <i class='bx bx-send me-2'></i>
+                                    Enviar Reseña
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Mostrar feedback del usuario actual (solo una vez) -->
+                    <div th:if="${nombreUsuario != null && yaDejoFeedback && !editandoFeedback && feedbackUsuario != null}" class="card mt-3 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0">
+                                <i class='bx bx-user me-2'></i>
+                                Tu reseña
+                            </h6>
+                        </div>
+                        <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
                                     <div class="d-flex align-items-center mb-1">
-                                        <span class="fw-bold me-2" th:text="${feedback.estudiante.nombre + ' ' + feedback.estudiante.apellido}">Nombre Estudiante</span>
+                                        <span class="fw-bold me-2" th:text="${feedbackUsuario.nombreEstudiante}">Tu nombre</span>
+                                        <div class="stars-rating">
+                                            <i th:each="star : ${#numbers.sequence(1, 5)}"
+                                               class='bx'
+                                               th:classappend="${star <= feedbackUsuario.calificacion} ? 'bxs-star text-warning' : 'bx-star text-muted'"></i>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted" th:text="${feedbackUsuario.fechaFormateada}">Fecha</small>
+                                </div>
+                                <div class="btn-group">
+                                    <form th:action="@{/editarFeedback}" method="post" class="d-inline">
+                                        <input type="hidden" name="profesorId" th:value="${profesor.id}" />
+                                        <input type="hidden" name="modoEdicion" value="true" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                                            <i class='bx bx-edit me-1'></i>
+                                            Editar
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/borrarFeedback}" method="post" class="d-inline ms-1"
+                                          onsubmit="return confirm('¿Estás seguro de que quieres eliminar tu reseña?')">
+                                        <input type="hidden" name="profesorId" th:value="${profesor.id}" />
+                                        <input type="hidden" name="feedbackId" th:value="${feedbackUsuario.id}" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class='bx bx-trash me-1'></i>
+                                            Borrar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <p th:if="${feedbackUsuario.comentario != null && !feedbackUsuario.comentario.isEmpty()}"
+                               class="mb-0 text-muted" th:text="${feedbackUsuario.comentario}">Tu comentario</p>
+                            <p th:if="${feedbackUsuario.comentario == null || feedbackUsuario.comentario.isEmpty()}"
+                               class="mb-0 text-muted fst-italic">Sin comentario</p>
+                        </div>
+                    </div>
+
+                    <div th:if="${nombreUsuario != null && yaDejoFeedback && editandoFeedback && feedbackUsuario != null}" class="card mt-3">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0">
+                                <i class='bx bx-edit me-2'></i>
+                                Editar tu reseña
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/actualizarFeedback}" method="post">
+                                <input type="hidden" name="profesorId" th:value="${profesor.id}" />
+                                <input type="hidden" name="feedbackId" th:value="${feedbackUsuario.id}" />
+
+                                <div class="mb-3">
+                                    <label for="calificacionEdit" class="form-label">Calificación:</label>
+                                    <div class="rating-input">
+                                        <input type="radio" name="calificacion" value="1" id="editStar1"
+                                               th:checked="${feedbackUsuario.calificacion == 1}" required>
+                                        <label for="editStar1" class="star-label"><i class='bx bxs-star'></i></label>
+
+                                        <input type="radio" name="calificacion" value="2" id="editStar2"
+                                               th:checked="${feedbackUsuario.calificacion == 2}" required>
+                                        <label for="editStar2" class="star-label"><i class='bx bxs-star'></i></label>
+
+                                        <input type="radio" name="calificacion" value="3" id="editStar3"
+                                               th:checked="${feedbackUsuario.calificacion == 3}" required>
+                                        <label for="editStar3" class="star-label"><i class='bx bxs-star'></i></label>
+
+                                        <input type="radio" name="calificacion" value="4" id="editStar4"
+                                               th:checked="${feedbackUsuario.calificacion == 4}" required>
+                                        <label for="editStar4" class="star-label"><i class='bx bxs-star'></i></label>
+
+                                        <input type="radio" name="calificacion" value="5" id="editStar5"
+                                               th:checked="${feedbackUsuario.calificacion == 5}" required>
+                                        <label for="editStar5" class="star-label"><i class='bx bxs-star'></i></label>
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="comentarioEdit" class="form-label">Comentario (opcional):</label>
+                                    <textarea name="comentario" id="comentarioEdit" class="form-control" rows="3"
+                                              th:text="${feedbackUsuario.comentario}"
+                                              placeholder="Comparte tu experiencia con este profesor..."></textarea>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class='bx bx-check me-2'></i>
+                                        Actualizar Reseña
+                                    </button>
+                                    <form th:action="@{/cancelarEdicionFeedback}" method="post" class="d-inline">
+                                        <input type="hidden" name="profesorId" th:value="${profesor.id}" />
+                                        <button type="submit" class="btn btn-secondary">
+                                            <i class='bx bx-x me-2'></i>
+                                            Cancelar
+                                        </button>
+                                    </form>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div th:if="${feedbacks != null && !feedbacks.isEmpty()}">
+                        <h6 class="mb-3 mt-4">
+                            <span th:if="${nombreUsuario != null}">Reseñas de otros estudiantes:</span>
+                            <span th:if="${nombreUsuario == null}">Reseñas de estudiantes:</span>
+                        </h6>
+                        <div th:each="feedback : ${feedbacks}"
+                             th:if="${usuarioId == null || !feedback.alumno.id.equals(usuarioId)}"
+                             class="border rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span class="fw-bold me-2" th:text="${feedback.nombreEstudiante}">Nombre Estudiante</span>
                                         <div class="stars-rating">
                                             <i th:each="star : ${#numbers.sequence(1, 5)}"
                                                class='bx'
                                                th:classappend="${star <= feedback.calificacion} ? 'bxs-star text-warning' : 'bx-star text-muted'"></i>
                                         </div>
                                     </div>
-                                    <small class="text-muted" th:text="${feedback.fecha}">Fecha</small>
+                                    <small class="text-muted" th:text="${feedback.fechaFormateada}">Fecha</small>
                                 </div>
                             </div>
-                            <p th:if="${feedback.descripcion != null && !feedback.descripcion.isEmpty()}"
-                               class="mb-0 text-muted" th:text="${feedback.descripcion}">Descripción de la reseña</p>
+                            <p th:if="${feedback.comentario != null && !feedback.comentario.isEmpty()}"
+                               class="mb-0 text-muted" th:text="${feedback.comentario}">Comentario de la reseña</p>
+                            <p th:if="${feedback.comentario == null || feedback.comentario.isEmpty()}"
+                               class="mb-0 text-muted fst-italic">Sin comentario</p>
                         </div>
                     </div>
-                    <div th:if="${feedbacks == null || feedbacks.isEmpty()}"
+                    <div th:if="${(feedbacks == null || feedbacks.isEmpty()) || (feedbacks.size() == 1 && yaDejoFeedback)}"
                          class="text-muted text-center py-4">
                         <i class='bx bx-star bx-lg'></i>
-                        <p class="mt-2">Aún no hay reseñas para este profesor</p>
+                        <p class="mt-2" th:if="${!yaDejoFeedback}">Aún no hay reseñas para este profesor</p>
+                        <p class="mt-2" th:if="${yaDejoFeedback && (feedbacks == null || feedbacks.size() <= 1)}">No hay otras reseñas para este profesor</p>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Sidebar -->
         <div class="col-lg-4">
-            <!-- Estadísticas -->
             <div class="card profile-card">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -260,8 +438,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Acciones -->
             <div class="card profile-card">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -284,8 +460,6 @@
                     </a>
                 </div>
             </div>
-
-            <!-- Volver -->
             <div class="card profile-card">
                 <div class="card-body text-center">
                     <a th:href="@{/verTutores}" class="btn btn-outline-secondary">
@@ -299,5 +473,8 @@
 </div>
 
 <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script>
+
+</script>
 </body>
 </html>

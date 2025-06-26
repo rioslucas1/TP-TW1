@@ -491,4 +491,144 @@ public class RepositorioUsuarioImplTest {
         assertThat(clases.size(), equalTo(1));
         assertThat(clases.get(0).getFechaEspecifica(), equalTo(LocalDate.now().plusDays(1)));
     }
+
+    @Test
+    @Rollback
+    public void cuandoGuardoDosUsuariosConElMismoEmailEntoncesLanzaExcepcion() {
+        Alumno alumno1 = new Alumno();
+        alumno1.setEmail("duplicado@test.com");
+        alumno1.setPassword("abc123");
+        alumno1.setNombre("Juan");
+        alumno1.setApellido("Perez");
+        sessionFactory.getCurrentSession().save(alumno1);
+        sessionFactory.getCurrentSession().flush();
+
+        Alumno alumno2 = new Alumno();
+        alumno2.setEmail("duplicado@test.com");
+        alumno2.setPassword("xyz789");
+        alumno2.setNombre("Pedro");
+        alumno2.setApellido("Lopez");
+
+        assertThrows(Exception.class, () -> {
+            sessionFactory.getCurrentSession().save(alumno2);
+            sessionFactory.getCurrentSession().flush();
+        });
+    }
+
+    @Test
+    @Rollback
+    public void cuandoAlumnoNoTieneClasesNiProfesoresEntoncesAmbasListasSonVacias() {
+        Alumno alumno = new Alumno();
+        alumno.setEmail("nada@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("Libre");
+        alumno.setApellido("Estudiante");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        List<Profesor> profesores = repositorioUsuario.obtenerProfesoresDeAlumno(alumno.getId());
+        List<Clase> clases = repositorioUsuario.obtenerClasesAlumno(alumno.getId());
+
+        assertTrue(profesores.isEmpty());
+        assertTrue(clases.isEmpty());
+    }
+    @Test
+    @Rollback
+    public void cuandoEliminoUsuarioEntoncesYaNoPuedeSerEncontrado() {
+        Alumno alumno = new Alumno();
+        alumno.setEmail("eliminar@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("Eliminar");
+        alumno.setApellido("Prueba");
+        sessionFactory.getCurrentSession().save(alumno);
+        sessionFactory.getCurrentSession().flush();
+
+        sessionFactory.getCurrentSession().delete(alumno);
+        sessionFactory.getCurrentSession().flush();
+
+        Usuario usuarioEncontrado = repositorioUsuario.buscar("eliminar@test.com");
+        assertNull(usuarioEncontrado);
+    }
+    @Test
+    @Rollback
+    public void cuandoGuardoUsuarioConEmailNuloEntoncesLanzaExcepcion() {
+        Alumno alumno = new Alumno();
+        alumno.setEmail(null);
+        alumno.setPassword("123456");
+        alumno.setNombre("Nombre");
+        alumno.setApellido("Apellido");
+
+        assertThrows(Exception.class, () -> {
+            repositorioUsuario.guardar(alumno);
+            sessionFactory.getCurrentSession().flush();
+        });
+    }
+    @Test
+    @Rollback
+    public void cuandoGuardoUsuarioConNombreNuloEntoncesLanzaExcepcion() {
+        Alumno alumno = new Alumno();
+        alumno.setEmail("test@ejemplo.com");
+        alumno.setPassword("123456");
+        alumno.setNombre(null);
+        alumno.setApellido("Apellido");
+
+        assertThrows(Exception.class, () -> {
+            repositorioUsuario.guardar(alumno);
+            sessionFactory.getCurrentSession().flush();
+        });
+    }
+    @Test
+    @Rollback
+    public void cuandoModificoElEmailDelUsuarioEntoncesSeActualizaCorrectamente() {
+        Alumno alumno = new Alumno();
+        alumno.setEmail("original@correo.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("Test");
+        alumno.setApellido("Apellido");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        alumno.setEmail("nuevo@correo.com");
+        repositorioUsuario.modificar(alumno);
+        sessionFactory.getCurrentSession().flush();
+
+        Usuario usuarioModificado = repositorioUsuario.buscar("nuevo@correo.com");
+
+        assertNotNull(usuarioModificado);
+        assertEquals("nuevo@correo.com", usuarioModificado.getEmail());
+    }
+    @Test
+    @Rollback
+    public void dadoClasesPasadasYFuturasCuandoObtengoClasesProfesorEntoncesIgnoraLasPasadas() {
+        Tema tema = new Tema();
+        tema.setNombre("Arte");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("arte@prof.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("ArteProf");
+        profesor.setApellido("Pintor");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Clase clasePasada = new Clase();
+        clasePasada.setProfesor(profesor);
+        clasePasada.setFechaEspecifica(LocalDate.now().minusDays(10));
+        clasePasada.setHora("08:00");
+        clasePasada.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(clasePasada);
+
+        Clase claseFutura = new Clase();
+        claseFutura.setProfesor(profesor);
+        claseFutura.setFechaEspecifica(LocalDate.now().plusDays(3));
+        claseFutura.setHora("10:00");
+        claseFutura.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(claseFutura);
+
+        List<Clase> clases = repositorioUsuario.obtenerClasesProfesor(profesor.getId());
+
+        assertNotNull(clases);
+        assertEquals(1, clases.size());
+        assertEquals(claseFutura.getFechaEspecifica(), clases.get(0).getFechaEspecifica());
+    }
+
 }

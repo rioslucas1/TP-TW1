@@ -40,7 +40,8 @@ public abstract class Usuario {
     @Column
     private String rol;
 
-    @Column
+    @Lob
+    @Column(name = "descripcion")
     private String descripcion;
 
     public Long getId() {

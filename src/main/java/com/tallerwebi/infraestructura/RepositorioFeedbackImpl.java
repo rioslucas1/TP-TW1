@@ -57,4 +57,26 @@ public class RepositorioFeedbackImpl implements RepositorioFeedback {
         Query query = session.createQuery(hql);
         return query.getResultList();
     }
+    @Override
+    public boolean existeFeedbackDeAlumnoParaProfesor(Long alumnoId, Long profesorId) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "SELECT COUNT(f) FROM FeedbackProfesor f WHERE f.alumno.id = :alumnoId AND f.profesor.id = :profesorId";
+        Query query = session.createQuery(hql);
+        query.setParameter("alumnoId", alumnoId);
+        query.setParameter("profesorId", profesorId);
+        Long count = (Long) query.getSingleResult();
+        return count > 0;
+    }
+    @Override
+    public FeedbackProfesor buscarPorAlumnoYProfesor(Long alumnoId, Long profesorId) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM FeedbackProfesor f WHERE f.alumno.id = :alumnoId AND f.profesor.id = :profesorId";
+        Query query = session.createQuery(hql);
+        query.setParameter("alumnoId", alumnoId);
+        query.setParameter("profesorId", profesorId);
+        query.setMaxResults(1);
+        List<FeedbackProfesor> resultados = query.getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
+
 }
