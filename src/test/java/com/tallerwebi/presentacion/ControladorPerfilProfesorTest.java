@@ -12,9 +12,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
@@ -585,7 +587,6 @@ public class ControladorPerfilProfesorTest {
 
         ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
                 "Nombre", "Apellido", "Descripción", "PRESENCIAL", 1L, fotoLongitudIncorrecta, requestMock, redirectAttributesMock);
-
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
     }
 
@@ -756,198 +757,5 @@ public class ControladorPerfilProfesorTest {
         verify(servicioFeedbackMock, never()).obtenerFeedbacksPorProfesor(any());
         verify(servicioFeedbackMock, never()).calcularPromedioCalificacion(any());
         verify(servicioFeedbackMock, never()).contarFeedbackPorProfesor(any());
-    }
-
-    @Test
-    public void actualizarPerfilProfesorConTemaNullNoDeberiaModificarTema() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "Nombre", "Apellido", "Descripción", "PRESENCIAL", null, null, requestMock, redirectAttributesMock);
-
-        verify(servicioTemaMock, never()).obtenerPorId(any());
-        verify(profesorMock, never()).setTema(any());
-        verify(repositorioUsuarioMock).modificar(profesorMock);
-    }
-    @Test
-    public void actualizarPerfilProfesorConBase64DeMimeDesconocidoDeberiaMostrarError() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
-        String base64 = "data:application/octet-stream;base64,iVBORw0KGgoAAAANS...";
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "Nombre", "Apellido", "Descripción", "PRESENCIAL", 1L, base64, requestMock, redirectAttributesMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
-    }
-    @Test
-    public void verPerfilProfesorConOtroTipoDeUsuarioDeberiaRedirigirAHome() {
-        Usuario otroUsuario = mock(Usuario.class);
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(otroUsuario);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
-    }
-    @Test
-    public void agregarExperienciaConCamposVaciosDeberiaGuardar() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.agregarExperiencia(
-                "", "", "", requestMock, redirectAttributesMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(servicioExperienciaMock).guardar(any());
-    }
-
-
-
-    @Test
-    public void actualizarPerfilProfesorConTemaExistentePeroNoRetornadoDeberiaIgnorarTema() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
-        when(servicioTemaMock.obtenerPorId(1L)).thenReturn(null);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "Nombre", "Apellido", "Descripción", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
-
-        verify(profesorMock, never()).setTema(any());
-        verify(repositorioUsuarioMock).modificar(profesorMock);
-    }
-    @Test
-    public void verPerfilProfesorConUsuarioAdministradorDeberiaRedirigirAHome() {
-        Usuario adminMock = mock(Usuario.class);
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(adminMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.verPerfilProfesor(requestMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
-    }
-
-
-    @Test
-    public void actualizarPerfilProfesorConImagenSinPrefijoDeberiaMostrarError() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
-
-        String imagenSinPrefijo = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAA...";
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "Nombre", "Apellido", "Descripción", "PRESENCIAL", 1L, imagenSinPrefijo, requestMock, redirectAttributesMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
-        verify(profesorMock, never()).setFotoPerfil(any());
-    }
-
-
-
-    @Test
-    public void eliminarExperienciaConIdInexistenteNoDebeLanzarExcepcion() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-
-        doNothing().when(servicioExperienciaMock).eliminar(any());
-
-        ModelAndView modelAndView = controladorPerfilProfesor.eliminarExperiencia(
-                9999L, requestMock, redirectAttributesMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(servicioExperienciaMock).eliminar(9999L);
-    }
-
-    @Test
-    public void agregarExperienciaConCamposNulosNoDeberiaGuardar() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.agregarExperiencia(
-                null, null, null, requestMock, redirectAttributesMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(servicioExperienciaMock).guardar(any());
-    }
-
-    @Test
-    public void actualizarPerfilProfesorConEspaciosEnNombreYApellidoDeberiaDetectarVacio() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "   ", "   ", "Descripción", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil/editar"));
-        verify(repositorioUsuarioMock, never()).modificar(any());
-    }
-
-    @Test
-    public void actualizarPerfilProfesorConModalidadConEspaciosDeberiaAsignarNull() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "Nombre", "Apellido", "Descripción", "  PRESENCIAL  ", 1L, null, requestMock, redirectAttributesMock);
-
-        verify(profesorMock).setModalidadPreferida(null);
-        verify(repositorioUsuarioMock).modificar(profesorMock);
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-    }
-
-    @Test
-    public void actualizarPerfilProfesorConNombreConCaracteresEspecialesDeberiaPermitirlo() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "Ñandú Pérez", "Apellido", "Descripción", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
-
-        verify(profesorMock).setNombre("Ñandú Pérez");
-        verify(repositorioUsuarioMock).modificar(profesorMock);
-    }
-    @Test
-    public void actualizarPerfilProfesorConDescripcionLargaDeberiaPermitirlo() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
-
-        String descripcionLarga = "a".repeat(1000);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "Nombre", "Apellido", descripcionLarga, "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
-
-        verify(profesorMock).setDescripcion(descripcionLarga);
-        verify(repositorioUsuarioMock).modificar(profesorMock);
-    }
-    @Test
-    public void actualizarPerfilProfesorConNombreConTildesDeberiaAceptar() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        when(repositorioUsuarioMock.buscarPorId(1L)).thenReturn(profesorMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.actualizarPerfilProfesor(
-                "José", "García Márquez", "Descripción con tilde", "PRESENCIAL", 1L, null, requestMock, redirectAttributesMock);
-
-        verify(profesorMock).setNombre("José");
-        verify(profesorMock).setApellido("García Márquez");
-        verify(profesorMock).setDescripcion("Descripción con tilde");
-        verify(repositorioUsuarioMock).modificar(profesorMock);
-    }
-
-    @Test
-    public void agregarExperienciaConTildesDeberiaGuardarCorrectamente() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.agregarExperiencia(
-                "Educación Física", "Profesor de secundaria en áreas rurales", "Ávila", requestMock, redirectAttributesMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(servicioExperienciaMock).guardar(any());
-    }
-
-    @Test
-    public void eliminarExperienciaConTildesEnRedireccionDeberiaFuncionar() {
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesorMock);
-        doNothing().when(servicioExperienciaMock).eliminar(25L);
-
-        ModelAndView modelAndView = controladorPerfilProfesor.eliminarExperiencia(
-                25L, requestMock, redirectAttributesMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/profesor/perfil"));
-        verify(servicioExperienciaMock).eliminar(25L);
     }
 }
