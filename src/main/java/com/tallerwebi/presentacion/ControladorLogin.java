@@ -234,6 +234,34 @@ public class ControladorLogin {
         return new ModelAndView("redirect:/login");
     }
 
+    @RequestMapping(path = "/mis-clases", method = RequestMethod.GET)
+    public ModelAndView verTodasMisClases(HttpServletRequest request) {
+        ModelMap modelo = new ModelMap();
+        Usuario usuario = (Usuario) request.getSession().getAttribute("USUARIO");
+        String rol = definirRol(usuario);
+
+        if (usuario != null) {
+            modelo.put("nombreUsuario", usuario.getNombre());
+            modelo.put("rol", rol);
+
+            List<Clase> todasLasClases = null;
+            if (rol.equals("profesor")) {
+                Profesor profesor = (Profesor) usuario;
+                todasLasClases = servicioLogin.obtenerClasesProfesor(profesor.getId());
+                modelo.put("temaProfesor", profesor.getTema());
+            } else if (rol.equals("alumno")) {
+                Alumno alumno = (Alumno) usuario;
+                todasLasClases = servicioLogin.obtenerClasesAlumno(alumno.getId());
+            }
+            modelo.put("todasLasClases", todasLasClases);
+        } else {
+            // Si no hay usuario en sesión, redirigir al login
+            return new ModelAndView("redirect:/login");
+        }
+
+        return new ModelAndView("todas-mis-clases", modelo);
+    }
+
     @RequestMapping(path = "/logout", method = RequestMethod.GET)
     public ModelAndView cerrarSesion(HttpServletRequest request) {
         request.getSession().invalidate();
