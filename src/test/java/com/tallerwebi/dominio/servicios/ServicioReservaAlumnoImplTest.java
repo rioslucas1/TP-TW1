@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -406,5 +407,91 @@ public class ServicioReservaAlumnoImplTest {
 		verify(repositorioUsuarioMock, times(1)).buscarPorId(alumnoId);
 	}
 
+	@Test
+	public void obtenerClasesPorProfesorYAlumnoDeberiaRetornarListaDeClasesCuandoExisten() {
+
+		String emailProfesor = "profesor@unlam.com";
+		String emailAlumno = "alumno@unlam.com";
+
+		Clase clase1 = mock(Clase.class);
+		when(clase1.getEmailProfesor()).thenReturn(emailProfesor);
+		when(clase1.getMailAlumno()).thenReturn(emailAlumno);
+
+		Clase clase2 = mock(Clase.class);
+		when(clase2.getEmailProfesor()).thenReturn(emailProfesor);
+		when(clase2.getMailAlumno()).thenReturn(emailAlumno);
+
+		List<Clase> clasesEsperadas = Arrays.asList(clase1, clase2);
+		when(repositorioReservaAlumnoMock.buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno))
+				.thenReturn(clasesEsperadas);
+
+
+		List<Clase> clasesObtenidas =
+				servicioReservaAlumno.obtenerClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+
+
+		assertNotNull(clasesObtenidas);
+		assertEquals(2, clasesObtenidas.size());
+		assertThat(clasesObtenidas, containsInAnyOrder(clase1, clase2));
+		verify(repositorioReservaAlumnoMock, times(1)).buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+	}
+
+
+	@Test
+	public void obtenerClasesPorProfesorYAlumnoSinClasesDeberiaRetornarListaVacia() {
+
+		String emailProfesor = "profesor@unlam.com";
+		String emailAlumno = "alumno@unlam.com";
+
+		List<Clase> listaVacia = Arrays.asList();
+		when(repositorioReservaAlumnoMock.buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno))
+				.thenReturn(listaVacia);
+
+
+		List<Clase> clasesObtenidas =
+				servicioReservaAlumno.obtenerClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+
+
+		assertNotNull(clasesObtenidas);
+		assertTrue(clasesObtenidas.isEmpty());
+		verify(repositorioReservaAlumnoMock, times(1)).buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+	}
+
+
+	@Test
+	public void obtenerClasesPorProfesorYAlumnoConEmailProfesorNuloDeberiaRetornarListaVacia() {
+
+		String emailProfesor = null;
+		String emailAlumno = "alumno@unlam.com";
+
+		when(repositorioReservaAlumnoMock.buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno))
+				.thenReturn(Arrays.asList());
+
+
+		List<Clase> clasesObtenidas =
+				servicioReservaAlumno.obtenerClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+
+		assertNotNull(clasesObtenidas);
+		assertTrue(clasesObtenidas.isEmpty());
+		verify(repositorioReservaAlumnoMock, times(1)).buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+	}
+
+	@Test
+	public void obtenerClasesPorProfesorYAlumnoConEmailAlumnoNuloDeberiaRetornarListaVacia() {
+
+		String emailProfesor = "profesor@unlam.com";
+		String emailAlumno = null;
+
+		when(repositorioReservaAlumnoMock.buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno))
+				.thenReturn(Arrays.asList());
+
+		List<Clase> clasesObtenidas =
+				servicioReservaAlumno.obtenerClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+
+
+		assertNotNull(clasesObtenidas);
+		assertTrue(clasesObtenidas.isEmpty());
+		verify(repositorioReservaAlumnoMock, times(1)).buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+	}
 
 }

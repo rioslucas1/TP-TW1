@@ -223,5 +223,42 @@ public class ControladorReservaAlumno {
         Clase disponibilidad = servicioReservaAlumno.obtenerDisponibilidadPorId(disponibilidadId);
         return disponibilidad != null ? disponibilidad.getEnlace_meet() : null;
     }
-    
+    @GetMapping("/clases-intercambio")
+    public ModelAndView verClasesEntreProfesorYAlumno(
+            @RequestParam("emailProfesor") String emailProfesor,
+            @RequestParam("emailAlumno") String emailAlumno,
+            HttpServletRequest request) {
+
+        ModelMap modelo = new ModelMap();
+        Usuario usuarioLogeado = obtenerUsuarioDeSesion(request);
+
+        if (usuarioLogeado == null) {
+            return new ModelAndView("redirect:/login");
+        }
+
+
+        if (!(usuarioLogeado.getEmail().equals(emailProfesor) || usuarioLogeado.getEmail().equals(emailAlumno))) {
+            modelo.put("error", "No tienes permiso para ver estas clases.");
+            return new ModelAndView("redirect:/home", modelo);
+        }
+
+        try {
+            List<Clase> clases = servicioReservaAlumno.obtenerClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+            modelo.put("clases", clases);
+            modelo.put("emailProfesor", emailProfesor);
+            modelo.put("emailAlumno", emailAlumno);
+            modelo.put("nombreUsuario", usuarioLogeado.getNombre());
+            modelo.put("rol", usuarioLogeado.getRol());
+
+        } catch (Exception e) {
+            System.err.println("Error al obtener clases de intercambio: " + e.getMessage());
+            modelo.put("error", "Error al cargar las clases. Inténtalo de nuevo más tarde.");
+            return new ModelAndView("error", modelo);
+        }
+
+        return new ModelAndView("clases-intercambio", modelo);
+    }
+
+
+
 }

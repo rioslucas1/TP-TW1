@@ -93,6 +93,12 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
         return alumno.getProfesores().stream()
                 .anyMatch(profesor -> profesor.getEmail().equals(emailProfesor));
 }
+
+    @Override
+    public List<Clase> obtenerClasesPorProfesorYAlumno(String emailProfesor, String emailAlumno) {
+        return repositorioReservaAlumno.buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+    }
+
 }
 
 
