@@ -19,14 +19,15 @@ public class RepositorioMensajeImpl implements RepositorioMensaje {
         entityManager.persist(mensaje);
     }
 
-    public List<Mensaje> obtenerConversacion(String nombre1, String nombre2) {
+    @Override
+    public List<Mensaje> obtenerConversacion(String alumnoNombre, String profesorNombre) {
         return entityManager.createQuery(
                         "FROM Mensaje m WHERE " +
-                                "(m.alumno.nombre = :nombre1 AND m.profesor.nombre = :nombre2) OR " +
-                                "(m.alumno.nombre = :nombre2 AND m.profesor.nombre = :nombre1) " +
+                                "(m.alumno.nombre = :alumnoNombre AND m.profesor.nombre = :profesorNombre) OR " +
+                                "(m.alumno.nombre = :profesorNombre AND m.profesor.nombre = :alumnoNombre) " +
                                 "ORDER BY m.fecha ASC", Mensaje.class)
-                .setParameter("nombre1", nombre1)
-                .setParameter("nombre2", nombre2)
+                .setParameter("alumnoNombre", alumnoNombre)
+                .setParameter("profesorNombre", profesorNombre)
                 .getResultList();
     }
 }

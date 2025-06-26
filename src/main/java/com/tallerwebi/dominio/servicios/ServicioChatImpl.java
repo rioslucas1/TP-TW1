@@ -28,22 +28,28 @@ public class ServicioChatImpl implements ServicioChat {
 
     @Override
     public void enviarMensaje(String emisorNombre, String receptorNombre, String contenido) {
-        Usuario emisor = repositorioUsuario.buscarPorNombre(emisorNombre);
-        Usuario receptor = repositorioUsuario.buscarPorNombre(receptorNombre);
-
         Mensaje mensaje = new Mensaje();
-        mensaje.setEmisor(emisor.getNombre());
+
+        // Buscar Alumno y Profesor por nombre:
+        Alumno alumno = repositorioUsuario.buscarAlumnoPorNombre(emisorNombre);
+        Profesor profesor = repositorioUsuario.buscarProfesorPorNombre(emisorNombre);
+
+        if (alumno != null) {
+            // El emisor es alumno, entonces el receptor es profesor:
+            mensaje.setAlumno(alumno);
+            Profesor receptorProfesor = repositorioUsuario.buscarProfesorPorNombre(receptorNombre);
+            mensaje.setProfesor(receptorProfesor);
+            mensaje.setEmisor("ALUMNO");
+        } else if (profesor != null) {
+            // El emisor es profesor, receptor es alumno:
+            mensaje.setProfesor(profesor);
+            Alumno receptorAlumno = repositorioUsuario.buscarAlumnoPorNombre(receptorNombre);
+            mensaje.setAlumno(receptorAlumno);
+            mensaje.setEmisor("PROFESOR");
+        }
+
         mensaje.setContenido(contenido);
         mensaje.setFecha(LocalDateTime.now());
-
-        // Asignar roles según clase
-        if (emisor instanceof Alumno && receptor instanceof Profesor) {
-            mensaje.setAlumno((Alumno) emisor);
-            mensaje.setProfesor((Profesor) receptor);
-        } else if (emisor instanceof Profesor && receptor instanceof Alumno) {
-            mensaje.setProfesor((Profesor) emisor);
-            mensaje.setAlumno((Alumno) receptor);
-        }
 
         repositorioMensaje.guardar(mensaje);
     }

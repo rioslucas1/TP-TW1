@@ -1,7 +1,9 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.RepositorioUsuario;
+import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Mensaje;
+import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.servicios.ServicioChat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +42,25 @@ public class ControladorChat {
 
         modelo.put("nombreUsuario", usuario.getNombre());
 
-        // Obtener la lista de profesores usando el método existente
-        List<Usuario> profesores = repositorioUsuario.buscarPorTipo(com.tallerwebi.dominio.entidades.Profesor.class);
-        modelo.put("profesores", profesores);
+        String rol = usuario.getClass().getSimpleName().toUpperCase();
+        modelo.put("rol", rol);
 
-        // Cargar la conversación si se seleccionó un profesor
+        if ("ALUMNO".equals(rol)) {
+            List<Usuario> profesores = repositorioUsuario.buscarPorTipo(com.tallerwebi.dominio.entidades.Profesor.class);
+            modelo.put("contactos", profesores);
+        } else if ("PROFESOR".equals(rol)) {
+            List<Usuario> alumnos = repositorioUsuario.buscarPorTipo(com.tallerwebi.dominio.entidades.Alumno.class);
+            modelo.put("contactos", alumnos);
+        }
+
         if (con != null && !con.trim().isEmpty()) {
             modelo.put("receptor", con);
-            List<Mensaje> mensajes = servicioChat.obtenerConversacion(usuario.getNombre(), con);
+            List<Mensaje> mensajes;
+            if ("ALUMNO".equals(rol)) {
+                mensajes = servicioChat.obtenerConversacion(usuario.getNombre(), con);
+            } else {
+                mensajes = servicioChat.obtenerConversacion(con, usuario.getNombre());
+            }
             modelo.put("mensajes", mensajes);
         }
 

@@ -140,4 +140,22 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
                 .uniqueResult();
     }
 
+    @Override
+    public Alumno buscarAlumnoPorNombre(String nombre) {
+        String hql = "FROM Alumno a WHERE a.nombre = :nombre";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("nombre", nombre);
+        List<Alumno> resultados = query.getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
+
+    @Override
+    public Profesor buscarProfesorPorNombre(String nombre) {
+        String hql = "FROM Profesor p WHERE p.nombre = :nombre";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("nombre", nombre);
+        List<Profesor> resultados = query.getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
+
 }

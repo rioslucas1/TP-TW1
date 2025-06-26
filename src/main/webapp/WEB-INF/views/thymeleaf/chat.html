@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Chat</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
 </head>
 <body>
 <div class="container mt-4">
     <div class="row">
 
-        <!-- 🧑 Lista de Profesores -->
+        <!-- 🧑 Lista de Contactos según rol -->
         <div class="col-md-3 border-end">
-            <h5>Profesores</h5>
+            <h5>Contactos</h5>
             <ul class="list-group">
-                <li th:each="profesor : ${profesores}" class="list-group-item">
+
+                <!-- Si es Alumno, muestra Profesores -->
+                <li th:if="${rol == 'ALUMNO'}" th:each="profesor : ${contactos}" class="list-group-item">
                     <a th:href="@{/chat(con=${profesor.nombre})}" th:text="${profesor.nombre}">Profesor</a>
                 </li>
+
+                <!-- Si es Profesor, muestra Alumnos -->
+                <li th:if="${rol == 'PROFESOR'}" th:each="alumno : ${contactos}" class="list-group-item">
+                    <a th:href="@{/chat(con=${alumno.nombre})}" th:text="${alumno.nombre}">Alumno</a>
+                </li>
+
             </ul>
         </div>
 
@@ -23,7 +31,7 @@
         <div class="col-md-9">
             <h5 th:if="${receptor != null}" th:text="'Chat con ' + ${receptor}">Chat</h5>
             <div th:if="${receptor == null}">
-                <p>Seleccioná un profesor para comenzar a chatear.</p>
+                <p>Seleccioná un contacto para comenzar a chatear.</p>
             </div>
 
             <!-- 📜 Lista de mensajes -->
@@ -32,10 +40,10 @@
                     <p>
                         <strong th:text="${mensaje.emisor} + ':'"></strong>
                         <span th:text="${mensaje.contenido}"></span>
-                        <br>
+                        <br />
                         <small th:text="${mensaje.fechaFormateada}"></small>
                     </p>
-                    <hr>
+                    <hr />
                 </div>
             </div>
 
