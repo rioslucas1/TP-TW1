@@ -115,4 +115,4 @@ docker run --name mysql-container -d -p 3306:3306 mysql # sudo apt install mysql
 * Node 18.16.1 o superior <- Instalación manual desde la [página de node](https://nodejs.org/en) 
 
 *_Proyecto modificado en base a: [Spring MVC hello world example (Maven and Thymeleaf)](https://mkyong.com/spring-mvc/spring-mvc-hello-world-example/) _* 
-aa
+aaaa
