@@ -66,6 +66,8 @@
   </div>
 </nav>
 
+<!-- /.form register -->
+
 <main role="main" class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
   <div class="row justify-content-center w-100">
     <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
@@ -107,8 +109,10 @@
             </select>
           </div>
         </div>
+          <input type="hidden" id="latitud" th:field="*{latitud}" />
+          <input type="hidden" id="longitud" th:field="*{longitud}" />
 
-        <div class="form-contenedor mb-4">
+          <div class="form-contenedor mb-4">
           <label for="password">CONTRASEÑA</label>
           <div class="input-contenedor">
             <span class="input-contenedor-text"><i class="fas fa-lock"></i></span>
@@ -116,7 +120,13 @@
           </div>
         </div>
 
-        <div class="d-grid gap-2">
+          <div class="form-contenedor mb-4">
+            <label for="map">Seleccioná tu ubicación en el mapa</label>
+            <div id="map" style="height: 300px; border-radius: 10px;"></div>
+          </div>
+
+
+          <div class="d-grid gap-2">
           <button id="btn-login" class="btn btn-login" type="submit">Registrarse</button>
         </div>
 
@@ -137,5 +147,36 @@
 
 <!-- Boostrap core js -->
 <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<!-- Leaflet CSS y JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const map = L.map('map').setView([-34.6037, -58.3816], 13); // Buenos Aires por defecto
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap',
+    }).addTo(map);
+
+    let marker;
+
+    map.on('click', function (e) {
+      const lat = e.latlng.lat;
+      const lng = e.latlng.lng;
+
+      // Actualiza campos ocultos
+      document.getElementById('latitud').value = lat;
+      document.getElementById('longitud').value = lng;
+
+      // Coloca el marcador
+      if (marker) {
+        marker.setLatLng(e.latlng);
+      } else {
+        marker = L.marker(e.latlng).addTo(map);
+      }
+    });
+  });
+</script>
+
 </body>
 </html>

@@ -4,14 +4,14 @@ public class DatosMapa {
 
     private String nombre;
     private String apellido;
-    private String materia;
+    private String tema;
     private double latitud;
     private double longitud;
 
-    public DatosMapa(String nombre, String apellido, String materia, double latitud, double longitud) {
+    public DatosMapa(String nombre, String apellido, String tema, double latitud, double longitud) {
         this.nombre = nombre;
         this.apellido = apellido;
-        this.materia = materia;
+        this.tema = tema;
         this.latitud = latitud;
         this.longitud = longitud;
     }
@@ -24,8 +24,8 @@ public class DatosMapa {
         return apellido;
     }
 
-    public String getMateria() {
-        return materia;
+    public String getTema() {
+        return tema;
     }
 
     public double getLatitud() {

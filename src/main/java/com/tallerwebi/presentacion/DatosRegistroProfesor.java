@@ -7,6 +7,9 @@ public class DatosRegistroProfesor {
     private String email;
     private String password;
     private Long temaId;
+    private Double latitud;
+    private Double longitud;
+
 
     public DatosRegistroProfesor() {
     }
@@ -58,4 +61,10 @@ public class DatosRegistroProfesor {
     public void setTemaId(Long temaId) {
         this.temaId = temaId;
     }
+
+    public Double getLatitud() { return latitud; }
+    public void setLatitud(Double latitud) { this.latitud = latitud; }
+
+    public Double getLongitud() { return longitud; }
+    public void setLongitud(Double longitud) { this.longitud = longitud; }
     }

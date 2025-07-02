@@ -337,30 +337,70 @@
                     </h5>
                 </div>
                 <div class="card-body">
+                    <div th:if="${feedbacks != null && !feedbacks.isEmpty()}" class="mb-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div>
+                                <div class="d-flex align-items-center">
+                                    <div class="stars-rating me-2">
+                                        <i th:each="star : ${#numbers.sequence(1, 5)}"
+                                           class='bx'
+                                           th:classappend="${star <= promedioCalificacion} ? 'bxs-star text-warning' : 'bx-star text-muted'"></i>
+                                    </div>
+                                    <span class="fs-5 fw-bold" th:text="${#numbers.formatDecimal(promedioCalificacion, 1, 1)}">4.5</span>
+                                    <span class="text-muted ms-2" th:text="'(' + ${totalResenas} + ' reseñas)'">
+                            (15 reseñas)
+                        </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div th:if="${feedbacks != null && !feedbacks.isEmpty()}">
                         <div th:each="feedback : ${feedbacks}" class="border rounded p-3 mb-3">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
                                     <div class="d-flex align-items-center mb-1">
-                                        <!-- NOTA: Ajusta estos nombres de propiedades según tu clase FeedbackProfesor -->
-                                        <span class="fw-bold me-2" th:text="${feedback.estudiante.nombre + ' ' + feedback.estudiante.apellido}">Nombre Estudiante</span>
-                                        <div class="stars-rating">
-                                            <i th:each="star : ${#numbers.sequence(1, 5)}"
-                                               class='bx'
-                                               th:classappend="${star <= feedback.calificacion} ? 'bxs-star text-warning' : 'bx-star text-muted'"></i>
+                                        <div class="me-2">
+                                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
+                                                 style="width: 32px; height: 32px;">
+                                                <i class='bx bx-user text-white'></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                <span class="fw-bold me-2"
+                                      th:text="${feedback.nombreEstudiante}">
+                                    Nombre Alumno
+                                </span>
+                                            <div class="stars-rating">
+                                                <i th:each="star : ${#numbers.sequence(1, 5)}"
+                                                   class='bx'
+                                                   th:classappend="${star <= feedback.calificacion} ? 'bxs-star text-warning' : 'bx-star text-muted'"></i>
+                                            </div>
                                         </div>
                                     </div>
-                                    <small class="text-muted" th:text="${feedback.fecha}">Fecha</small>
+
+                                    <small class="text-muted" th:text="${feedback.fechaFormateada}">
+                                        Fecha
+                                    </small>
                                 </div>
                             </div>
-                            <p th:if="${feedback.descripcion != null && !feedback.descripcion.isEmpty()}"
-                               class="mb-0 text-muted" th:text="${feedback.descripcion}">Descripción de la reseña</p>
+                            <div th:if="${feedback.comentario != null && !feedback.comentario.isEmpty()}"
+                                 class="mt-2">
+                                <p class="mb-0 text-muted" th:text="${feedback.comentario}">
+                                    Descripción de la reseña
+                                </p>
+                            </div>
+                            <div th:if="${feedback.comentario == null || feedback.comentario.isEmpty()}"
+                                 class="mt-2">
+                                <p class="mb-0 text-muted fst-italic">Sin comentario</p>
+                            </div>
                         </div>
                     </div>
                     <div th:if="${feedbacks == null || feedbacks.isEmpty()}"
-                         class="text-muted text-center py-4">
-                        <i class='bx bx-star bx-lg'></i>
-                        <p class="mt-2">Todavía no tenés reseñas de alumnos</p>
+                         class="text-muted text-center py-5">
+                        <i class='bx bx-star bx-lg mb-3 d-block' style="font-size: 3rem; opacity: 0.3;"></i>
+                        <h6 class="text-muted">Todavía no tenés reseñas de alumnos</h6>
+                        <p class="mb-0 small">Las reseñas aparecerán aca cuando los alumnos califiquen tus clases</p>
                     </div>
                 </div>
             </div>

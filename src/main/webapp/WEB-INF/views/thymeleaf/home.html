@@ -33,7 +33,7 @@
     <nav class="nav flex-column gap-2">
       <a href="#" class="nav-link-custom active"><i class='bx bx-grid-alt'></i> Dashboard</a>
       <a href="#" class="nav-link-custom"><i class='bx bx-user'></i> Historial</a>
-      <a href="#" class="nav-link-custom"><i class='bx bx-message-square-detail'></i> Mensajes</a>
+      <a th:href="@{/chat}" class="nav-link-custom"><i class='bx bx-message-square-detail'></i> Mensajes</a>
       <a href="#" class="nav-link-custom"><i class='bx bx-bookmark'></i> Guardados</a>
       <a href="#" class="nav-link-custom"><i class='bx bx-folder'></i> Archivos Compartidos</a>
       <a href="#" class="nav-link-custom"><i class='bx bx-bar-chart-alt-2'></i> Estadísticas</a>
@@ -263,7 +263,7 @@
             <div th:if="${clasesReservadas == null or clasesReservadas.isEmpty()}">
               <p class="text-muted">No tenes clases reservadas</p>
             </div>
-            <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
+            <a th:href="@{/mis-clases}" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
           </div>
         </div>
       </div>
@@ -364,7 +364,7 @@
               <div th:if="${clasesProfesor == null or clasesProfesor.isEmpty()}">
                 <p class="text-muted">No tenes clases programadas</p>
               </div>
-              <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
+              <a href="@{/mis-clases}" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
             </div>
           </div>
         </div>
@@ -376,7 +376,7 @@
               <div class="dashboard-item">
                 <div><strong th:text="${temaProfesor != null ? temaProfesor.nombre : 'Sin tema asignado'}">Especialidad</strong></div>
               </div>
-              <a href="#" class="btn btn-outline-primary w-100 mt-3">Editar perfil</a>
+              <a href="profesor/perfil/editar" class="btn btn-outline-primary w-100 mt-3">Editar perfil</a>
             </div>
           </div>
         </div>

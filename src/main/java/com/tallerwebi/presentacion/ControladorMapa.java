@@ -35,7 +35,7 @@ public class ControladorMapa {
                 .map(profesor -> new DatosMapa(
                         profesor.getNombre(),
                         profesor.getApellido(),
-                        profesor.getMateria().toString(),
+                        profesor.getTema().getNombre(),
                         profesor.getLatitud(),
                         profesor.getLongitud()
                 ))

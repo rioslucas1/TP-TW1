@@ -14,4 +14,7 @@ public interface ServicioReservaAlumno {
     List<Clase> obtenerDisponibilidadProfesorPorSemana(String emailProfesor, LocalDate fechaInicioSemana);
     Clase obtenerDisponibilidadPorId(Long disponibilidadId);
 
+    boolean estaSuscritoAProfesor(Long id, String emailProfesor);
+
+    List<Clase> obtenerClasesPorProfesorYAlumno(String emailProfesor, String emailAlumno);
 }

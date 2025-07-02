@@ -295,4 +295,39 @@ public class RepositorioReservaAlumnoImplTest {
         assertNotNull(resultado1);
         assertNotNull(resultado4);
     }
+
+    @Test
+    @Rollback
+    public void guardarDisponibilidadConFechaEspecificaYRecuperarla() {
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("VIERNES");
+        disponibilidad.setHora("15:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        disponibilidad.setFechaEspecifica(LocalDate.of(2025, 6, 13));
+        repositorioReservaAlumno.guardar(disponibilidad);
+
+        Clase recuperada = repositorioReservaAlumno.buscarPorId(disponibilidad.getId());
+
+        assertNotNull(recuperada);
+        assertEquals(LocalDate.of(2025, 6, 13), recuperada.getFechaEspecifica());
+    }
+
+    @Test
+    @Rollback
+    public void actualizarEstadoAOcupadoSinAlumnoDebeGuardarCorrectamente() {
+        Clase disponibilidad = new Clase();
+        disponibilidad.setProfesor(profesor);
+        disponibilidad.setDiaSemana("MIERCOLES");
+        disponibilidad.setHora("13:00");
+        disponibilidad.setEstado(EstadoDisponibilidad.DISPONIBLE);
+        sessionFactory.getCurrentSession().save(disponibilidad);
+
+        disponibilidad.setEstado(EstadoDisponibilidad.OCUPADO);
+        repositorioReservaAlumno.guardar(disponibilidad);
+
+        Clase actualizada = repositorioReservaAlumno.buscarPorId(disponibilidad.getId());
+        assertEquals(EstadoDisponibilidad.OCUPADO, actualizada.getEstado());
+        assertNull(actualizada.getAlumno());
+    }
 }

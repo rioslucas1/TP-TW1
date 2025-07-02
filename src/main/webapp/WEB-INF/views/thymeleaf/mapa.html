@@ -75,10 +75,10 @@
         <!-- Card de profesores dinamica -->
         <h2 class="profesores-title">Listado de Profesores</h2>
         <div class="profesores-cards" id="profesoresContainer" th:if="${not #lists.isEmpty(datosProfesores)}">
-            <div class="profesor-card" th:each="profesor : ${datosProfesores}" th:data-nombre="${profesor.nombre + ' ' + profesor.apellido}" th:data-materia="${profesor.materia}">
+            <div class="profesor-card" th:each="profesor : ${datosProfesores}" th:data-nombre="${profesor.nombre + ' ' + profesor.apellido}" th:data-materia="${profesor.tema}">
                 <div class="profesor-nombre" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre Profesor</div>
                 <div class="profesor-info">
-                    <span>Materia:</span> <span th:text="${profesor.materia}">Materia</span>
+                    <span>Materia:</span> <span th:text="${profesor.tema}">Materia</span>
                 </div>
                 <div class="profesor-info">
                     <span>Ubicación:</span>
@@ -158,7 +158,7 @@
                     <div style="text-align: center;">
                         <strong style="color: #FF8C00;">${profesor.nombre} ${profesor.apellido}</strong>
                         <br>
-                        <span style="color: #5CACEE;">${profesor.materia}</span>
+                        <span style="color: #5CACEE;">${profesor.tema}</span>
                     </div>
                 `);
 
