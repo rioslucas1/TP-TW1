@@ -100,7 +100,7 @@
                     <!-- Filtro de Categoría -->
                     <div class="col-md-3">
                         <select name="temaId" class="form-select shadow-sm rounded-pill">
-                            <option th:value="${query}" th:selected="${temaIdSeleccionado == null}">Todas las categorías</option>
+                            <option th:value="''" th:selected="${temaIdSeleccionado == null}">Todas las categorías</option>
                             <option th:each="tema : ${listaTemas}"
                                     th:value="${tema.id}"
                                     th:text="${tema.nombre}"
@@ -112,7 +112,7 @@
                     <!-- Filtro de Modalidad -->
                     <div class="col-md-3">
                         <select name="modalidad" class="form-select shadow-sm rounded-pill">
-                            <option th:value="${query}" th:selected="${modalidadSeleccionada == null}">Todas las modalidades</option>
+                            <option th:value="''" th:selected="${modalidadSeleccionada == null}">Todas las modalidades</option>
                             <option th:value="PRESENCIAL" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).PRESENCIAL}">
                                 Presencial
                             </option>
