@@ -1,13 +1,14 @@
 package com.tallerwebi.dominio.servicios;
-import java.util.List;
-import java.util.Map;
 
 import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Usuario;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-
+@Service
 public class ServicioNotificacion {
 
     private final RepositorioUsuario repositorioUsuario;
@@ -27,7 +28,12 @@ public class ServicioNotificacion {
             datos.put("mensaje", "Tenés una nueva notificación.");
             datos.put("url", "https://clasesya.com/notificaciones");
 
-            servicioCorreo.enviarCorreo(usuario.getEmail(), "Notificación", ServicioEnvioDeCorreos.TipoCorreo.NOTIFICACION, datos);
+            servicioCorreo.enviarCorreo(
+                usuario.getEmail(),
+                "Notificación",
+                ServicioEnvioDeCorreos.TipoCorreo.NOTIFICACION,
+                datos
+            );
         }
     }
 }

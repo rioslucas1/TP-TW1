@@ -40,9 +40,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
     @Override
     public void guardar(Usuario usuario) {
-        sessionFactory.getCurrentSession().save(usuario);
-
-             ServicioEnvioDeCorreos servicio = new ServicioEnvioDeCorreos();
+                     ServicioEnvioDeCorreos servicio = new ServicioEnvioDeCorreos();
                  Map<String, String> datos = new HashMap<>();
 
         datos.put("nombre", usuario.getNombre());
@@ -53,6 +51,9 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
             ServicioEnvioDeCorreos.TipoCorreo.BIENVENIDA,
             datos                                                 
         );
+        sessionFactory.getCurrentSession().save(usuario);
+
+
     }
 
     @Override
@@ -176,7 +177,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     @Override
         public List<Usuario> buscarConNotificacionesPendientes() {
         final Session session = sessionFactory.getCurrentSession();
-        String hql = "FROM Usuario WHERE DATEDIFF(CURDATE(),ultima_conexion) >7 ";        /*Agregar un timestamp en la base de datos cuando hace cada login para saber hace cuanto no ingresa */
+        String hql = "FROM Usuario  id>0  ";        /* WHERE DATEDIFF(CURDATE(),ultima_conexion) >7Agregar un timestamp en la base de datos cuando hace cada login para saber hace cuanto no ingresa */
         Query query = session.createQuery(hql, Usuario.class);
         return query.getResultList();
 }

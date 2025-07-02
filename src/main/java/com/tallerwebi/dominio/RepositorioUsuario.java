@@ -7,6 +7,8 @@ import com.tallerwebi.dominio.entidades.Clase;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+@Repository
 public interface RepositorioUsuario {
 
 

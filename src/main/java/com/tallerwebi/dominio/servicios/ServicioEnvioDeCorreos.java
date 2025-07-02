@@ -3,17 +3,21 @@ package com.tallerwebi.dominio.servicios;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
+
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Properties;
 
+import org.springframework.stereotype.Component;
 
+@Component
 public class ServicioEnvioDeCorreos {
 
     private final String remitente = "eze.mendoza100@gmail.com";
     private final String password = "wymi fefi wwgz jvbt";
 
     public enum TipoCorreo {
-        BIENVENIDA, RECUPERAR_PASSWORD, NOTIFICACION
+        BIENVENIDA, RECUPERAR_PASSWORD, NOTIFICACION, CLASE_CONFIRMADA
     }
 
     public void enviarCorreo(String destinatario, String asunto, TipoCorreo tipo, Map<String, String> datos) {
@@ -32,19 +36,24 @@ public class ServicioEnvioDeCorreos {
             }
         });
 
-        try {
+       try {
             Message mensaje = new MimeMessage(session);
 
-            mensaje.setFrom(new InternetAddress("noreply@clasesya"));
+            mensaje.setFrom(new InternetAddress("noreply@clasesya.com", "ClasesYa"));
             mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
             mensaje.setSubject(asunto);
             mensaje.setContent(cuerpoHtml, "text/html; charset=utf-8");
 
             Transport.send(mensaje);
-            System.out.println("Correo enviado correctamente.");
-        } catch (MessagingException e) {
-            throw new RuntimeException("Error al enviar correo", e);
-        }
+                System.out.println("Correo enviado correctamente.");
+
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("Error con la codificación del remitente", e);
+
+            } catch (MessagingException e) {
+                throw new RuntimeException("Error al enviar correo", e);
+            }
+
     }
 
     private String generarHtmlSegunTipo(TipoCorreo tipo, Map<String, String> datos) {
@@ -118,9 +127,43 @@ public class ServicioEnvioDeCorreos {
                             datos.getOrDefault("url", "https://clasesya.com")
                         );
 
+                    case CLASE_CONFIRMADA:
+                        return String.format(
+                            "<div style='font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 40px;'>"
+                                + "<div style='max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);'>"
+                                + "  <div style='text-align: center;'>"
+                                + "    <a href='https://clasesya.com' style='text-decoration: none; font-size: 28px; font-weight: bold; color: #195755;'>Clases<span style='color: #f4b400;'>Ya</span></a>"
+                                + "    <h2 style='color: #195755; margin-top: 20px;'>¡Clase confirmada, %s!</h2>"
+                                + "  </div>"
+                                + "  <p style='font-size: 16px; color: #333333; line-height: 1.6; margin-top: 20px;'>"
+                                + "    Te confirmamos que tu clase con <strong>%s</strong> fue agendada con éxito."
+                                + "  </p>"
+                                + "  <p style='font-size: 16px; color: #333333; line-height: 1.6;'>"
+                                + "    📅 Fecha: <strong>%s</strong><br>"
+                                + "    ⏰ Hora: <strong>%s</strong><br>"
+                                + "    📚 Tema: <strong>%s</strong>"
+                                + "  </p>"
+                                + "  <div style='text-align: center; margin: 30px 0;'>"
+                                + "    <a href='https://clasesya.com/mis-clases' style='background-color: #195755; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px;'>Ver mi clase</a>"
+                                + "  </div>"
+                                + "  <p style='font-size: 14px; color: #777777;'>"
+                                + "    Si necesitás reprogramarla o tenés alguna duda, podés contactarnos a <a href='mailto:soporte@clasesya.com'>soporte@clasesya.com</a>."
+                                + "  </p>"
+                                + "  <hr style='margin: 40px 0; border: none; border-top: 1px solid #dddddd;'>"
+                                + "  <p style='font-size: 12px; color: #aaaaaa; text-align: center;'>"
+                                + "    © 2025 ClasesYa. Todos los derechos reservados."
+                                + "  </p>"
+                                + "</div>"
+                            + "</div>",
+                            datos.getOrDefault("nombre", "usuario"),
+                            datos.getOrDefault("profesor", "el profesor asignado"),
+                            datos.getOrDefault("fecha", "a confirmar"),
+                            datos.getOrDefault("hora", "a confirmar"),
+                            datos.getOrDefault("tema", "sin tema asignado")
+                        );
 
             default:
-                return "<div><p>Mensaje genérico</p></div>";
+                return "";
         }
     }
 }

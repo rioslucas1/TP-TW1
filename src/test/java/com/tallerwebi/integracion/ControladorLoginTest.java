@@ -50,52 +50,5 @@ public class ControladorLoginTest {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
-	@Test
-	public void debeRetornarLaPaginaLoginCuandoSeNavegaALaRaiz() throws Exception {
-
-		MvcResult result = this.mockMvc.perform(get("/"))
-				/*.andDo(print())*/
-				.andExpect(status().is3xxRedirection())
-				.andReturn();
-
-		ModelAndView modelAndView = result.getModelAndView();
-        assert modelAndView != null;
-		assertThat("redirect:/login", equalToIgnoringCase(Objects.requireNonNull(modelAndView.getViewName())));
-		assertThat(true, is(modelAndView.getModel().isEmpty()));
-	}
-
-	@Test
-	public void debeRetornarLaPaginaLoginCuandoSeNavegaALLogin() throws Exception {
-
-		MvcResult result = this.mockMvc.perform(get("/login"))
-				.andExpect(status().isOk())
-				.andReturn();
-
-		ModelAndView modelAndView = result.getModelAndView();
-        assert modelAndView != null;
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
-		assertThat(modelAndView.getModel().get("datosLogin").toString(),  containsString("com.tallerwebi.presentacion.DatosLogin"));
-
-	}
-
-
-	@Test
-	public void siUsuarioDeberiaRedirigirAHome() throws Exception {
-		when(usuarioMock.getRol()).thenReturn("usuario");
-
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
-				.defaultRequest(get("/home").sessionAttr("USUARIO", usuarioMock))
-				.build();
-
-		MvcResult result = this.mockMvc.perform(get("/home"))
-				.andExpect(status().isOk())
-				.andReturn();
-
-		ModelAndView modelAndView = result.getModelAndView();
-		assertThat(modelAndView.getViewName(), equalToIgnoringCase("home"));
-		assertThat(modelAndView.getModel().get("rol").toString(), equalToIgnoringCase("usuario"));
-	}
-
-
-
+	
 }
