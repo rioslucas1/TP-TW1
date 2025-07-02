@@ -165,6 +165,18 @@ public class Profesor extends Usuario {
         }
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "modalidad")
+    private ModalidadPreferida modalidad;
+
+    public ModalidadPreferida getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(ModalidadPreferida modalidad) {
+        this.modalidad = modalidad;
+    }
+
 }
 
 

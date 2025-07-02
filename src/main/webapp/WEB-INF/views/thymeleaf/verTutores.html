@@ -53,7 +53,7 @@
                         <a class="nav-link" th:href="@{/home}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/verTutores}" >Ver tutores</a>
+                        <a class="nav-link" th:href="@{/verTutores}">Ver tutores</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Mi perfil</a>
@@ -64,15 +64,12 @@
                     <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
                     <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
                 </div>
-
             </div>
         </div>
     </nav>
-
 </header>
 
-
-<div  class="d-flex">
+<div class="d-flex">
     <div class="sidebar-custom d-flex flex-column p-3">
         <a href="#" class="sidebar-logo mb-4">
             <i class='bx bx-layer'></i>
@@ -93,139 +90,135 @@
         </div>
     </div>
 
+    <!-- Main -->
+    <main class="container flex-grow-1">
+        <!-- Sección Superior -->
+        <section class="search-section container py-4">
+            <form th:action="@{/verTutores}" method="get">
+                <div class="row g-3 align-items-center">
 
-<!-- Main -->
-<main class="container flex-grow-1">
-    <!-- Sección Superior -->
-    <section class="search-section container py-4">
-        <div class="row g-3 align-items-center">
+                    <!-- Filtro de Categoría -->
+                    <div class="col-md-3">
+                        <select name="temaId" class="form-select shadow-sm rounded-pill">
+                            <option th:value="${query}" th:selected="${temaIdSeleccionado == null}">Todas las categorías</option>
+                            <option th:each="tema : ${listaTemas}"
+                                    th:value="${tema.id}"
+                                    th:text="${tema.nombre}"
+                                    th:selected="${tema.id == temaIdSeleccionado}">
+                            </option>
+                        </select>
+                    </div>
 
-            <!-- Filtro de Categoría -->
-            <div class="col-md-3">
-                <select id="categoria" class="form-select shadow-sm rounded-pill">
-                    <option value="todos">Categoría</option>
-                    <option value="todos">Todos</option>
-                    <option value="informatica">Informática</option>
-                    <option value="idiomas">Idiomas</option>
-                    <option value="espiritual">Espiritual</option>
-                    <option value="negocios">Negocios</option>
-                </select>
+                    <!-- Filtro de Modalidad -->
+                    <div class="col-md-3">
+                        <select name="modalidad" class="form-select shadow-sm rounded-pill">
+                            <option th:value="${query}" th:selected="${modalidadSeleccionada == null}">Todas las modalidades</option>
+                            <option th:value="PRESENCIAL" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).PRESENCIAL}">
+                                Presencial
+                            </option>
+                            <option th:value="VIRTUAL" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).VIRTUAL}">
+                                Virtual
+                            </option>
+                            <option th:value="AMBAS" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).AMBAS}">
+                                Ambas
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Botón de Filtrar -->
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary shadow-sm rounded-pill w-100">Filtrar</button>
+                    </div>
+
+                    <!-- Campo de Búsqueda CORREGIDO -->
+                    <div class="col-md-3">
+                        <div class="input-group shadow-sm rounded-pill">
+                            <span class="input-group-text bg-white border-0 rounded-start-pill">
+                                <i class="fa fa-search text-muted"></i>
+                            </span>
+                            <input type="text" name="query" class="form-control border-0 rounded-end-pill"
+                                   placeholder="Buscar tutor, curso..."
+                                   th:value="${query}">
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+
+        <!-- Título y Cursos Disponibles -->
+        <section class="available-courses container py-5">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-primary">Tutores Disponibles</h2>
+                <div class="mx-auto mt-2" style="width: 80px; height: 4px; background-color: #00729A; border-radius: 2px;"></div>
             </div>
 
-            <!-- Filtro de Modalidad -->
-            <div class="col-md-3">
-                <select id="modalidad" class="form-select shadow-sm rounded-pill">
-                    <option value="todos">Modalidad</option>
-                    <option value="todos">Todos</option>
-                    <option value="virtual">Virtual</option>
-                    <option value="san-justo">Presencial - San Justo</option>
-                    <option value="congreso">Presencial - Congreso</option>
-                </select>
-            </div>
-
-            <!-- Filtro de Duración -->
-            <div class="col-md-3">
-                <select id="Duracion" class="form-select shadow-sm rounded-pill">
-                    <option value="todos">Duración</option>
-                    <option value="todos">Todos</option>
-                    <option value="3-meses">Hasta 3 meses</option>
-                    <option value="6-meses">Hasta 6 meses</option>
-                    <option value="1-año">Hasta 1 año</option>
-                </select>
-            </div>
-
-            <!-- Campo de Búsqueda -->
-            <div class="col-md-3">
-                <div class="input-group shadow-sm rounded-pill">
-        <span class="input-group-text bg-white border-0 rounded-start-pill">
-          <i class="fa fa-search text-muted"></i>
-        </span>
-                    <input type="text" class="form-control border-0 rounded-end-pill" placeholder="Buscar tutor, curso...">
+            <!-- Mensaje cuando no hay profesores -->
+            <div th:if="${#lists.isEmpty(listaProfesores)}" class="text-center py-5">
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle me-2"></i>
+                    No hay tutores disponibles en este momento.
                 </div>
             </div>
 
-        </div>
-    </section>
-
-
-    <!-- Título y Cursos Disponibles -->
-    <section class="available-courses container py-5">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold text-primary">Tutores Disponibles</h2>
-            <div class="mx-auto mt-2" style="width: 80px; height: 4px; background-color: #00729A; border-radius: 2px;"></div>
-        </div>
-
-        <!-- Mensaje cuando no hay profesores -->
-        <div th:if="${#lists.isEmpty(listaProfesores)}" class="text-center py-5">
-            <div class="alert alert-info" role="alert">
-                <i class="bi bi-info-circle me-2"></i>
-                No hay tutores disponibles en este momento.
-            </div>
-        </div>
-
-        <!-- Lista de profesores -->
-        <div class="row gy-4" th:if="${!#lists.isEmpty(listaProfesores)}">
-
-            <!-- Iteración sobre la lista de profesores -->
-            <div class="col-md-6 col-lg-4" th:each="profesor : ${listaProfesores}">
-                <div class="card shadow-sm h-100 border-0 rounded-4 tutor-card">
-                    <div class="card-body d-flex flex-column">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="img/iconoUsuario.png" th:src="@{img/iconoUsuario.png}"
-                                 th:alt="${profesor.nombre + ' ' + profesor.apellido}"
-                                 class="rounded-circle me-3"
-                                 style="width: 70px; height: 70px; object-fit: cover;">
-                            <div>
-                                <h5 class="card-title mb-1" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre del Profesor</h5>
-                                <div class="d-flex align-items-center mb-1">
-                                    <div class="text-warning me-2">
-                                        <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, 5)}"
-                                           th:class="${i <= (profesor.calificacionPromedio ?: 0) ? 'bi bi-star-fill' : 'bi bi-star'}"></i>
+            <!-- Lista de profesores -->
+            <div class="row gy-4" th:if="${!#lists.isEmpty(listaProfesores)}">
+                <div class="col-md-6 col-lg-4" th:each="profesor : ${listaProfesores}">
+                    <div class="card shadow-sm h-100 border-0 rounded-4 tutor-card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="img/iconoUsuario.png" th:src="@{img/iconoUsuario.png}"
+                                     th:alt="${profesor.nombre + ' ' + profesor.apellido}"
+                                     class="rounded-circle me-3"
+                                     style="width: 70px; height: 70px; object-fit: cover;">
+                                <div>
+                                    <h5 class="card-title mb-1" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre del Profesor</h5>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <div class="text-warning me-2">
+                                            <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, 5)}"
+                                               th:class="${i <= (profesor.calificacionPromedio ?: 0) ? 'bi bi-star-fill' : 'bi bi-star'}"></i>
+                                        </div>
+                                        <small class="text-muted">
+                                            (<span th:text="${profesor.calificacionPromedio != null ? #numbers.formatDecimal(profesor.calificacionPromedio, 1, 1) : '0.0'}">0.0</span>)
+                                        </small>
                                     </div>
-                                    <small class="text-muted">
-                                        (<span th:text="${profesor.calificacionPromedio != null ? #numbers.formatDecimal(profesor.calificacionPromedio, 1, 1) : '0.0'}">0.0</span>)
-                                    </small>
                                 </div>
                             </div>
-                        </div>
 
-                        <ul class="list-unstyled mb-3 flex-grow-1">
-                            <li class="mb-2">
-                                <i class="bi bi-award-fill me-2 text-primary"></i>
-                                <strong>Tema:</strong>
-                                <span th:text="${profesor.tema != null ? profesor.tema.nombre : 'No especificado'}">No especificado</span>
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-laptop-fill me-2 text-primary"></i>
-                                <strong>Modalidad:</strong>
-                                <span th:text="${profesor.modalidadPreferida ?: 'Presencial'}">Presencial</span>
-                            </li>
-                            <li class="mb-2" th:if="${profesor.totalClasesDadas != null && profesor.totalClasesDadas > 0}">
-                                <i class="bi bi-book-fill me-2 text-success"></i>
-                                <strong>Clases dadas:</strong>
-                                <span th:text="${profesor.totalClasesDadas}">0</span>
-                            </li>
-                            <li class="mb-2" th:if="${profesor.totalAlumnos != null && profesor.totalAlumnos > 0}">
-                                <i class="bi bi-people-fill me-2 text-info"></i>
-                                <strong>Alumnos:</strong>
-                                <span th:text="${profesor.totalAlumnos}">0</span>
-                            </li>
-                        </ul>
+                            <ul class="list-unstyled mb-3 flex-grow-1">
+                                <li class="mb-2">
+                                    <i class="bi bi-award-fill me-2 text-primary"></i>
+                                    <strong>Tema:</strong>
+                                    <span th:text="${profesor.tema != null ? profesor.tema.nombre : 'No especificado'}">No especificado</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-laptop-fill me-2 text-primary"></i>
+                                    <strong>Modalidad:</strong>
+                                    <span th:text="${profesor.modalidadPreferida ?: 'Presencial'}">Presencial</span>
+                                </li>
+                                <li class="mb-2" th:if="${profesor.totalClasesDadas != null && profesor.totalClasesDadas > 0}">
+                                    <i class="bi bi-book-fill me-2 text-success"></i>
+                                    <strong>Clases dadas:</strong>
+                                    <span th:text="${profesor.totalClasesDadas}">0</span>
+                                </li>
+                                <li class="mb-2" th:if="${profesor.totalAlumnos != null && profesor.totalAlumnos > 0}">
+                                    <i class="bi bi-people-fill me-2 text-info"></i>
+                                    <strong>Alumnos:</strong>
+                                    <span th:text="${profesor.totalAlumnos}">0</span>
+                                </li>
+                            </ul>
 
-                        <div class="d-flex justify-content-between align-items-center mt-auto">
-                            <a th:href="@{/verPerfilDeProfesor(email=${profesor.email})}"
-                               class="btn btn-outline-primary btn-sm rounded-pill px-3">Ver perfil</a>
-                            <button class="btn btn-primary btn-sm rounded-pill px-3">Contactar</button>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <a th:href="@{/verPerfilDeProfesor(email=${profesor.email})}"
+                                   class="btn btn-outline-primary btn-sm rounded-pill px-3">Ver perfil</a>
+                                <button class="btn btn-primary btn-sm rounded-pill px-3">Contactar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-        </div>
-    </section>
-
-</main>
-
+        </section>
+    </main>
 </div>
 </body>
 </html>

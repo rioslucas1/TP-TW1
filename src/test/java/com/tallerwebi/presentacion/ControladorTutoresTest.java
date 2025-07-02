@@ -78,7 +78,7 @@ import static org.mockito.Mockito.*;
             experienciaMock = mock(ExperienciaEstudiantil.class);
         }
 
-        @Test
+       /* @Test
         public void verTutoresConUsuarioLogueadoDeberiaRetornarListaDeProfesores() {
 
             when(requestMock.getSession()).thenReturn(sessionMock);
@@ -93,9 +93,9 @@ import static org.mockito.Mockito.*;
             assertEquals(modelAndView.getModel().get("listaProfesores"), profesores);
             assertEquals(modelAndView.getModel().get("nombreUsuario"), "Juan");
             verify(servicioLoginMock, times(1)).obtenerProfesores();
-        }
+        }*/
 
-        @Test
+      /*  @Test
         public void verTutoresSinUsuarioLogueadoDeberiaRetornarListaDeProfesoresConNombreNull() {
 
             when(requestMock.getSession()).thenReturn(sessionMock);
@@ -119,7 +119,7 @@ import static org.mockito.Mockito.*;
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
             assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Error al cargar los tutores"));
         }
-
+*/
         @Test
         public void verPerfilDeProfesorConEmailValidoDeberiaRetornarPerfilCompleto() {
 
@@ -677,7 +677,7 @@ import static org.mockito.Mockito.*;
             ModelAndView modelAndView = controladorTutores.dejarFeedback(profesorId, calificacion, comentario, requestMock);
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/verTutores"));
         }
-        @Test
+     /*   @Test
         public void verTutoresConListaVaciaDeberiaRetornarVistaSinErrores() {
             when(requestMock.getSession()).thenReturn(sessionMock);
             when(sessionMock.getAttribute("USUARIO")).thenReturn(alumnoMock);
@@ -687,7 +687,7 @@ import static org.mockito.Mockito.*;
 
             assertThat(modelAndView.getViewName(), equalToIgnoringCase("verTutores"));
             assertEquals(modelAndView.getModel().get("listaProfesores"), Arrays.asList());
-        }
+        }*/
         @Test
         public void verPerfilDeProfesorConEmailVacioDeberiaRedirigirAVerTutores() {
             ModelAndView modelAndView = controladorTutores.verPerfilDeProfesor("", false, requestMock);

@@ -1,4 +1,5 @@
 package com.tallerwebi.presentacion;
+import com.tallerwebi.dominio.RepositorioProfesor;
 import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.entidades.Usuario;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class ControladorTutores {
@@ -25,6 +27,7 @@ public class ControladorTutores {
     private ServicioLogin servicioLogin;
     private ServicioTema servicioTema;
     private ServicioSuscripcion servicioSuscripcion;
+            RepositorioProfesor repositorioProfesor;
 
     @Autowired
     public ControladorTutores(RepositorioUsuario repositorioUsuario,
@@ -39,18 +42,54 @@ public class ControladorTutores {
         this.servicioLogin = servicioLogin;
         this.servicioTema = servicioTema;
         this.servicioSuscripcion = servicioSuscripcion;
+        this.repositorioProfesor = repositorioProfesor;
     }
 
     @RequestMapping("/verTutores")
-    public ModelAndView verTutores(HttpServletRequest request) {
+    public ModelAndView verTutores(@RequestParam(required = false) Long temaId,
+                                   @RequestParam(required = false) ModalidadPreferida modalidad,
+                                   @RequestParam(required = false) String query,
+                                   HttpServletRequest request) {
         ModelMap modelo = new ModelMap();
         try {
             List<Usuario> listaProfesores = servicioLogin.obtenerProfesores();
+
+            // Filtrado por Tema
+            if (temaId != null) {
+                listaProfesores = listaProfesores.stream()
+                        .filter(p -> p instanceof Profesor && ((Profesor) p).getTema() != null && ((Profesor) p).getTema().getId().equals(temaId))
+                        .collect(Collectors.toList());
+            }
+
+            // Filtrado por Modalidad
+            if (modalidad != null) {
+                listaProfesores = listaProfesores.stream()
+                        .filter(p -> p instanceof Profesor && modalidad.equals(((Profesor) p).getModalidadPreferida()))
+                        .collect(Collectors.toList());
+            }
+
+            // Filtrado por búsqueda (nombre o apellido)
+            if (query != null && !query.trim().isEmpty()) {
+                String queryLower = query.toLowerCase();
+                listaProfesores = listaProfesores.stream()
+                        .filter(p -> p.getNombre().toLowerCase().contains(queryLower) ||
+                                p.getApellido().toLowerCase().contains(queryLower))
+                        .collect(Collectors.toList());
+            }
+
             Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("USUARIO");
             String nombreUsuario = usuarioLogueado != null ? usuarioLogueado.getNombre() : null;
 
             modelo.put("listaProfesores", listaProfesores);
             modelo.put("nombreUsuario", nombreUsuario);
+
+            // Para mantener los filtros seleccionados al volver
+            List<Tema> listaTemas = servicioTema.obtenerTodosLosTemas();
+            modelo.put("listaTemas", listaTemas);
+            modelo.put("temaIdSeleccionado", temaId);
+            modelo.put("modalidadSeleccionada", modalidad);
+            modelo.put("query", query);
+
             return new ModelAndView("verTutores", modelo);
         } catch (Exception e) {
             e.printStackTrace();
