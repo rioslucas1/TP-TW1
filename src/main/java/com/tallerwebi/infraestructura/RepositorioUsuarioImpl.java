@@ -2,6 +2,8 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.servicios.ServicioEnvioDeCorreos;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository("repositorioUsuario")
 @Transactional
@@ -37,6 +41,18 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     @Override
     public void guardar(Usuario usuario) {
         sessionFactory.getCurrentSession().save(usuario);
+
+             ServicioEnvioDeCorreos servicio = new ServicioEnvioDeCorreos();
+                 Map<String, String> datos = new HashMap<>();
+
+        datos.put("nombre", usuario.getNombre());
+
+         servicio.enviarCorreo(
+            usuario.getEmail(),                            
+            "Bienvenido a Clases Ya!",                             
+            ServicioEnvioDeCorreos.TipoCorreo.BIENVENIDA,
+            datos                                                 
+        );
     }
 
     @Override
@@ -157,5 +173,13 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         List<Profesor> resultados = query.getResultList();
         return resultados.isEmpty() ? null : resultados.get(0);
     }
+    @Override
+        public List<Usuario> buscarConNotificacionesPendientes() {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM Usuario WHERE DATEDIFF(CURDATE(),ultima_conexion) >7 ";        /*Agregar un timestamp en la base de datos cuando hace cada login para saber hace cuanto no ingresa */
+        Query query = session.createQuery(hql, Usuario.class);
+        return query.getResultList();
+}
+
 
 }

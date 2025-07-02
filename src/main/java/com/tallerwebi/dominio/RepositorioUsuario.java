@@ -23,5 +23,6 @@ public interface RepositorioUsuario {
     Usuario buscarPorNombre(String nombre);
     Alumno buscarAlumnoPorNombre(String emisorNombre);
     Profesor buscarProfesorPorNombre(String emisorNombre);
+        List<Usuario> buscarConNotificacionesPendientes();
 }
 
