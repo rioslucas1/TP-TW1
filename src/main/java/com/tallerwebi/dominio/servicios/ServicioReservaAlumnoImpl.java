@@ -99,6 +99,11 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
         return repositorioReservaAlumno.buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
     }
 
+
+    @Override
+    public List<Clase> obtenerTodasLasClasesPorProfesor(Long profesorId) { //
+        return repositorioReservaAlumno.obtenerTodasLasClasesPorProfesor(profesorId);
+    }
 }
 
 
