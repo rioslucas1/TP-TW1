@@ -380,42 +380,299 @@
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="card h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-clock-history"></i> Disponibilidad</h5>
-              <div class="dashboard-item">
-                <div><strong>Gestionar Horarios</strong></div>
-                <small class="d-block">Configura tu disponibilidad semanal</small>
-              </div>
-              <a th:href="@{/calendario-profesor}" class="btn btn-outline-primary w-100 mt-3">Gestionar calendario</a>
-            </div>
-          </div>
+            <!-- About Us - Features Section -->
+            <section class="features-section" th:if="${nombreUsuario} == null">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2 class="section-title">Sobre Nosotros</h2>
+                        <p class="section-subtitle">Descubre por qué somos la mejor opción para tu educación</p>
+                    </div>
+                    
+                    <div class="carousel-container">
+                        <div class="carousel-wrapper">
+                            <div class="carousel-track" id="featuresTrack">
+                                <div class="feature-card active">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <h3 class="feature-title">Clases Personalizadas</h3>
+                                    <p class="feature-description">Cada sesión se adapta a tu ritmo y necesidades específicas de aprendizaje.</p>
+                                </div>
+                                
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <h3 class="feature-title">Profesores Verificados</h3>
+                                    <p class="feature-description">Todos nuestros tutores pasan por un riguroso proceso de selección y verificación.</p>
+                                </div>
+                                
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <h3 class="feature-title">Horarios Flexibles</h3>
+                                    <p class="feature-description">Programa tus clases cuando mejor te convenga, 24/7 disponibilidad.</p>
+                                </div>
+                                
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-award"></i>
+                                    </div>
+                                    <h3 class="feature-title">Certificaciones</h3>
+                                    <p class="feature-description">Obtén certificados oficiales al completar tus cursos y objetivos.</p>
+                                </div>
+                                
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <h3 class="feature-title">Calidad Garantizada</h3>
+                                    <p class="feature-description">Sistema de calificaciones y reseñas para asegurar la mejor experiencia.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="carousel-btn carousel-btn-prev" id="featuresPrev">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-btn carousel-btn-next" id="featuresNext">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        
+                        <div class="carousel-dots" id="featuresDots">
+                            <span class="dot active" data-slide="0"></span>
+                            <span class="dot" data-slide="1"></span>
+                            <span class="dot" data-slide="2"></span>
+                            <span class="dot" data-slide="3"></span>
+                            <span class="dot" data-slide="4"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tutors Section -->
+            <section class="tutors-section" th:if="${nombreUsuario} == null">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2 class="section-title">Nuestros Profesionales</h2>
+                        <p class="section-subtitle">Conoce a algunos de nuestros tutores más destacados</p>
+                    </div>
+                    
+                    <div class="carousel-container">
+                        <div class="carousel-wrapper">
+                            <div class="carousel-track" id="tutorsTrack">
+                                <div class="tutor-card active">
+                                    <img src="/img/tutor-maria.jpg" alt="María González" class="tutor-image">
+                                    <h3 class="tutor-name">María González</h3>
+                                    <p class="tutor-subject">Matemáticas y Física</p>
+                                    <div class="tutor-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">4.9 (127 reseñas)</span>
+                                    </div>
+                                    <p class="tutor-comment">"Excelente profesora, muy paciente y clara en sus explicaciones."</p>
+                                </div>
+                                
+                                <div class="tutor-card">
+                                    <img src="/img/tutor-carlos.jpg" alt="Carlos Rodríguez" class="tutor-image">
+                                    <h3 class="tutor-name">Carlos Rodríguez</h3>
+                                    <p class="tutor-subject">Programación Web</p>
+                                    <div class="tutor-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">4.8 (89 reseñas)</span>
+                                    </div>
+                                    <p class="tutor-comment">"Me ayudó a conseguir mi primer trabajo como desarrollador."</p>
+                                </div>
+                                
+                                <div class="tutor-card">
+                                    <img src="/img/tutor-ana.jpg" alt="Ana Martínez" class="tutor-image">
+                                    <h3 class="tutor-name">Ana Martínez</h3>
+                                    <p class="tutor-subject">Inglés Conversacional</p>
+                                    <div class="tutor-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">5.0 (156 reseñas)</span>
+                                    </div>
+                                    <p class="tutor-comment">"Gracias a Ana logré aprobar mi examen TOEFL con excelente puntaje."</p>
+                                </div>
+                                
+                                <div class="tutor-card">
+                                    <img src="/img/tutor-diego.jpg" alt="Diego López" class="tutor-image">
+                                    <h3 class="tutor-name">Diego López</h3>
+                                    <p class="tutor-subject">Guitarra y Piano</p>
+                                    <div class="tutor-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">4.7 (73 reseñas)</span>
+                                    </div>
+                                    <p class="tutor-comment">"Un músico increíble que hace que aprender sea divertido."</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="carousel-btn carousel-btn-prev" id="tutorsPrev">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-btn carousel-btn-next" id="tutorsNext">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        
+                        <div class="carousel-dots" id="tutorsDots">
+                            <span class="dot active" data-slide="0"></span>
+                            <span class="dot" data-slide="1"></span>
+                            <span class="dot" data-slide="2"></span>
+                            <span class="dot" data-slide="3"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subscription CTA -->
+            <section class="cta-section" th:if="${nombreUsuario} == null">
+                <div class="cta-container">
+                    <h2 class="cta-title">¿Quieres ser parte de esta plataforma en línea?</h2>
+                    <p class="cta-text">
+                        Únete a miles de estudiantes que ya están aprendiendo con los profesionales mejor capacitados. 
+                        Accede a clases ilimitadas, contenido exclusivo y un seguimiento personalizado de tu progreso. 
+                        ¡Tu futuro académico y profesional te está esperando!
+                    </p>
+                    <a href="#" class="btn-cta">Ver Planes de Suscripción</a>
+                </div>
+            </section>
+
+            <!-- Contact Form -->
+            <section class="contact-section" th:if="${nombreUsuario} == null">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2 class="section-title">Contáctanos</h2>
+                        <p class="section-subtitle">¿Tienes preguntas? Estamos aquí para ayudarte</p>
+                    </div>
+                    
+                    <div class="contact-content">
+                        <div class="contact-form-container">
+                            <form class="contact-form" id="contactForm">
+                                <div class="form-group">
+                                    <label for="name" class="form-label">Nombre Completo</label>
+                                    <input type="text" id="name" name="name" class="form-input" placeholder="Tu nombre completo" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" id="email" name="email" class="form-input" placeholder="tu@email.com" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="subject" class="form-label">Asunto</label>
+                                    <input type="text" id="subject" name="subject" class="form-input" placeholder="¿En qué podemos ayudarte?" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="message" class="form-label">Mensaje</label>
+                                    <textarea id="message" name="message" class="form-textarea" placeholder="Escribe tu mensaje aquí..." rows="4" required></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn-form-submit">Enviar Mensaje</button>
+                            </form>
+                        </div>
+                        
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h3 class="contact-title">Email</h3>
+                                    <p class="contact-text">contacto@clases-ya.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h3 class="contact-title">Teléfono</h3>
+                                    <p class="contact-text">+54 11 1234-5678</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h3 class="contact-title">Dirección</h3>
+                                    <p class="contact-text">Buenos Aires, Argentina</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mantener tus secciones existentes para usuarios logueados -->
+            <section class="main-section logged-in" th:if="${nombreUsuario} != null and ${rol} == 'alumno'">
+                <!-- Tu contenido existente para alumnos -->
+            </section>
+            
+            <section class="main-section logged-in" th:if="${nombreUsuario} != null and ${rol} == 'profesor'">
+                <!-- Tu contenido existente para profesores -->
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer-redesign">
+                <div class="footer-container">
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Clases-Ya</span>
+                        </div>
+                        <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+                    </div>
+                    
+                    <div class="footer-bottom">
+                        <p class="footer-copyright">© 2025 Taller Web</p>
+                        <div class="footer-team">
+                            <p class="team-label">Desarrollado por:</p>
+                            <div class="team-members">
+                                <span class="team-member">Angel Leyes</span>
+                                <span class="team-member">Ezequiel Mendoza</span>
+                                <span class="team-member">Fede Hodara</span>
+                                <span class="team-member">Lucas Rios</span>
+                                <span class="team-member">Luka Cambriglia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
-      </div>
     </div>
-  </section>
 
-  <footer class="footer text-white py-4 mt-5">
-    <div class="container text-center">
-      <p class="mb-2">© 2025 Clases-Ya. Todos los derechos reservados.</p>
-      <ul class="list-inline mt-2 mb-0">
-        <li class="list-inline-item">Angel Leyes</li>
-        <li class="list-inline-item">Ezequiel Mendoza</li>
-        <li class="list-inline-item">Fede Hodara</li>
-        <li class="list-inline-item">Lucas Rios</li>
-        <li class="list-inline-item">Luka Cambriglia</li>
-      </ul>
-    </div>
-  </footer>
-
-</main>
-</div>
-</div>
-<!-- /.container -->
-</div>
-<!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-
+    <!-- Scripts -->
+    <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/carousel.js}"></script>
+    <script th:src="@{/js/contact-form.js}"></script>
 </body>
 </html>
