@@ -91,6 +91,16 @@ public class RepositorioReservaAlumnoImpl implements RepositorioReservaAlumno {
     }
 
     @Override
+    public List<Clase> obtenerTodasLasClasesPorProfesor(Long profesorId) {
+        final Session session = sessionFactory.getCurrentSession();
+        // Modificación: Usar HQL en lugar de Criteria y Restrictions
+        return session.createQuery("FROM Clase c JOIN FETCH c.profesor p WHERE p.id = :profesorId AND c.alumno IS NOT NULL" , Clase.class)
+                .setParameter("profesorId", profesorId)
+                .list();
+    }
+
+
+    @Override
     public void guardar(Clase disponibilidad) {
         sessionFactory.getCurrentSession().saveOrUpdate(disponibilidad);
     }
