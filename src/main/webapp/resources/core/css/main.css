@@ -1,105 +1,325 @@
-<!DOCTYPE HTML>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  <title>Iniciar sesión - ClasesYa</title>
+.navbar {
+    padding: 1rem 2rem;
+    background-color: white;
+}
 
-  <!-- Bootstrap core -->
-  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0098c7;
+}
 
-  <!-- Estilos personalizados -->
-  <link rel="stylesheet" th:href="@{/css/main.css}"/>
-  <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
-  <link rel="stylesheet" th:href="@{/css/login.css}"/>
+.navbar-brand span {
+    background-color: #0098c7;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    vertical-align: middle;
+}
 
-  <!-- Iconos -->
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
+.navbar .nav-link {
+    color: #333;
+    margin: 0 0.5rem;
+}
 
-<body class="bg-light">
+.btn-registro {
+    background-color: #0098c7;
+    color: white;
+    border-radius: 20px;
+    padding: 5px 20px;
+}
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-light">
-  <div class="container">
-    <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
+.btn-inicio {
+    background-color: white;
+    color: #0098c7;
+    border: 1px solid #0098c7;
+    border-radius: 20px;
+    padding: 5px 20px;
+}
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-            aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" th:href="@{/home}">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" th:href="@{/verTutores}">Nuestros Tutores</a></li>
-        <li class="nav-item"><a class="nav-link" th:href="@{/registrarprofesor}">Convertirse en Tutor</a></li>
-      </ul>
-      <div class="d-flex">
-        <a th:href="@{/login}" class="btn btn-inicio me-2">Iniciar sesión</a>
-        <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
-      </div>
-    </div>
-  </div>
-</nav>
+.main-section {
+    background: linear-gradient(rgba(0, 152, 199, 0.8), rgba(0, 152, 199, 0.8)),
+    url('https://via.placeholder.com/1600x900') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 5rem 0;
+    position: relative;
+}
+.features-section {
+    background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+    padding: 60px 0;
+}
 
-<!-- LOGIN -->
-<main class="d-flex justify-content-center align-items-center min-vh-100">
-  <div class="contact-form-container shadow" style="max-width: 400px; width: 100%;">
-    <div class="text-center mb-4">
-      <img th:src="@{/img/iconoUsuario.png}" alt="icono usuario" width="80" class="mb-3">
-      <h3 class="section-title">Iniciar Sesión</h3>
-    </div>
+.section-title {
+    font-weight: bold;
+    color: #333;
+}
 
-    <form th:action="@{/validar-login}" method="POST" th:object="${datosLogin}" class="contact-form">
-      <div class="form-group">
-        <label for="email" class="form-label">Email</label>
-        <input th:field="*{email}" id="email" type="email" class="form-input" placeholder="correo@ejemplo.com" required>
-      </div>
+.feature-card h4 {
+    font-weight: bold;
+}
 
-      <div class="form-group">
-        <label for="password" class="form-label">Contraseña</label>
-        <input th:field="*{password}" type="password" id="password" class="form-input" placeholder="••••••••" required>
-      </div>
+.review-card {
+    border-left: 5px solid #2ea9d3;
+}
 
-      <div class="form-check mt-2">
-        <input type="checkbox" class="form-check-input" id="remember-me">
-        <label for="remember-me" class="form-check-label">Recordarme</label>
-      </div>
+.main-contenedor {
+    position: relative;
+    z-index: 1;
+}
 
-      <div class="mt-3 text-end">
-        <a href="#" class="text-secondary small">¿Olvidaste tu contraseña?</a>
-      </div>
+.main-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
 
-      <button type="submit" class="btn btn-inicio w-100 mt-4">Iniciar Sesión</button>
+.main-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
 
-      <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="${error}"></p>
-    </form>
+.btn-inicio {
+    background-color: #e63946;
+    color: white;
+    border-radius: 25px;
+    padding: 10px 25px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
 
-    <div class="mt-4 text-center">
-      <p>¿No tenés cuenta? <a th:href="@{/nuevo-usuario}">Registrarme</a></p>
-    </div>
-  </div>
-</main>
+.btn-inicio:hover {
+    background-color: #d62b3a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
 
-<!-- FOOTER -->
-<footer class="footer text-white py-4 mt-5" style="background-color: #0098c7;">
-  <div class="container text-center">
-    <p class="mb-2">© 2025 Clases-Ya. Todos los derechos reservados.</p>
-    <ul class="list-inline mt-2 mb-0">
-      <li class="list-inline-item">Angel Leyes</li>
-      <li class="list-inline-item">Ezequiel Mendoza</li>
-      <li class="list-inline-item">Fede Hodara</li>
-      <li class="list-inline-item">Lucas Rios</li>
-      <li class="list-inline-item">Luka Cambriglia</li>
-    </ul>
-  </div>
-</footer>
+.btn-empezar i {
+    margin-left: 5px;
+}
 
-<!-- JS -->
-<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-</body>
-</html>
+.main-section.logged-in {
+    background-color: #fff;
+    color: #333;
+    padding: 3rem 0;
+}
+
+.header-inicio {
+    margin-bottom: 2rem;
+    border-left: 4px solid #0098c7;
+    padding-left: 1rem;
+}
+
+.header-inicio h2 {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.header-inicio h2 span {
+    color: #0098c7;
+}
+
+.header-inicio p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.dashboard-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card .card-title {
+    color: #0098c7;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-item {
+    padding: 0.6rem;
+    margin-bottom: 0.8rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.dashboard-item:hover {
+    background-color: #eaf6fa;
+}
+
+.profesores-section {
+    margin-top: 3rem;
+    color: black;
+}
+
+.profesores-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.profesores-header h4 {
+    color: white;
+    font-weight: 600;
+}
+
+.btn-ver-todos {
+    color: whitesmoke;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.btn-ver-todos:hover {
+    text-decoration: underline;
+}
+
+.profesor-card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.profesor-card:hover {
+    transform: translateY(-4px);
+}
+
+.profesor-avatar {
+    background-color: #0098c7;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.rating {
+    margin: 0.5rem 0;
+    fill: yellow;
+}
+
+.badge-tema {
+    display: inline-block;
+    background-color: #0098c7;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin: 0.2rem;
+}
+
+
+
+/*BUSQUEDA DE VER TUTORES*/
+
+.search-section {
+    background-color: #0098c7;
+    color: white;
+    padding: 10px;
+}
+
+.course-image {
+    width: 14em;
+    height: 11.75em;
+    object-fit: cover;
+}
+
+
+.contenedor-grid {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    padding: 20px;
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .btn-signin,
+    .btn-signup {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+
+    @media (max-width: 992px) {
+        .main-title {
+            font-size: 2.5rem;
+        }
+    }
+
+
+
+
+    @media (max-width: 576px) {
+        .navbar {
+            padding: 0.5rem 1rem;
+        }
+    }
+
+
+    .item-grid {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+
+    .item-grid img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.3s ease;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .btn-signin,
+    .btn-signup {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+
+    @media (max-width: 992px) {
+        .main-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .navbar {
+            padding: 0.5rem 1rem;
+        }
+    }
+
+}
