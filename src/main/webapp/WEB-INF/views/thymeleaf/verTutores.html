@@ -11,7 +11,7 @@
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
     <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
     <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
-    <link rel="stylesheet" th:href="@{/css/tutors-dashboard.css}"/>
+    <link rel="stylesheet" th:href="@{/css/tutor-dashboard.css}"/>
 
     <!-- External Icons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
@@ -49,6 +49,7 @@
         </div>
         <div class="nav-user-info" th:if="${nombreUsuario} != null">
             <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting"></span>
+
             <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
         </div>
     </div>
