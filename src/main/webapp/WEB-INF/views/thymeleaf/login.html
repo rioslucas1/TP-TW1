@@ -10,66 +10,11 @@
 
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/home-redesign.css}" />
-      <link rel="stylesheet" th:href="@{/css/register.css}"/>
-            <link rel="stylesheet" th:href="@{/css/login.css}"/>
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/register.css}"/>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-        .login-box {
-          width: 100%;
-          max-width: 360px;
-          background-color: var(--bg-white);
-          padding: 2rem;
-          border-radius: var(--border-radius);
-          box-shadow: var(--shadow-lg);
-          font-size: 0.9rem;
-        }
-
-        .login-box .section-title {
-          font-size: 1.3rem;
-          font-weight: 600;
-          margin-bottom: 1.5rem;
-          color: var(--primary-color);
-        }
-
-        .login-box .form-label {
-          font-size: 0.85rem;
-          margin-bottom: 0.25rem;
-        }
-
-        .login-box .form-input {
-          padding: 0.5rem 0.75rem;
-          font-size: 0.85rem;
-        }
-
-        .btn-form-submit:hover {
-          background: var(--accent-color);
-          transform: translateY(-1px);
-        }
-
-        .login-box img {
-          width: 58px;
-        }
-
-        .login-box .form-check-label,
-        .login-box a {
-          font-size: 0.8rem;
-        }
-
-        .login-box a {
-          color: var(--text-light);
-        }
-
-        .login-box a:hover {
-          color: var(--secondary-color);
-        }
-
-        @media (max-width: 400px) {
-          .login-box {
-            padding: 1.5rem;
-          }
-        }
-    </style>
 </head>
 
 <body class="bg-light">
@@ -120,40 +65,40 @@
             </div>
 
             <form class="register-form" th:action="@{/validar-login}" method="post" th:object="${datosLogin}">
-                   <div class="form-group">
+                <div class="form-group">
                     <label for="email" class="form-label">Correo Electrónico</label>
                     <div class="input-container">
                                     <span class="input-icon">
                                         <i class="fas fa-envelope"></i>
                                     </span>
                         <input th:field="*{email}"
-                            type="email"
-                            id="email"
-                            class="form-input form-control"
-                            placeholder="correo@ejemplo.com"
-                            required />
+                               type="email"
+                               id="email"
+                               class="form-input form-control"
+                               placeholder="correo@ejemplo.com"
+                               required />
                     </div>
-                    </div>
+                </div>
                 <div class="form-group">
-          <label for="password" class="form-label">Contraseña</label>
-          <div class="input-container">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="input-container">
                         <span class="input-icon">
                             <i class="fas fa-lock"></i>
                         </span>
-            <input th:field="*{password}"
-                   type="password"
-                   id="password"
-                   class="form-input form-control"
-                   placeholder="Mínimo 3 caracteres"
-                   required />
-          </div>
-          <div class="password-strength">
-            <div class="strength-bar">
-              <div id="strengthFill" class="strength-fill"></div>
-            </div>
-            <span id="strengthText"  class="strength-text">Fortaleza de la contraseña</span>
-          </div>
-        </div>
+                        <input th:field="*{password}"
+                               type="password"
+                               id="password"
+                               class="form-input form-control"
+                               placeholder="Mínimo 3 caracteres"
+                               required />
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div id="strengthFill" class="strength-fill"></div>
+                        </div>
+                        <span id="strengthText"  class="strength-text">Fortaleza de la contraseña</span>
+                    </div>
+                </div>
 
                 <div class="d-flex justify-content-between">
                     <div class="form-check mb-2">

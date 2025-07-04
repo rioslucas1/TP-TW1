@@ -1,224 +1,315 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="fontAwesome/css/fontawesome.css">
-    <link href="fontAwesome/css/brands.css" rel="stylesheet">
-    <link href="fontAwesome/css/solid.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+    <!-- Custom CSS Files -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
     <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
-    <link rel="stylesheet" th:href="@{/css/tutores.css}"/>
+    <link rel="stylesheet" th:href="@{/css/tutors-dashboard.css}"/>
+
+    <!-- External Icons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <title>Ver tutores</title>
+    <title>Ver Tutores - Clases-Ya</title>
 </head>
 <body>
 
-<!-- Header -->
-<header>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Nuestros tutores</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Convertirse un tutor</a>
-                    </li>
-                </ul>
-
-                <div class="d-flex">
-                    <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
-                    <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
-                </div>
-            </div>
-
-            <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/verTutores}">Ver tutores</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Mi perfil</a>
-                    </li>
-                </ul>
-
-                <div class="d-flex align-items-center">
-                    <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
-                    <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
-                </div>
-            </div>
+<!-- Navigation -->
+<nav class="navbar-redesign">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
         </div>
-    </nav>
-</header>
-
-<div class="d-flex">
-    <div class="sidebar-custom d-flex flex-column p-3">
-        <a href="#" class="sidebar-logo mb-4">
-            <i class='bx bx-layer'></i>
-            <span>ClasesYa</span>
-        </a>
-
-        <nav class="nav flex-column gap-2">
-            <a href="#" class="nav-link-custom active"><i class='bx bx-grid-alt'></i> Dashboard</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-user'></i> Historial</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-message-square-detail'></i> Mensajes</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-bookmark'></i> Guardados</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-folder'></i> Archivos Compartidos</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-bar-chart-alt-2'></i> Estadísticas</a>
-        </nav>
-
-        <div class="mt-auto">
-            <a href="#" class="nav-link-custom"><i class='bx bx-log-out'></i> Cerrar sesión</a>
+        <div class="nav-menu" th:if="${nombreUsuario} == null">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Nuestros Tutores</a>
+            <a th:href="@{/registrarprofesor}" class="nav-link-redesign">Convertirse en Tutor</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+        <div class="nav-buttons" th:if="${nombreUsuario} == null">
+            <a th:href="@{/login}" class="btn-login">Iniciar Sesión</a>
+            <a th:href="@{/nuevo-usuario}" class="btn-register">Registrarse</a>
+        </div>
+        <div class="nav-menu" th:if="${nombreUsuario} != null">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+            <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+            <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+        <div class="nav-user-info" th:if="${nombreUsuario} != null">
+            <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting"></span>
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
         </div>
     </div>
+</nav>
 
-    <!-- Main -->
-    <main class="container flex-grow-1">
-        <!-- Sección Superior -->
-        <section class="search-section container py-4">
-            <form th:action="@{/verTutores}" method="get">
-                <div class="row g-3 align-items-center">
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar-nav">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-graduation-cap sidebar-logo-icon"></i>
+                <span class="sidebar-logo-text">ClasesYa</span>
+            </div>
+        </div>
 
-                    <!-- Filtro de Categoría -->
-                    <div class="col-md-3">
-                        <select name="temaId" class="form-select shadow-sm rounded-pill">
-                            <option th:value="''" th:selected="${temaIdSeleccionado == null}">Todas las categorías</option>
-                            <option th:each="tema : ${listaTemas}"
-                                    th:value="${tema.id}"
-                                    th:text="${tema.nombre}"
-                                    th:selected="${tema.id == temaIdSeleccionado}">
-                            </option>
-                        </select>
-                    </div>
+        <nav class="sidebar-menu">
+            <ul class="sidebar-menu-list">
+                <li class="sidebar-menu-item active">
+                    <a href="#" class="sidebar-menu-link">
+                        <i class="fas fa-th-large sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#" class="sidebar-menu-link">
+                        <i class="fas fa-history sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Historial</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#" class="sidebar-menu-link">
+                        <i class="fas fa-comments sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Mensajes</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#" class="sidebar-menu-link">
+                        <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Guardados</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#" class="sidebar-menu-link">
+                        <i class="fas fa-folder sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Archivos Compartidos</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#" class="sidebar-menu-link">
+                        <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Estadísticas</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
 
-                    <!-- Filtro de Modalidad -->
-                    <div class="col-md-3">
-                        <select name="modalidad" class="form-select shadow-sm rounded-pill">
-                            <option th:value="''" th:selected="${modalidadSeleccionada == null}">Todas las modalidades</option>
-                            <option th:value="PRESENCIAL" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).PRESENCIAL}">
-                                Presencial
-                            </option>
-                            <option th:value="VIRTUAL" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).VIRTUAL}">
-                                Virtual
-                            </option>
-                            <option th:value="AMBAS" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).AMBAS}">
-                                Ambas
-                            </option>
-                        </select>
-                    </div>
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-logout-link">
+                <i class="fas fa-sign-out-alt sidebar-logout-icon"></i>
+                <span class="sidebar-logout-text">Cerrar sesión</span>
+            </a>
+        </div>
+    </aside>
 
-                    <!-- Botón de Filtrar -->
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary shadow-sm rounded-pill w-100">Filtrar</button>
-                    </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <h2 class="search-title">
+                    <i class="fas fa-search"></i>
+                    Encuentra tu tutor ideal
+                </h2>
 
-                    <!-- Campo de Búsqueda CORREGIDO -->
-                    <div class="col-md-3">
-                        <div class="input-group shadow-sm rounded-pill">
-                            <span class="input-group-text bg-white border-0 rounded-start-pill">
-                                <i class="fa fa-search text-muted"></i>
-                            </span>
-                            <input type="text" name="query" class="form-control border-0 rounded-end-pill"
-                                   placeholder="Buscar tutor, curso..."
-                                   th:value="${query}">
+                <form th:action="@{/verTutores}" method="get" class="search-form">
+                    <div class="search-filters">
+                        <!-- Category Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Categoría</label>
+                            <div class="select-container">
+                                <select name="temaId" class="filter-select">
+                                    <option th:value="''" th:selected="${temaIdSeleccionado == null}">
+                                        Todas las categorías
+                                    </option>
+                                    <option th:each="tema : ${listaTemas}"
+                                            th:value="${tema.id}"
+                                            th:text="${tema.nombre}"
+                                            th:selected="${tema.id == temaIdSeleccionado}">
+                                    </option>
+                                </select>
+                                <i class="fas fa-chevron-down select-arrow"></i>
+                            </div>
+                        </div>
+
+                        <!-- Modality Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Modalidad</label>
+                            <div class="select-container">
+                                <select name="modalidad" class="filter-select">
+                                    <option th:value="''" th:selected="${modalidadSeleccionada == null}">
+                                        Todas las modalidades
+                                    </option>
+                                    <option th:value="PRESENCIAL" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).PRESENCIAL}">
+                                        Presencial
+                                    </option>
+                                    <option th:value="VIRTUAL" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).VIRTUAL}">
+                                        Virtual
+                                    </option>
+                                    <option th:value="AMBAS" th:selected="${modalidadSeleccionada == T(com.tallerwebi.dominio.entidades.ModalidadPreferida).AMBAS}">
+                                        Ambas
+                                    </option>
+                                </select>
+                                <i class="fas fa-chevron-down select-arrow"></i>
+                            </div>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div class="filter-group search-input-group">
+                            <label class="filter-label">Buscar</label>
+                            <div class="search-input-container">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text"
+                                       name="query"
+                                       class="search-input"
+                                       placeholder="Buscar tutor, curso..."
+                                       th:value="${query}">
+                            </div>
+                        </div>
+
+                        <!-- Filter Button -->
+                        <div class="filter-group">
+                            <button type="submit" class="filter-button">
+                                <i class="fas fa-filter"></i>
+                                Filtrar
+                            </button>
                         </div>
                     </div>
-
-                </div>
-            </form>
+                </form>
+            </div>
         </section>
 
-        <!-- Título y Cursos Disponibles -->
-        <section class="available-courses container py-5">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold text-primary">Tutores Disponibles</h2>
-                <div class="mx-auto mt-2" style="width: 80px; height: 4px; background-color: #00729A; border-radius: 2px;"></div>
+        <!-- Tutors Section -->
+        <section class="tutors-section">
+            <div class="section-header">
+                <h2 class="section-title">Tutores Disponibles</h2>
+                <div class="section-divider"></div>
             </div>
 
-            <!-- Mensaje cuando no hay profesores -->
-            <div th:if="${#lists.isEmpty(listaProfesores)}" class="text-center py-5">
-                <div class="alert alert-info" role="alert">
-                    <i class="bi bi-info-circle me-2"></i>
-                    No hay tutores disponibles en este momento.
+            <!-- No tutors message -->
+            <div th:if="${#lists.isEmpty(listaProfesores)}" class="no-tutors">
+                <div class="no-tutors-content">
+                    <i class="fas fa-user-slash"></i>
+                    <h3>No hay tutores disponibles</h3>
+                    <p>No se encontraron tutores que coincidan con tus criterios de búsqueda.</p>
+                    <a href="#" class="btn-primary">Ver todos los tutores</a>
                 </div>
             </div>
 
-            <!-- Lista de profesores -->
-            <div class="row gy-4" th:if="${!#lists.isEmpty(listaProfesores)}">
-                <div class="col-md-6 col-lg-4" th:each="profesor : ${listaProfesores}">
-                    <div class="card shadow-sm h-100 border-0 rounded-4 tutor-card">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="img/iconoUsuario.png" th:src="@{img/iconoUsuario.png}"
-                                     th:alt="${profesor.nombre + ' ' + profesor.apellido}"
-                                     class="rounded-circle me-3"
-                                     style="width: 70px; height: 70px; object-fit: cover;">
-                                <div>
-                                    <h5 class="card-title mb-1" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre del Profesor</h5>
-                                    <div class="d-flex align-items-center mb-1">
-                                        <div class="text-warning me-2">
-                                            <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, 5)}"
-                                               th:class="${i <= (profesor.calificacionPromedio ?: 0) ? 'bi bi-star-fill' : 'bi bi-star'}"></i>
-                                        </div>
-                                        <small class="text-muted">
-                                            (<span th:text="${profesor.calificacionPromedio != null ? #numbers.formatDecimal(profesor.calificacionPromedio, 1, 1) : '0.0'}">0.0</span>)
-                                        </small>
-                                    </div>
+            <!-- Tutors Grid -->
+            <div class="tutors-grid" th:if="${!#lists.isEmpty(listaProfesores)}">
+                <div class="tutor-card" th:each="profesor : ${listaProfesores}">
+                    <div class="tutor-header">
+                        <div class="tutor-avatar">
+                            <img src="img/iconoUsuario.png"
+                                 th:src="@{img/iconoUsuario.png}"
+                                 th:alt="${profesor.nombre + ' ' + profesor.apellido}">
+                        </div>
+                        <div class="tutor-info">
+                            <h3 class="tutor-name" th:text="${profesor.nombre + ' ' + profesor.apellido}">
+                                Nombre del Profesor
+                            </h3>
+                            <div class="tutor-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star"
+                                       th:each="i : ${#numbers.sequence(1, 5)}"
+                                       th:class="${i <= (profesor.calificacionPromedio ?: 0) ? 'fas fa-star filled' : 'fas fa-star'}"></i>
                                 </div>
-                            </div>
-
-                            <ul class="list-unstyled mb-3 flex-grow-1">
-                                <li class="mb-2">
-                                    <i class="bi bi-award-fill me-2 text-primary"></i>
-                                    <strong>Tema:</strong>
-                                    <span th:text="${profesor.tema != null ? profesor.tema.nombre : 'No especificado'}">No especificado</span>
-                                </li>
-                                <li class="mb-2">
-                                    <i class="bi bi-laptop-fill me-2 text-primary"></i>
-                                    <strong>Modalidad:</strong>
-                                    <span th:text="${profesor.modalidadPreferida ?: 'Presencial'}">Presencial</span>
-                                </li>
-                                <li class="mb-2" th:if="${profesor.totalClasesDadas != null && profesor.totalClasesDadas > 0}">
-                                    <i class="bi bi-book-fill me-2 text-success"></i>
-                                    <strong>Clases dadas:</strong>
-                                    <span th:text="${profesor.totalClasesDadas}">0</span>
-                                </li>
-                                <li class="mb-2" th:if="${profesor.totalAlumnos != null && profesor.totalAlumnos > 0}">
-                                    <i class="bi bi-people-fill me-2 text-info"></i>
-                                    <strong>Alumnos:</strong>
-                                    <span th:text="${profesor.totalAlumnos}">0</span>
-                                </li>
-                            </ul>
-
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <a th:href="@{/verPerfilDeProfesor(email=${profesor.email})}"
-                                   class="btn btn-outline-primary btn-sm rounded-pill px-3">Ver perfil</a>
-                                <button class="btn btn-primary btn-sm rounded-pill px-3">Contactar</button>
+                                <span class="rating-value">
+                                    (<span th:text="${profesor.calificacionPromedio != null ? #numbers.formatDecimal(profesor.calificacionPromedio, 1, 1) : '0.0'}">0.0</span>)
+                                </span>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="tutor-details">
+                        <div class="detail-item">
+                            <i class="fas fa-award"></i>
+                            <span class="detail-label">Tema:</span>
+                            <span class="detail-value" th:text="${profesor.tema != null ? profesor.tema.nombre : 'No especificado'}">
+                                No especificado
+                            </span>
+                        </div>
+
+                        <div class="detail-item">
+                            <i class="fas fa-laptop"></i>
+                            <span class="detail-label">Modalidad:</span>
+                            <span class="detail-value" th:text="${profesor.modalidadPreferida ?: 'Presencial'}">
+                                Presencial
+                            </span>
+                        </div>
+
+                        <div class="detail-item" th:if="${profesor.totalClasesDadas != null && profesor.totalClasesDadas > 0}">
+                            <i class="fas fa-book"></i>
+                            <span class="detail-label">Clases dadas:</span>
+                            <span class="detail-value" th:text="${profesor.totalClasesDadas}">0</span>
+                        </div>
+
+                        <div class="detail-item" th:if="${profesor.totalAlumnos != null && profesor.totalAlumnos > 0}">
+                            <i class="fas fa-users"></i>
+                            <span class="detail-label">Alumnos:</span>
+                            <span class="detail-value" th:text="${profesor.totalAlumnos}">0</span>
+                        </div>
+                    </div>
+
+                    <div class="tutor-actions">
+                        <a th:href="@{/verPerfilDeProfesor(email=${profesor.email})}"
+                           class="btn-secondary">
+                            <i class="fas fa-user"></i>
+                            Ver perfil
+                        </a>
+                        <button class="btn-primary">
+                            <i class="fas fa-envelope"></i>
+                            Contactar
+                        </button>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 </div>
+
+<!-- Footer -->
+<footer class="footer-redesign">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Clases-Ya</span>
+            </div>
+            <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Taller Web</p>
+            <div class="footer-team">
+                <p class="team-label">Desarrollado por:</p>
+                <div class="team-members">
+                    <span class="team-member">Angel Leyes</span>
+                    <span class="team-member">Ezequiel Mendoza</span>
+                    <span class="team-member">Fede Hodara</span>
+                    <span class="team-member">Lucas Rios</span>
+                    <span class="team-member">Luka Cambriglia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/main.js}"></script>
+<script type="text/javascript" th:src="@{/js/tutors-dashboard.js}"></script>
+
 </body>
 </html>
