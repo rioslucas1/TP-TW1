@@ -5,58 +5,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}" />
     <link rel="stylesheet" th:href="@{/css/profesores.css}"/>
+    
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
-<div class="d-flex">
-    <div class="sidebar-custom">
-        <a href="#" class="sidebar-logo">
-            <i class='bx bx-layer'></i>
-            <span>ClasesYa</span>
-        </a>
 
-        <nav class="nav">
-            <a href="#" class="nav-link-custom active">
-                <i class='bx bx-grid-alt'></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-user'></i>
-                <span>Historial</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-message-square-detail'></i>
-                <span>Mensajes</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-bookmark'></i>
-                <span>Guardados</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-folder'></i>
-                <span>Archivos Compartidos</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-bar-chart-alt-2'></i>
-                <span>Estadísticas</span>
-            </a>
-        </nav>
+<div >
+<div class="">
 
-        <div class="mt-auto">
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-log-out'></i>
-                <span>Cerrar sesión</span>
-            </a>
+
+        <!-- Sidebar  -->
+        <div class="sidebar-nav" >
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <a th:href="@{/home}" class="sidebar-logo">
+                    <i class="fas fa-graduation-cap sidebar-logo-icon"></i>
+                    <span class="sidebar-logo-text">ClasesYa</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <ul class="sidebar-menu-list">
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/home}" class="sidebar-menu-link" th:if="${nombreUsuario} != null">
+                            <i class="fas fa-th-large sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/historial}" class="sidebar-menu-link">
+                            <i class="fas fa-history sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Historial</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item active">
+                        <a th:href="@{/chat}" class="sidebar-menu-link">
+                            <i class="fas fa-comments sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Mensajes</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/guardados}" class="sidebar-menu-link">
+                            <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Guardados</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/archivos}" class="sidebar-menu-link">
+                            <i class="fas fa-folder-open sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Archivos Compartidos</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/estadisticas}" class="sidebar-menu-link">
+                            <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Estadísticas</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="sidebar-logout-link">
+                    <i class="fas fa-sign-out-alt sidebar-logout-icon"></i>
+                    <span class="sidebar-logout-text">Cerrar sesión</span>
+                </a>
+            </div>
         </div>
-    </div>
 
-    <div class="container">
-        <header>
-            <h1>Ubicación de Profesores</h1>
+<div class="py-5" th:classappend="${nombreUsuario} != null ? 'container-fluid' : 'container'">
+
+    <header class="px-2">
+            <h1 class="text-white">Ubicación de Profesores</h1>
             <p>Sistema de localización de profesores por materia</p>
 
             <div class="search-container">
@@ -67,48 +94,51 @@
             </div>
         </header>
 
-        <div class="map-container">
-            <h2 class="map-title">Mapa de Ubicaciones</h2>
-            <div id="map"></div>
-        </div>
+    <div class="map-container mb-5">
+        <h2 class="h4 mb-3 fw-semibold" style="color: #195755;">Mapa de Ubicaciones</h2>
+        <div id="map" style="height: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></div>
+    </div>
 
-        <!-- Card de profesores dinamica -->
-        <h2 class="profesores-title">Listado de Profesores</h2>
-        <div class="profesores-cards" id="profesoresContainer" th:if="${not #lists.isEmpty(datosProfesores)}">
-            <div class="profesor-card" th:each="profesor : ${datosProfesores}" th:data-nombre="${profesor.nombre + ' ' + profesor.apellido}" th:data-materia="${profesor.tema}">
-                <div class="profesor-nombre" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre Profesor</div>
-                <div class="profesor-info">
-                    <span>Materia:</span> <span th:text="${profesor.tema}">Materia</span>
+    <h2 class="profesores-title" style="color: #195755;">Listado de Profesores</h2>
+    <div class="profesores-cards"   id="profesoresContainer" th:if="${not #lists.isEmpty(datosProfesores)}">
+        <div class="profesor-card"  th:each="profesor : ${datosProfesores}" th:data-nombre="${profesor.nombre + ' ' + profesor.apellido}" th:data-materia="${profesor.tema}">
+            <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body">
+                    <h5 class="profesor-nombre" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre Profesor</h5>
+                    <p class="profesor-info"><strong>Materia:</strong> <span th:text="${profesor.tema}">Materia</span></p>
+                    <p class="profesor-info">
+                        <strong>Ubicación:</strong>
+                        <span th:text="${#numbers.formatDecimal(profesor.latitud, 1, 6) + ', ' + #numbers.formatDecimal(profesor.longitud, 1, 6)}">Coordenadas</span>
+                    </p>
+                    <button class="btn btn-sm w-100 mt-3" style="border: 1px solid #195755; color: #195755;" th:onclick="'centrarMapa(' + ${profesor.latitud} + ',' + ${profesor.longitud} + ')'">
+                        Ver en mapa
+                    </button>
                 </div>
-                <div class="profesor-info">
-                    <span>Ubicación:</span>
-                    <span th:text="${#numbers.formatDecimal(profesor.latitud, 1, 6) + ', ' + #numbers.formatDecimal(profesor.longitud, 1, 6)}">
-                        Coordenadas
-                    </span>
-                </div>
-                <button class="btn-ver-mapa" th:onclick="'centrarMapa(' + ${profesor.latitud} + ',' + ${profesor.longitud} + ')'">
-                    Ver en mapa
-                </button>
             </div>
         </div>
+    </div>
 
-        <div class="no-profesores" th:if="${#lists.isEmpty(datosProfesores)}">
-            <p>No se han encontrado profesores en el sistema.</p>
-        </div>
+    <div class="alert alert-warning mt-5 text-center rounded-3 shadow-sm" th:if="${#lists.isEmpty(datosProfesores)}">
+        No se han encontrado profesores en el sistema.
+    </div>
 
-        <footer class="footer text-white py-4 mt-5">
-            <div class="container text-center">
-                <p class="mb-2">© 2025 Clases-Ya. Todos los derechos reservados.</p>
-                <ul class="list-inline mt-2 mb-0">
-                    <li class="list-inline-item">Angel Leyes</li>
-                    <li class="list-inline-item">Ezequiel Mendoza</li>
-                    <li class="list-inline-item">Fede Hodara</li>
-                    <li class="list-inline-item">Lucas Rios</li>
-                    <li class="list-inline-item">Luka Cambriglia</li>
-                </ul>
-            </div>
-        </footer>
 
+
+<footer class="footer-redesign">
+  <div class="footer-container">
+    <div class="footer-logo">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Clases-Ya</span>
+    </div>
+    <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+    <div class="footer-bottom">
+      <p>© 2025 Taller Web</p>
+      <div class="footer-team">
+        <p>Desarrollado por: Angel, Ezequiel, Fede, Lucas, Luka</p>
+      </div>
+    </div>
+  </div>
+</footer>
     </div>
 </div>
 
@@ -147,7 +177,7 @@
             console.log(`Marcador: ${profesor.nombre} en [${profesor.latitud}, ${profesor.longitud}]`);
             const customIcon = L.divIcon({
                 className: 'custom-marker',
-                html: `<div style="background-color: #FF8C00; width: 12px; height: 12px; border-radius: 50%; border: 3px solid #87CEEB;"></div>`,
+                html: `<div style="background-color: #195755; width: 12px; height: 12px; border-radius: 50%; border: 3px solid white;"></div>`,
                 iconSize: [18, 18],
                 iconAnchor: [9, 9]
             });
@@ -155,10 +185,10 @@
             const marker = L.marker([profesor.latitud, profesor.longitud], { icon: customIcon })
                 .addTo(map)
                 .bindPopup(`
-                    <div style="text-align: center;">
-                        <strong style="color: #FF8C00;">${profesor.nombre} ${profesor.apellido}</strong>
+                    <div style="text-align: center; font-family: 'Poppins', sans-serif;">
+                        <strong style="color: #195755; font-size: 14px;">${profesor.nombre} ${profesor.apellido}</strong>
                         <br>
-                        <span style="color: #5CACEE;">${profesor.tema}</span>
+                        <span style="color: #333; font-size: 13px;">${profesor.tema}</span>
                     </div>
                 `);
 
