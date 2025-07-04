@@ -1,4 +1,4 @@
-/*
+
 package com.tallerwebi.punta_a_punta;
 
 
@@ -24,7 +24,7 @@ public class VistaLoginE2E {
     static void abrirNavegador() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch();
-        //browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(100));
 
     }
 
@@ -46,7 +46,7 @@ public class VistaLoginE2E {
     }
 
     @Test
-    void deberiaDecirUNLAMEnElNavbar() {
+    void deberiaDecirCLASEYAEnElNavbar() {
         String texto = vistaLogin.obtenerTextoDeLaBarraDeNavegacion();
         assertThat("ClasesYa", equalToIgnoringCase(texto));
     }
@@ -68,5 +68,16 @@ public class VistaLoginE2E {
         String url = vistaLogin.obtenerURLActual();
         assertThat(url, containsStringIgnoringCase("http://localhost:8080/spring/validar-login"));
     }
+
+    @Test
+    void deberiaQuedarseEnLaMismaPaginaSiSeIntentaLoguearSinCompletarCampos() {
+        String urlAntes = vistaLogin.obtenerURLActual();
+        vistaLogin.darClickEnIniciarSesion();
+
+        // Espera breve para permitir el evento de validación del navegador
+        try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
+
+        String urlDespues = vistaLogin.obtenerURLActual();
+        assertThat(urlDespues, equalToIgnoringCase(urlAntes));
+    }
 }
-*/

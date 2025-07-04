@@ -11,6 +11,6 @@ public interface RepositorioReservaAlumno {
     void guardar(Clase disponibilidadExistente);
     List<Clase> buscarClasesPorProfesorYAlumno(String emailProfesor, String emailAlumno);
     Clase buscarPorId(Long disponibilidadId);
-
+    List<Clase> obtenerTodasLasClasesPorProfesor(Long profesorId);
     List<Clase> buscarPorProfesorDiaFecha(String emailProfesor, String diaSemana, LocalDate fechaEspecifica);
 }

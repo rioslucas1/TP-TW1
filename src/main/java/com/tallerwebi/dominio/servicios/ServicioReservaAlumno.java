@@ -17,4 +17,5 @@ public interface ServicioReservaAlumno {
     boolean estaSuscritoAProfesor(Long id, String emailProfesor);
 
     List<Clase> obtenerClasesPorProfesorYAlumno(String emailProfesor, String emailAlumno);
+    List<Clase> obtenerTodasLasClasesPorProfesor(Long profesorId);
 }

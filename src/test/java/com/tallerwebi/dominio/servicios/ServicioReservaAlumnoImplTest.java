@@ -494,4 +494,5 @@ public class ServicioReservaAlumnoImplTest {
 		verify(repositorioReservaAlumnoMock, times(1)).buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
 	}
 
+
 }
