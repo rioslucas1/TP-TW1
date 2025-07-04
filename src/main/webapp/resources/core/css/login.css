@@ -1,64 +1,60 @@
- .login-wrapper {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
-      background: linear-gradient(135deg, var(--primary-color) 0%, #374151 50%, var(--accent-color) 100%);
-    }
+    .login-wrapper {
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 2rem;
+          background: linear-gradient(135deg, var(--primary-color) 0%, #374151 50%, var(--accent-color) 100%);
+        }
 
-    .login-box {
-      width: 100%;
-      max-width: 360px;
-      background-color: var(--bg-white);
-      padding: 2rem;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-lg);
-      font-size: 0.9rem;
-    }
+        .login-box {
+          width: 100%;
+          max-width: 360px;
+          background-color: var(--bg-white);
+          padding: 2rem;
+          border-radius: var(--border-radius);
+          box-shadow: var(--shadow-lg);
+          font-size: 0.9rem;
+        }
 
-    .login-box .section-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: var(--primary-color);
-    }
+        .login-box .section-title {
+          font-size: 1.3rem;
+          font-weight: 600;
+          margin-bottom: 1.5rem;
+          color: var(--primary-color);
+        }
 
-    .login-box .form-label {
-      font-size: 0.85rem;
-      margin-bottom: 0.25rem;
-    }
-
-    .login-box .form-input {
-      padding: 0.5rem 0.75rem;
-      font-size: 0.85rem;
-    }
+        .login-box .form-label {
+          font-size: 0.85rem;
+          margin-bottom: 0.25rem;
+        }
 
 
-    .btn-form-submit:hover {
-      background: var(--accent-color);
-      transform: translateY(-1px);
-    }
 
-    .login-box img {
-      width: 58px;
-    }
+        .btn-form-submit:hover {
+          background: var(--accent-color);
+          transform: translateY(-1px);
+        }
 
-    .login-box .form-check-label,
-    .login-box a {
-      font-size: 0.8rem;
-    }
+        .login-box img {
+          width: 58px;
+        }
 
-    .login-box a {
-      color: var(--text-light);
-    }
+        .login-box .form-check-label,
+        .login-box a {
+          font-size: 0.8rem;
+        }
 
-    .login-box a:hover {
-      color: var(--secondary-color);
-    }
+        .login-box a {
+          color: var(--text-light);
+        }
 
-    @media (max-width: 400px) {
-      .login-box {
-        padding: 1.5rem;
-      }
-    }
+        .login-box a:hover {
+          color: var(--secondary-color);
+        }
+
+        @media (max-width: 400px) {
+          .login-box {
+            padding: 1.5rem;
+          }
+        }

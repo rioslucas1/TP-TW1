@@ -10,17 +10,10 @@
 
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/home-redesign.css}" />
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .login-wrapper {
-          min-height: 100vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 2rem;
-          background: linear-gradient(135deg, var(--primary-color) 0%, #374151 50%, var(--accent-color) 100%);
-        }
+      <link rel="stylesheet" th:href="@{/css/register.css}"/>
+            <link rel="stylesheet" th:href="@{/css/login.css}"/>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
         .login-box {
           width: 100%;
@@ -126,16 +119,41 @@
                 <h3 class="section-title">Iniciar Sesión</h3>
             </div>
 
-            <form class="contact-form" th:action="@{/validar-login}" method="post" th:object="${datosLogin}">
-                <div class="form-group mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input th:field="*{email}" type="email" id="email" class="form-input form-control" placeholder="correo@ejemplo.com" required />
-                </div>
-
-                <div class="form-group mb-3">
-                    <label for="password" class="form-label">Contraseña</label>
-                    <input th:field="*{password}" type="password" id="password" class="form-input form-control" placeholder="Contraseña"  required />
-                </div>
+            <form class="register-form" th:action="@{/validar-login}" method="post" th:object="${datosLogin}">
+                   <div class="form-group">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <div class="input-container">
+                                    <span class="input-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                        <input th:field="*{email}"
+                            type="email"
+                            id="email"
+                            class="form-input form-control"
+                            placeholder="correo@ejemplo.com"
+                            required />
+                    </div>
+                    </div>
+                <div class="form-group">
+          <label for="password" class="form-label">Contraseña</label>
+          <div class="input-container">
+                        <span class="input-icon">
+                            <i class="fas fa-lock"></i>
+                        </span>
+            <input th:field="*{password}"
+                   type="password"
+                   id="password"
+                   class="form-input form-control"
+                   placeholder="Mínimo 3 caracteres"
+                   required />
+          </div>
+          <div class="password-strength">
+            <div class="strength-bar">
+              <div id="strengthFill" class="strength-fill"></div>
+            </div>
+            <span id="strengthText"  class="strength-text">Fortaleza de la contraseña</span>
+          </div>
+        </div>
 
                 <div class="d-flex justify-content-between">
                     <div class="form-check mb-2">
@@ -153,7 +171,7 @@
                 <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="${error}"></p>
             </form>
 
-            <div class="text-center mt-3">
+            <div class="text-center">
                 <p>¿No tenés cuenta? <a th:href="@{/nuevo-usuario}">Registrarme</a></p>
             </div>
         </div>

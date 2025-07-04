@@ -654,6 +654,105 @@ body {
     font-size: 0.875rem;
     display: block;
 }
+.dashboard-card {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-white);
+  padding: 1.2rem;
+}
+
+.dashboard-item {
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0;
+}
+
+.badge-tema {
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.profesor-avatar {
+  background-color: var(--secondary-color);
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.btn-ver-todos {
+  font-size: 0.85rem;
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+.profesor-avatar {
+  background-color: #195755;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+
+/* Fondo general suave */
+body {
+  background-color: #f4f6f8;
+}
+
+/* Contenedor principal del dashboard */
+.dashboard-wrapper {
+  background-color: #ffffff;
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+/* Tarjetas principales */
+.dashboard-card {
+  background-color: #fefefe;
+  border: 1px solid #e0e0e0;
+  border-left: 5px solid #009874;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Botones */
+.btn-outline-success {
+  border-color: #009874;
+  color: #009874;
+}
+
+.btn-outline-success:hover {
+  background-color: #009874;
+  color: white;
+}
+
+/* Titulares */
+h1, .card-title {
+  color: #212529;
+  font-weight: bold;
+}
+
+/* Sidebar activo */
+.sidebar .active {
+  background-color: #009874;
+  color: white;
+  font-weight: 600;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -661,31 +760,33 @@ body {
         flex-direction: column;
         gap: 1rem;
     }
+    
     .nav-menu {
         flex-direction: column;
         gap: 1rem;
     }
+    
     .hero-content {
         grid-template-columns: 1fr;
         text-align: center;
     }
-
+    
     .hero-title {
         font-size: 2.5rem;
     }
-
+    
     .contact-content {
         grid-template-columns: 1fr;
     }
-
+    
     .carousel-btn-prev {
         left: 0.5rem;
     }
-
+    
     .carousel-btn-next {
         right: 0.5rem;
     }
-
+    
     .team-members {
         grid-template-columns: 1fr;
     }
@@ -695,11 +796,11 @@ body {
     .hero-title {
         font-size: 2rem;
     }
-
+    
     .section-title {
         font-size: 2rem;
     }
-
+    
     .cta-title {
         font-size: 2rem;
     }
