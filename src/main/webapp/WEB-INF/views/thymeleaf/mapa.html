@@ -217,7 +217,8 @@
 
                 <div class="professor-card-footer">
                     <button class="btn-view-map"
-                            th:onclick="'centrarMapa(' + ${profesor.latitud} + ',' + ${profesor.longitud} + ', \'' + ${profesor.nombre + ' ' + profesor.apellido} + '\')'">
+                            th:attr="data-lat=${profesor.latitud}, data-lng=${profesor.longitud}, data-nombre=${profesor.nombre + ' ' + profesor.apellido}"
+                            onclick="handleCentrarMapa(this)">
                         <i class="fas fa-map-marked-alt"></i>
                         Ver en Mapa
                     </button>
@@ -285,6 +286,13 @@
 
 <!-- Scripts -->
 <script th:inline="javascript">
+
+    function handleCentrarMapa(button) {
+        const lat = parseFloat(button.dataset.lat);
+        const lng = parseFloat(button.dataset.lng);
+        const nombre = button.dataset.nombre;
+        centrarMapa(lat, lng, nombre);
+    }
     /*<![CDATA[*/
     // Obtener datos de profesores desde el backend
     const profesores = [[${datosProfesores}]];
