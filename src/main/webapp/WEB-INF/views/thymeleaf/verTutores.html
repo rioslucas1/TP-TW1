@@ -42,14 +42,12 @@
         <div class="nav-menu" th:if="${nombreUsuario} != null">
             <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
             <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
-            <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
-            <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${nombreUsuario} != null">Mi Perfil</a>
             <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
             <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
         </div>
         <div class="nav-user-info" th:if="${nombreUsuario} != null">
             <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting"></span>
-
             <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
         </div>
     </div>
@@ -60,8 +58,8 @@
     <aside class="sidebar-nav">
         <div class="sidebar-header">
             <div class="sidebar-logo">
-                <i class="fas fa-graduation-cap sidebar-logo-icon"></i>
-                <span class="sidebar-logo-text">ClasesYa</span>
+                <i style="display: none" class="fas fa-graduation-cap sidebar-logo-icon"></i>
+                <span style="display: none" class="sidebar-logo-text"></span>
             </div>
         </div>
 
@@ -106,12 +104,7 @@
             </ul>
         </nav>
 
-        <div class="sidebar-footer">
-            <a href="#" class="sidebar-logout-link">
-                <i class="fas fa-sign-out-alt sidebar-logout-icon"></i>
-                <span class="sidebar-logout-text">Cerrar sesión</span>
-            </a>
-        </div>
+        
     </aside>
 
     <!-- Main Content -->
