@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Clase;
+import com.tallerwebi.dominio.servicios.ServicioMeet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,7 +25,13 @@ public class ControladorReservaAlumno {
 
     private static final String[] DIAS_SEMANA = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
+    @Autowired
     private ServicioReservaAlumno servicioReservaAlumno;
+
+    @Autowired
+    private ServicioMeet servicioMeet;
+
+
     @Autowired
     public ControladorReservaAlumno(ServicioReservaAlumno servicioReservaAlumno) {
         this.servicioReservaAlumno = servicioReservaAlumno;
@@ -223,6 +230,8 @@ public class ControladorReservaAlumno {
         Clase disponibilidad = servicioReservaAlumno.obtenerDisponibilidadPorId(disponibilidadId);
         return disponibilidad != null ? disponibilidad.getEnlace_meet() : null;
     }
+
+
     @GetMapping("/clases-intercambio")
     public ModelAndView verClasesEntreProfesorYAlumno(
             @RequestParam("emailProfesor") String emailProfesor,
@@ -242,8 +251,19 @@ public class ControladorReservaAlumno {
             return new ModelAndView("redirect:/home", modelo);
         }
 
+        List<Clase> clases = null;
         try {
-            List<Clase> clases = servicioReservaAlumno.obtenerClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+            clases = servicioReservaAlumno.obtenerClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            for (Clase clase : clases) {
+                if (clase.getFechaEspecifica() != null) {
+                    clase.setFechaFormateada(clase.getFechaEspecifica().format(formatter));
+                } else {
+                    clase.setFechaFormateada("N/D");
+                }
+            }
             modelo.put("clases", clases);
             modelo.put("emailProfesor", emailProfesor);
             modelo.put("emailAlumno", emailAlumno);
@@ -253,11 +273,45 @@ public class ControladorReservaAlumno {
         } catch (Exception e) {
             System.err.println("Error al obtener clases de intercambio: " + e.getMessage());
             modelo.put("error", "Error al cargar las clases. Inténtalo de nuevo más tarde.");
+            for (Clase clase : clases) {
+                System.out.println("DEBUG - Clase ID: " + clase.getId() +
+                        " | enlace_meet: " + clase.getEnlace_meet());
+            }
             return new ModelAndView("error", modelo);
         }
+        System.out.println("DEBUG - rol en modelo: " + usuarioLogeado.getRol());
+
 
         return new ModelAndView("clases-intercambio", modelo);
     }
+
+
+    @PostMapping("/clase/{id}/crear-reunion-meet")
+    public ModelAndView crearReunionMeet(@PathVariable Long id,
+                                         @RequestParam("emailProfesor") String emailProfesor,
+                                         @RequestParam("emailAlumno") String emailAlumno,
+                                         HttpServletRequest request) {
+        Usuario usuarioLogeado = obtenerUsuarioDeSesion(request);
+
+        if (usuarioLogeado == null || !usuarioLogeado.getEmail().equals(emailProfesor)) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        try {
+            Clase clase = servicioReservaAlumno.obtenerDisponibilidadPorId(id);
+
+            if (clase != null && clase.getEnlace_meet() == null) {
+                String enlaceMeet = servicioMeet.crearReunionGoogleMeet(clase);
+                clase.setEnlace_meet(enlaceMeet);
+                servicioReservaAlumno.actualizarClase(clase);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al crear reunión Meet: " + e.getMessage());
+        }
+
+        return new ModelAndView("redirect:/clases-intercambio?emailProfesor=" + emailProfesor + "&emailAlumno=" + emailAlumno);
+    }
+
 
 
 

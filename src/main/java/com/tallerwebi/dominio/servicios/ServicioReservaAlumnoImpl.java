@@ -104,6 +104,17 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
     public List<Clase> obtenerTodasLasClasesPorProfesor(Long profesorId) { //
         return repositorioReservaAlumno.obtenerTodasLasClasesPorProfesor(profesorId);
     }
+
+    @Override
+    public void actualizarClase(Clase clase) {
+        if (clase != null && clase.getId() != null) {
+            repositorioReservaAlumno.guardar(clase);
+        } else {
+            throw new IllegalArgumentException("Clase inválida para actualizar");
+        }
+    }
+
+
 }
 
 

@@ -101,6 +101,15 @@
 <!--                                <span th:if="${clase.estadoDisponibilidad != null}" th:text="${clase.estadoDisponibilidad.name()}"></span>-->
 <!--                                <span th:if="${clase.estadoDisponibilidad == null}">No definido</span>-->
                             </p>
+                            <a th:if="${clase.profesor != null and clase.alumno != null}"
+                               th:href="@{'/clases-intercambio'(emailProfesor=${clase.profesor.email}, emailAlumno=${clase.alumno.email})}"
+                               class="btn btn-primary btn-sm">
+                                Ver Detalles
+                            </a>
+                            <span th:if="${clase.profesor == null or clase.alumno == null}" class="text-muted">No disponible</span>
+                            <p>URL generada:
+                                <code th:text="@{'/clases-intercambio'(emailProfesor=${clase.profesor.email}, emailAlumno=${clase.alumno.email})}"></code>
+                            </p>
                         </div>
                     </div>
                 </div>

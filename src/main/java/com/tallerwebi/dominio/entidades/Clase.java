@@ -12,6 +12,9 @@ public class Clase {
 
     public String diaSemana;
     public String hora;
+    private String fechaFormateada;
+
+
 
 
 
@@ -57,6 +60,14 @@ public class Clase {
 
     public Clase() {
 
+    }
+
+    public String getFechaFormateada() {
+        return fechaFormateada;
+    }
+
+    public void setFechaFormateada(String fechaFormateada) {
+        this.fechaFormateada = fechaFormateada;
     }
 
 

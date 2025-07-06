@@ -18,4 +18,6 @@ public interface ServicioReservaAlumno {
 
     List<Clase> obtenerClasesPorProfesorYAlumno(String emailProfesor, String emailAlumno);
     List<Clase> obtenerTodasLasClasesPorProfesor(Long profesorId);
+
+    void actualizarClase(Clase clase);
 }
