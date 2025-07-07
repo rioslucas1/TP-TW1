@@ -21,9 +21,10 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 
-@Service
+
 public interface ServicioMeet {
     String crearReunionGoogleMeet(Clase clase);
 
 
+    void intercambiarCodigoPorTokens(String code);
 }

@@ -291,6 +291,7 @@ public class ControladorReservaAlumno {
                                          @RequestParam("emailProfesor") String emailProfesor,
                                          @RequestParam("emailAlumno") String emailAlumno,
                                          HttpServletRequest request) {
+
         Usuario usuarioLogeado = obtenerUsuarioDeSesion(request);
 
         if (usuarioLogeado == null || !usuarioLogeado.getEmail().equals(emailProfesor)) {
@@ -301,17 +302,18 @@ public class ControladorReservaAlumno {
             Clase clase = servicioReservaAlumno.obtenerDisponibilidadPorId(id);
 
             if (clase != null && clase.getEnlace_meet() == null) {
-                String enlaceMeet = servicioMeet.crearReunionGoogleMeet(clase);
-                clase.setEnlace_meet(enlaceMeet);
+                // ✅ Crear enlace Jitsi único para esta clase
+                String enlaceJitsi = "https://meet.jit.si/clase-" + clase.getId();
+                clase.setEnlace_meet(enlaceJitsi);
+
                 servicioReservaAlumno.actualizarClase(clase);
             }
         } catch (Exception e) {
-            System.err.println("Error al crear reunión Meet: " + e.getMessage());
+            System.err.println("Error al crear reunión Jitsi: " + e.getMessage());
         }
 
         return new ModelAndView("redirect:/clases-intercambio?emailProfesor=" + emailProfesor + "&emailAlumno=" + emailAlumno);
     }
-
 
 
 

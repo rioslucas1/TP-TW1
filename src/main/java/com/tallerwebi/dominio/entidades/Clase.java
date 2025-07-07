@@ -10,12 +10,9 @@ public class Clase {
     private Long id;
 
 
-    public String diaSemana;
-    public String hora;
+    private String diaSemana;
+    private String hora;
     private String fechaFormateada;
-
-
-
 
 
     @ManyToOne(fetch = FetchType.LAZY)
