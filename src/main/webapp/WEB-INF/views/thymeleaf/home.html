@@ -9,8 +9,11 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
 
     <!-- Custom styles -->
-    <link rel="stylesheet" href="home-redesign.css"/>
-    <link rel="stylesheet" href="sidebar.css"/>
+
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    <link rel="stylesheet" th:href="@{/css/layout-fixes.css}">
+
 
     <!-- Icons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
@@ -18,60 +21,54 @@
 </head>
 
 <body>
-<div class="d-flex">
-    <!-- Sidebar (mantener tu estructura existente) -->
-    <div class="sidebar-nav" th:if="${nombreUsuario} != null">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <a th:href="@{/home}" class="sidebar-logo">
-                    <i class="fas fa-graduation-cap sidebar-logo-icon"></i>
-                    <span class="sidebar-logo-text">ClasesYa</span>
-            </div>
-        </div>
-
-        <nav class="sidebar-menu">
-            <ul class="sidebar-menu-list">
-                <li class="sidebar-menu-item">
-                    <a th:href="@{/home}" class="sidebar-menu-link" th:if="${nombreUsuario} != null">
-                        <i class="fas fa-th-large sidebar-menu-icon"></i>
-                        <span class="sidebar-menu-text">Dashboard</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a th:href="@{/historial}" class="sidebar-menu-link">
-                        <i class="fas fa-history sidebar-menu-icon"></i>
-                        <span class="sidebar-menu-text">Historial</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a th:href="@{/chat}" class="sidebar-menu-link">
-                        <i class="fas fa-comments sidebar-menu-icon"></i>
-                        <span class="sidebar-menu-text">Mensajes</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a th:href="@{/guardados}" class="sidebar-menu-link">
-                        <i class="fas fa-bookmark sidebar-menu-icon"></i>
-                        <span class="sidebar-menu-text">Guardados</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a th:href="@{/archivos}" class="sidebar-menu-link">
-                        <i class="fas fa-folder-open sidebar-menu-icon"></i>
-                        <span class="sidebar-menu-text">Archivos Compartidos</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a th:href="@{/estadisticas}" class="sidebar-menu-link">
-                        <i class="fas fa-chart-bar sidebar-menu-icon"></i>
-                        <span class="sidebar-menu-text">Estadísticas</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-
-    </div>
+<aside class="sidebar-nav" th:if="${nombreUsuario} != null">
+    <nav class="sidebar-menu">
+        <ul class="sidebar-menu-list">
+            <li class="sidebar-menu-item active">
+                <a th:href="@{/home}" class="sidebar-menu-link" th:if="${nombreUsuario} != null">
+                    <i class="fas fa-th-large sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-history sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Historial de clases</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chat}" class="sidebar-menu-link">
+                    <i class="fas fa-comments sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mensajes</span>
+                </a>
+            </li>
+          <!--  <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Guardados</span>
+                </a>
+            </li>-->
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-folder sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Archivos Compartidos</span>
+                </a>
+            </li>
+           <!-- <li class="sidebar-menu-item">
+                <a th:href="@{/perfil}" class="sidebar-menu-link">
+                    <i class="fas fa-user sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mi Perfil</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Estadísticas</span>
+                </a>
+            </li>-->
+        </ul>
+    </nav>
+</aside>
 
     <div class="flex-grow-1">
         <!-- Header Navigation -->
@@ -116,7 +113,7 @@
             <div class="hero-container">
                 <div class="hero-content">
                     <div class="hero-text">
-                        <h1 class="hero-title" color="#fbbf24" >
+                        <h1 style="color: #ffffff;" class="hero-title">
                             Conecta con los Mejores
                             <span class="hero-highlight">Profesores</span>
                         </h1>
@@ -385,7 +382,7 @@
         </section>
 
         <!-- Usuario Loggeado como alumno-->
-        <section class="dashboard-wrapper "          th:if="${nombreUsuario} != null and ${rol} == 'alumno'">
+        <section class="dashboard-wrapper " th:if="${nombreUsuario} != null and ${rol} == 'alumno'">
             <div class="container">
                 <div class="text-center mb-5">
                     <h1 class="display-5 fw-bold">¡Hola, <span th:text="${nombreUsuario}">Ezequiel</span>!</h1>
@@ -398,7 +395,7 @@
                         <div class="dashboard-card p-4">
                             <h5 class="card-title text-success"><i class="bi bi-calendar3"></i> Clases Reservadas</h5>
                             <p class="text-muted">No tenés clases reservadas.</p>
-                            <a class="btn btn-outline-success w-100 mt-3" href="#">Ver todas</a>
+                            <a class="btn btn-outline-success w-100 mt-3" th:href="@{/mis-clases}">Ver todas las clases</a>
                         </div>
                     </div>
 
@@ -417,14 +414,14 @@
                                 <small class="text-muted">DOCX - Hace 5 días</small><br>
                                 <small>Prof. Prueba 2</small>
                             </div>
-                            <a class="btn btn-outline-success w-100 mt-3" href="#">Ver todos</a>
+                            <a class="btn btn-outline-success w-100 mt-3" href="#"> Ver todos los materiales</a>
                         </div>
                     </div>
 
                     <!-- Mensajes -->
                     <div class="col-md-4">
                         <div class="dashboard-card p-4">
-                            <h5 class="card-title text-success"><i class="bi bi-chat-dots"></i> Mensajes</h5>
+                            <h5 class="card-title text-success"><i class="bi bi-chat-dots"></i>Mensajes</h5>
                             <div>
                                 <strong>Prof. Prueba 1</strong><br>
                                 <small>Mensaje de prueba 1</small><br>
@@ -436,14 +433,14 @@
                                 <small>Mensaje de prueba 2…</small><br>
                                 <small class="text-muted">Ayer</small>
                             </div>
-                            <a class="btn btn-outline-success w-100 mt-3" href="#">Ver todos</a>
+                            <a class="btn btn-outline-success w-100 mt-3" th:href="@{/chat}">Ver todos los mensajes</a>
                         </div>
                     </div>
                 </div>
                 <div class="profesores-section">
                     <div class="profesores-header">
-                        <h4><i class="bi bi-search-text-white"></i> Encontrar Profesores</h4>
-                        <a href="#" class="btn-ver-todos">Ver todos <i class="bi bi-arrow-right"></i></a>
+                        <h4><i class="bi bi-search-text-white"></i>Reserva tu clase </h4>
+
                     </div>
                     <div class="row g-4">
                         <div class="col-md-3" th:each="profesor : ${listaProfesores}">

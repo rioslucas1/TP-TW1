@@ -53,7 +53,7 @@
     </div>
 </nav>
 
-<div class="dashboard-layout">
+
     <!-- Sidebar -->
     <aside class="sidebar-nav">
         <div class="sidebar-header">
@@ -74,33 +74,33 @@
                 <li class="sidebar-menu-item">
                     <a href="#" class="sidebar-menu-link">
                         <i class="fas fa-history sidebar-menu-icon"></i>
-                        <span class="sidebar-menu-text">Historial</span>
+                        <span class="sidebar-menu-text">Historial de clases</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="#" class="sidebar-menu-link">
+                    <a th:href="@{/chat}" class="sidebar-menu-link">
                         <i class="fas fa-comments sidebar-menu-icon"></i>
                         <span class="sidebar-menu-text">Mensajes</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
-                    <a href="#" class="sidebar-menu-link">
-                        <i class="fas fa-bookmark sidebar-menu-icon"></i>
-                        <span class="sidebar-menu-text">Guardados</span>
-                    </a>
-                </li>
+                <!--  <li class="sidebar-menu-item">
+                 <a href="#" class="sidebar-menu-link">
+                     <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                     <span class="sidebar-menu-text">Guardados</span>
+                 </a>
+             </li>-->
                 <li class="sidebar-menu-item">
                     <a href="#" class="sidebar-menu-link">
                         <i class="fas fa-folder sidebar-menu-icon"></i>
                         <span class="sidebar-menu-text">Archivos Compartidos</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
+               <!-- <li class="sidebar-menu-item">
                     <a href="#" class="sidebar-menu-link">
                         <i class="fas fa-chart-bar sidebar-menu-icon"></i>
                         <span class="sidebar-menu-text">Estadísticas</span>
                     </a>
-                </li>
+                </li>-->
             </ul>
         </nav>
 
@@ -272,7 +272,7 @@
             </div>
         </section>
     </main>
-</div>
+
 
 <!-- Footer -->
 <footer class="footer-redesign">

@@ -51,7 +51,7 @@
 <aside class="sidebar-nav">
     <nav class="sidebar-menu">
         <ul class="sidebar-menu-list">
-            <li class="sidebar-menu-item">
+            <li class="sidebar-menu-item active">
                 <a th:href="@{/home}" class="sidebar-menu-link">
                     <i class="fas fa-th-large sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Dashboard</span>
@@ -60,28 +60,28 @@
             <li class="sidebar-menu-item">
                 <a href="#" class="sidebar-menu-link">
                     <i class="fas fa-history sidebar-menu-icon"></i>
-                    <span class="sidebar-menu-text">Historial</span>
+                    <span class="sidebar-menu-text">Historial de clases</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a th:href="@{/chat}" class="sidebar-menu-link">
                     <i class="fas fa-comments sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Mensajes</span>
                 </a>
             </li>
-            <li class="sidebar-menu-item">
+           <!-- <li class="sidebar-menu-item">
                 <a href="#" class="sidebar-menu-link">
                     <i class="fas fa-bookmark sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Guardados</span>
                 </a>
-            </li>
+            </li>-->
             <li class="sidebar-menu-item">
                 <a href="#" class="sidebar-menu-link">
                     <i class="fas fa-folder sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Archivos Compartidos</span>
                 </a>
             </li>
-            <li class="sidebar-menu-item active">
+           <!-- <li class="sidebar-menu-item active">
                 <a th:href="@{/perfil}" class="sidebar-menu-link">
                     <i class="fas fa-user sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Mi Perfil</span>
@@ -92,7 +92,7 @@
                     <i class="fas fa-chart-bar sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Estadísticas</span>
                 </a>
-            </li>
+            </li>-->
         </ul>
     </nav>
 </aside>
@@ -130,7 +130,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h1 th:text="${alumno.nombre + ' ' + alumno.apellido}">Angel Antonio Leyes Delvalle</h1>
+                    <h1 style="color: #ffffff;" th:text="${alumno.nombre + ' ' + alumno.apellido}">Angel Antonio Leyes Delvalle</h1>
                     <p th:text="${alumno.email}">angelleyesdkd@gmail.com</p>
                 </div>
                 <div class="col-md-3">
@@ -388,7 +388,7 @@
                                 <i class='bx bx-calendar'></i>
                                 Mis Clases
                             </a>
-                            <a href="#" class="quick-action-btn">
+                            <a th:href="@{/chat}" class="quick-action-btn">
                                 <i class='bx bx-message'></i>
                                 Mensajes
                             </a>

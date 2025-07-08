@@ -28,7 +28,7 @@ public class ControladorMapa {
         ModelMap modelo = new ModelMap();
 
         // Agregar nombreUsuario si hay usuario logueado
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("USUARIO");
         if (usuario != null) {
             modelo.put("nombreUsuario", usuario.getNombre());
         }
