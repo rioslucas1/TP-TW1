@@ -10,9 +10,9 @@ public class Clase {
     private Long id;
 
 
-    public String diaSemana;
-    public String hora;
-
+    private String diaSemana;
+    private String hora;
+    private String fechaFormateada;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,6 +57,14 @@ public class Clase {
 
     public Clase() {
 
+    }
+
+    public String getFechaFormateada() {
+        return fechaFormateada;
+    }
+
+    public void setFechaFormateada(String fechaFormateada) {
+        this.fechaFormateada = fechaFormateada;
     }
 
 
