@@ -1,6 +1,7 @@
 package com.tallerwebi.dominio;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
 import com.tallerwebi.dominio.servicios.ServicioNotificacion;
@@ -9,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @Component
+@EnableScheduling
 public class RepositorioTareasProgramadas implements InitializingBean {
 
     private final ServicioNotificacion servicioNotificacion;

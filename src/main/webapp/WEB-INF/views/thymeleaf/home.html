@@ -1,422 +1,543 @@
 <!DOCTYPE HTML>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <title>Taller Web I</title>
-
-  <!-- Boostrap core css -->
-  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-
-  <!-- custom style -->
-  <link rel="stylesheet" th:href="@{/css/main.css}"/>
-
-  <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
-  <link rel="stylesheet" th:href="@{/css/footer.css}"/>
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Clases-Ya - Conectando estudiantes con los mejores profesores</title>
+    
+    <!-- Bootstrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    
+    <!-- Custom styles -->
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+      <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    
+    <!-- Icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
-<div  class="d-flex">
-
-
-  <div class="sidebar-custom d-flex flex-column p-3" th:if="${nombreUsuario} != null">
-    <a href="#" class="sidebar-logo mb-4">
-      <i class='bx bx-layer'></i>
-      <span>ClasesYa</span>
-    </a>
-
-    <nav class="nav flex-column gap-2">
-      <a href="#" class="nav-link-custom active"><i class='bx bx-grid-alt'></i> Dashboard</a>
-      <a href="#" class="nav-link-custom"><i class='bx bx-user'></i> Historial</a>
-      <a th:href="@{/chat}" class="nav-link-custom"><i class='bx bx-message-square-detail'></i> Mensajes</a>
-      <a href="#" class="nav-link-custom"><i class='bx bx-bookmark'></i> Guardados</a>
-      <a href="#" class="nav-link-custom"><i class='bx bx-folder'></i> Archivos Compartidos</a>
-      <a href="#" class="nav-link-custom"><i class='bx bx-bar-chart-alt-2'></i> Estadísticas</a>
-    </nav>
-
-    <div class="mt-auto">
-      <a th:href="@{/logout}" href="" class="nav-link-custom"><i class='bx bx-log-out'></i> Cerrar sesión</a>
-    </div>
-  </div>
-
-
-<div class="flex-grow-1">
-
-<main role="main" class="container"></main>
-<nav class="navbar navbar-expand-lg navbar-light">
-  <div class="container">
-    <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/home}">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/verTutores}" href="">Nuestros tutores</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
-        </li>
-      </ul>
-
-      <div class="d-flex">
-
-        <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
-        <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
-      </div>
-    </div>
-
-    <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/home}">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/verTutores}" >Ver tutores</a>
-
-        </li>
-        <li class="nav-item">
-          <a class="nav-link"
-             th:href="@{/profesor/perfil}"
-             th:if="${rol == 'profesor'}">Mi perfil</a>
-          <a class="nav-link"
-             th:href="@{/perfil}"
-             th:if="${rol == 'alumno'}">Mi perfil</a>
-
-        </li>
-        <li class="nav-item">
-          <a class="nav-link"
-             th:href="@{/calendario-profesor}"
-             th:if="${nombreUsuario != null and rol == 'profesor'}">
-            Calendario
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
-        </li>
-      </ul>
-      <div class="d-flex align-items-center">
-        <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
-        <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
-      </div>
-
-    </div>
-  </div>
-</nav>
-<section th:if="${nombreUsuario} == null">
-<section class="main-section" >
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-7 main-contenedor">
-        <h1 class="main-title">Bienvenido a<br>Clases-Ya</h1>
-        <p class="main-subtitle">Conectando los mejores tutores con estudiantes de todos los ámbitos.</p>
-        <a th:href="@{/login}" class="btn btn-inicio">Empezar <i class="fas fa-chevron-right"></i></a>
-      </div>
-
-      <div class="col-lg-5">
-        <div class="contenedor-grid d-none d-lg-grid">
-          <div class="item-grid">
-            <img th:src="@{/img/imagenMenu1.jpg}" alt="imagen-1">
-          </div>
-          <div class="item-grid">
-            <img th:src="@{/img/imagenMenu2.jpg}" alt="imagen-2">
-          </div>
-          <div class="item-grid">
-            <img th:src="@{/img/imagenMenu3.jpg}" alt="imagen-3">
-          </div>
-          <div class="item-grid">
-            <img th:src="@{/img/imagenMenu4.jpg}" alt="imagen-4">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-  <section class="section-categorias py-5 bg-light" th:if="${nombreUsuario} == null">
-    <div class="container">
-      <div class="text-center mb-5">
-        <h2 class="fw-bold">¿Qué tipo de clase estás buscando?</h2>
-        <p class="text-muted">Seleccioná una categoría para ver tutores disponibles.</p>
-      </div>
-
-      <div class="row g-4 justify-content-center">
-        <!-- Idiomas -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <div class="border rounded-3 text-center p-4 bg-white shadow-sm h-100 hover-shadow">
-            <div class="fs-1 mb-3"></div>
-            <h5 class="fw-semibold">Idiomas</h5>
-            <p class="text-muted small">Inglés, Portugués, Francés, Alemán y más.</p>
-            <a href="#" class="btn btn-outline-primary btn-sm mt-2">Ver tutores</a>
-            <!--<a href="/buscar?categoria=idiomas" class="btn btn-outline-primary btn-sm mt-2">Ver tutores</a>-->
-          </div>
-        </div>
-
-        <!-- Música -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <div class="border rounded-3 text-center p-4 bg-white shadow-sm h-100 hover-shadow">
-            <div class="fs-1 mb-3"></div>
-            <h5 class="fw-semibold">Música</h5>
-            <p class="text-muted small">Guitarra, piano, canto, producción musical.</p>
-            <a href="#" class="btn btn-outline-primary btn-sm mt-2">Ver tutores</a>
-            <!-- <a href="/buscar?categoria=musica" class="btn btn-outline-primary btn-sm mt-2">Ver tutores</a>-->
-           </div>
-         </div>
-
-         <!-- Programación -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <div class="border rounded-3 text-center p-4 bg-white shadow-sm h-100 hover-shadow">
-            <div class="fs-1 mb-3"></div>
-            <h5 class="fw-semibold">Programación</h5>
-            <p class="text-muted small">Desarrollo web, apps, bases de datos, algoritmos.</p>
-            <a href="#" class="btn btn-outline-primary btn-sm mt-2">Ver tutores</a>
-            <!--<a href="/buscar?categoria=programacion" class="btn btn-outline-primary btn-sm mt-2">Ver tutores</a>-->
-         </div>
-       </div>
-
-       <!-- Oficios -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <div class="border rounded-3 text-center p-4 bg-white shadow-sm h-100 hover-shadow">
-            <div class="fs-1 mb-3"></div>
-            <h5 class="fw-semibold">Oficios</h5>
-            <p class="text-muted small">Carpintería, electricidad, mecánica y más.</p>
-            <a href="/buscar?categoria=oficios" class="btn btn-outline-primary btn-sm mt-2">Ver tutores</a>
-            <!--<a href="/buscar?categoria=oficios" class="btn btn-outline-primary btn-sm mt-2">Ver tutores</a>-->
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-
-  <section class="section-como-funciona py-5">
-  <div class="container">
-    <h2 class="text-center mb-5">¿Cómo funciona?</h2>
-    <div class="row text-center">
-      <div class="col-md-4">
-        <i class="fas fa-search fa-2x text-primary mb-3"></i>
-        <h5>1. Buscá un tutor</h5>
-        <p>Explorá categorías, filtros y perfiles detallados.</p>
-      </div>
-      <div class="col-md-4">
-        <i class="fas fa-calendar-check fa-2x text-success mb-3"></i>
-        <h5>2. Reservá tu clase</h5>
-        <p>Seleccioná día, horario y modalidad de tu preferencia.</p>
-      </div>
-      <div class="col-md-4">
-        <i class="fas fa-video fa-2x text-danger mb-3"></i>
-        <h5>3. Tomá tu clase</h5>
-        <p>De manera presencial o virtual desde cualquier dispositivo.</p>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-<section class="section-final-cta py-5 text-white text-center">
-  <div class="main-section ">
-    <h2 class="mb-3">¿Listo para empezar?</h2>
-    <p class="mb-4">Cientos de tutores están esperando para ayudarte a aprender lo que necesitás.</p>
-    <a th:href="@{/login}" class="btn btn-inicio btn-primary">Empezar <i class="fas fa-chevron-right"></i></a>
-  </div>
-</section>
-
-</section>
-  <section class="main-section logged-in" th:if="${nombreUsuario} != null and ${rol} == 'alumno'">
-
-  <div class="container">
-    <div class="header-inicio">
-      <h2>Bienvenido, <span class="text-white" th:text="${nombreUsuario}">Estudiante</span></h2>
-      <p class="text-white">Gestiona tus clases y encuentra nuevos profesores.</p>
-    </div>
-
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100 dashboard-card">
-          <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-calendar3"></i> Mis clases Reservadas</h5>
-            <div th:if="${clasesReservadas != null and !clasesReservadas.isEmpty()}">
-              <div class="dashboard-item" th:each="clase : ${clasesReservadas}">
-                <div><strong th:text="${clase.profesor.tema != null ? clase.profesor.tema.nombre : 'Sin tema'}">Materia</strong></div>
-                <small class="d-block"><i class="bi bi-person"></i> <span th:text="${clase.profesor.nombre + ' ' + clase.profesor.apellido}">Profesor</span></small>
-                <small class="d-block"><i class="bi bi-clock"></i> <span th:text="${clase.diaSemana + ', ' + clase.hora}">Horario</span></small>
-                <small class="d-block" th:if="${clase.fechaEspecifica != null}">
-                  <i class="bi bi-calendar"></i> <span th:text="${clase.fechaEspecifica}">Fecha</span>
-                </small>
-              </div>
-            </div>
-            <div th:if="${clasesReservadas == null or clasesReservadas.isEmpty()}">
-              <p class="text-muted">No tenes clases reservadas</p>
-            </div>
-            <a th:href="@{/mis-clases}" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card h-100 dashboard-card">
-          <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-file-earmark-text"></i> Material de Estudio</h5>
-            <div class="dashboard-item">
-              <div><strong>Ejercicios de Programación</strong></div>
-              <small class="d-block"><i class="bi bi-file-pdf"></i> PDF - Hace 2 días</small>
-              <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 1</small>
-            </div>
-            <div class="dashboard-item">
-              <div><strong>Apuntes de Diseño</strong></div>
-              <small class="d-block"><i class="bi bi-file-word"></i> DOCX - Hace 5 días</small>
-              <small class="d-block"><i class="bi bi-person"></i> Prof. Prueba 2</small>
-            </div>
-            <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todos los materiales</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card h-100 dashboard-card">
-          <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-chat-dots"></i> Mensajes Recientes</h5>
-            <div class="dashboard-item">
-              <div><strong>Prof. Prueba 1</strong></div>
-              <small class="d-block">Mensaje de prueba 1</small>
-              <small class="d-block text-muted"><i class="bi bi-clock"></i> Hace 3 horas</small>
-            </div>
-            <div class="dashboard-item">
-              <div><strong>Prof. Prueba 2</strong></div>
-              <small class="d-block">Mensaje de prueba 2...</small>
-              <small class="d-block text-muted"><i class="bi bi-clock"></i> Ayer</small>
-            </div>
-            <a href="#" class="btn btn-outline-primary w-100 mt-3">Ver todos los mensajes</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="profesores-section">
-      <div class="profesores-header">
-        <h4><i class="bi bi-search-text-white"></i> Encontrar Profesores</h4>
-        <a href="#" class="btn-ver-todos">Ver todos <i class="bi bi-arrow-right"></i></a>
-      </div>
-      <div class="row g-4">
-        <div class="col-md-3" th:each="profesor : ${listaProfesores}">
-          <div class="card text-center p-3 h-100 profesor-card">
-            <div class="profesor-avatar rounded-circle mx-auto">
-              <i class="bi bi-person"></i>
-            </div>
-            <h6 th:text="${profesor.nombre + ' ' + profesor.apellido}">Profesor</h6>
-            <div class="rating">
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star"></i>
-            </div>
-            <div>
-              <span class="badge-tema" th:if="${profesor.tema != null}" th:text="${profesor.tema.nombre}">Tema</span>
-              <span class="badge-tema" th:if="${profesor.tema == null}">Sin tema asignado</span>
-            </div>
-            <a class="nav-link" th:href="@{/calendario-reserva(emailProfesor=${profesor.email})}">Ver Calendario</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-  <section class="main-section logged-in" th:if="${nombreUsuario} != null and ${rol} == 'profesor'">
-    <div class="container">
-      <div class="header-inicio">
-        <h2>Bienvenido Profesor, <span class="text-white" th:text="${nombreUsuario}">Profesor</span></h2>
-        <p class="text-white">Gestiona tus clases y horarios disponibles.</p>
-      </div>
-
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-calendar3"></i> Mis clases Programadas</h5>
-              <div th:if="${clasesProfesor != null and !clasesProfesor.isEmpty()}">
-                <div class="dashboard-item" th:each="clase : ${clasesProfesor}">
-                  <div><strong th:text="${temaProfesor != null ? temaProfesor.nombre : 'Sin tema'}">Materia</strong></div>
-                  <small class="d-block" th:if="${clase.alumno != null}">
-                    <i class="bi bi-person"></i> <span th:text="${clase.alumno.nombre + ' ' + clase.alumno.apellido}">Alumno</span>
-                  </small>
-                  <small class="d-block"><i class="bi bi-clock"></i> <span th:text="${clase.diaSemana + ', ' + clase.hora}">Horario</span></small>
-                  <small class="d-block" th:if="${clase.fechaEspecifica != null}">
-                    <i class="bi bi-calendar"></i> <span th:text="${clase.fechaEspecifica}">Fecha</span>
-                  </small>
+    <div class="d-flex">
+        <!-- Sidebar (mantener tu estructura existente) -->
+        <div class="sidebar-nav" th:if="${nombreUsuario} != null">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <a th:href="@{/home}" class="sidebar-logo">
+                    <i class="fas fa-graduation-cap sidebar-logo-icon"></i>
+                    <span class="sidebar-logo-text">ClasesYa</span>
                 </div>
-              </div>
-              <div th:if="${clasesProfesor == null or clasesProfesor.isEmpty()}">
-                <p class="text-muted">No tenes clases programadas</p>
-              </div>
-              <a href="@{/mis-clases}" class="btn btn-outline-primary w-100 mt-3">Ver todas mis clases</a>
             </div>
-          </div>
+
+            <nav class="sidebar-menu">
+                <ul class="sidebar-menu-list">
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/home}" class="sidebar-menu-link" th:if="${nombreUsuario} != null">
+                            <i class="fas fa-th-large sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/historial}" class="sidebar-menu-link">
+                            <i class="fas fa-history sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Historial</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item active">
+                        <a th:href="@{/chat}" class="sidebar-menu-link">
+                            <i class="fas fa-comments sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Mensajes</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/guardados}" class="sidebar-menu-link">
+                            <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Guardados</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/archivos}" class="sidebar-menu-link">
+                            <i class="fas fa-folder-open sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Archivos Compartidos</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a th:href="@{/estadisticas}" class="sidebar-menu-link">
+                            <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                            <span class="sidebar-menu-text">Estadísticas</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a th:href="@{/logout}" class="sidebar-logout-link">
+                    <i class="fas fa-sign-out-alt sidebar-logout-icon"></i>
+                    <span class="sidebar-logout-text">Cerrar sesión</span>
+                </a>
+            </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="card h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-book"></i> Especialidad elegida</h5>
-              <div class="dashboard-item">
-                <div><strong th:text="${temaProfesor != null ? temaProfesor.nombre : 'Sin tema asignado'}">Especialidad</strong></div>
-              </div>
-              <a href="profesor/perfil/editar" class="btn btn-outline-primary w-100 mt-3">Editar perfil</a>
-            </div>
-          </div>
-        </div>
+        <div class="flex-grow-1">
+            <!-- Header Navigation -->
+            <nav class="navbar-redesign">
+                <div class="nav-container">
+                    <div class="nav-brand">
+                        <i class="fas fa-graduation-cap nav-logo-icon"></i>
+                        <span class="nav-logo-text">Clases-Ya</span>
+                    </div>
+                    
+                    <div class="nav-menu" th:if="${nombreUsuario} == null">
+                        <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+                        <a th:href="@{/verTutores}" class="nav-link-redesign">Nuestros Tutores</a>
+                        <a th:href="@{/registrarprofesor}" class="nav-link-redesign">Convertirse en Tutor</a>
+                        <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+                    </div>
+                    
+                    <div class="nav-buttons" th:if="${nombreUsuario} == null">
+                        <a th:href="@{/login}" class="btn-login">Iniciar Sesión</a>
+                        <a th:href="@{/nuevo-usuario}" class="btn-register">Registrarse</a>
+                    </div>
+                    
+                    <!-- Logged in navigation -->
+                    <div class="nav-menu" th:if="${nombreUsuario} != null">
+                        <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+                        <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+                        <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+                        <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+                        <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+                        <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+                    </div>
+                    
+                    <div class="nav-user-info" th:if="${nombreUsuario} != null">
+                        <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting"></span>
+                        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+                    </div>
+                </div>
+            </nav>
 
-        <div class="col-md-4">
-          <div class="card h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-clock-history"></i> Disponibilidad</h5>
-              <div class="dashboard-item">
-                <div><strong>Gestionar Horarios</strong></div>
-                <small class="d-block">Configura tu disponibilidad semanal</small>
-              </div>
-              <a th:href="@{/calendario-profesor}" class="btn btn-outline-primary w-100 mt-3">Gestionar calendario</a>
-            </div>
-          </div>
+            <!-- Hero Section -->
+            <section class="hero-section" th:if="${nombreUsuario} == null">
+                <div class="hero-container">
+                    <div class="hero-content">
+                        <div class="hero-text">
+                            <h1 class="hero-title">
+                                Conecta con los Mejores
+                                <span class="hero-highlight">Profesores</span>
+                            </h1>
+                            <p class="hero-subtitle">
+                                Descubre una nueva forma de aprender con tutores expertos que se adaptan a tu ritmo y objetivos personales.
+                            </p>
+                            <a th:href="@{/login}" class="btn-hero">¡Empezemos!</a>
+                        </div>
+                        <div class="hero-image">
+                            <img src="@{/img/homeImage.png}" alt="Profesor enseñando a estudiantes" class="hero-img">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Us - Features Section -->
+            <section class="features-section" th:if="${nombreUsuario} == null">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2 class="section-title">Sobre Nosotros</h2>
+                        <p class="section-subtitle">Descubre por qué somos la mejor opción para tu educación</p>
+                    </div>
+                    
+                    <div class="carousel-container">
+                        <div class="carousel-wrapper">
+                            <div class="carousel-track" id="featuresTrack">
+                                <div class="feature-card active">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <h3 class="feature-title">Clases Personalizadas</h3>
+                                    <p class="feature-description">Cada sesión se adapta a tu ritmo y necesidades específicas de aprendizaje.</p>
+                                </div>
+                                
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <h3 class="feature-title">Profesores Verificados</h3>
+                                    <p class="feature-description">Todos nuestros tutores pasan por un riguroso proceso de selección y verificación.</p>
+                                </div>
+                                
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <h3 class="feature-title">Horarios Flexibles</h3>
+                                    <p class="feature-description">Programa tus clases cuando mejor te convenga, 24/7 disponibilidad.</p>
+                                </div>
+                                
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-award"></i>
+                                    </div>
+                                    <h3 class="feature-title">Certificaciones</h3>
+                                    <p class="feature-description">Obtén certificados oficiales al completar tus cursos y objetivos.</p>
+                                </div>
+                                
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <h3 class="feature-title">Calidad Garantizada</h3>
+                                    <p class="feature-description">Sistema de calificaciones y reseñas para asegurar la mejor experiencia.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="carousel-btn carousel-btn-prev" id="featuresPrev">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-btn carousel-btn-next" id="featuresNext">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        
+                        <div class="carousel-dots" id="featuresDots">
+                            <span class="dot active" data-slide="0"></span>
+                            <span class="dot" data-slide="1"></span>
+                            <span class="dot" data-slide="2"></span>
+                            <span class="dot" data-slide="3"></span>
+                            <span class="dot" data-slide="4"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tutors Section -->
+            <section class="tutors-section" th:if="${nombreUsuario} == null">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2 class="section-title">Nuestros Profesionales</h2>
+                        <p class="section-subtitle">Conoce a algunos de nuestros tutores más destacados</p>
+                    </div>
+                    
+                    <div class="carousel-container">
+                        <div class="carousel-wrapper">
+                            <div class="carousel-track" id="tutorsTrack">
+                                <div class="tutor-card active">
+                                    <img src="/img/tutor-maria.jpg" alt="María González" class="tutor-image">
+                                    <h3 class="tutor-name">María González</h3>
+                                    <p class="tutor-subject">Matemáticas y Física</p>
+                                    <div class="tutor-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">4.9 (127 reseñas)</span>
+                                    </div>
+                                    <p class="tutor-comment">"Excelente profesora, muy paciente y clara en sus explicaciones."</p>
+                                </div>
+                                
+                                <div class="tutor-card">
+                                    <img src="/img/tutor-carlos.jpg" alt="Carlos Rodríguez" class="tutor-image">
+                                    <h3 class="tutor-name">Carlos Rodríguez</h3>
+                                    <p class="tutor-subject">Programación Web</p>
+                                    <div class="tutor-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">4.8 (89 reseñas)</span>
+                                    </div>
+                                    <p class="tutor-comment">"Me ayudó a conseguir mi primer trabajo como desarrollador."</p>
+                                </div>
+                                
+                                <div class="tutor-card">
+                                    <img src="/img/tutor-ana.jpg" alt="Ana Martínez" class="tutor-image">
+                                    <h3 class="tutor-name">Ana Martínez</h3>
+                                    <p class="tutor-subject">Inglés Conversacional</p>
+                                    <div class="tutor-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">5.0 (156 reseñas)</span>
+                                    </div>
+                                    <p class="tutor-comment">"Gracias a Ana logré aprobar mi examen TOEFL con excelente puntaje."</p>
+                                </div>
+                                
+                                <div class="tutor-card">
+                                    <img src="/img/tutor-diego.jpg" alt="Diego López" class="tutor-image">
+                                    <h3 class="tutor-name">Diego López</h3>
+                                    <p class="tutor-subject">Guitarra y Piano</p>
+                                    <div class="tutor-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">4.7 (73 reseñas)</span>
+                                    </div>
+                                    <p class="tutor-comment">"Un músico increíble que hace que aprender sea divertido."</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="carousel-btn carousel-btn-prev" id="tutorsPrev">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-btn carousel-btn-next" id="tutorsNext">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        
+                        <div class="carousel-dots" id="tutorsDots">
+                            <span class="dot active" data-slide="0"></span>
+                            <span class="dot" data-slide="1"></span>
+                            <span class="dot" data-slide="2"></span>
+                            <span class="dot" data-slide="3"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subscription CTA -->
+            <section class="cta-section" th:if="${nombreUsuario} == null">
+                <div class="cta-container">
+                    <h2 class="cta-title">¿Quieres ser parte de esta plataforma en línea?</h2>
+                    <p class="cta-text">
+                        Únete a miles de estudiantes que ya están aprendiendo con los profesionales mejor capacitados. 
+                        Accede a clases ilimitadas, contenido exclusivo y un seguimiento personalizado de tu progreso. 
+                        ¡Tu futuro académico y profesional te está esperando!
+                    </p>
+                    <a href="#" class="btn-cta">Ver Planes de Suscripción</a>
+                </div>
+            </section>
+
+            <!-- Contact Form -->
+            <section class="contact-section" th:if="${nombreUsuario} == null">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2 class="section-title">Contáctanos</h2>
+                        <p class="section-subtitle">¿Tienes preguntas? Estamos aquí para ayudarte</p>
+                    </div>
+                    
+                    <div class="contact-content">
+                        <div class="contact-form-container">
+                            <form class="contact-form" id="contactForm">
+                                <div class="form-group">
+                                    <label for="name" class="form-label">Nombre Completo</label>
+                                    <input type="text" id="name" name="name" class="form-input" placeholder="Tu nombre completo" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" id="email" name="email" class="form-input" placeholder="tu@email.com" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="subject" class="form-label">Asunto</label>
+                                    <input type="text" id="subject" name="subject" class="form-input" placeholder="¿En qué podemos ayudarte?" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="message" class="form-label">Mensaje</label>
+                                    <textarea id="message" name="message" class="form-textarea" placeholder="Escribe tu mensaje aquí..." rows="4" required></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn-form-submit">Enviar Mensaje</button>
+                            </form>
+                        </div>
+                        
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h3 class="contact-title">Email</h3>
+                                    <p class="contact-text">contacto@clases-ya.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h3 class="contact-title">Teléfono</h3>
+                                    <p class="contact-text">+54 11 1234-5678</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h3 class="contact-title">Dirección</h3>
+                                    <p class="contact-text">Buenos Aires, Argentina</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Usuario Loggeado como alumno-->
+            <section class="dashboard-wrapper "          th:if="${nombreUsuario} != null and ${rol} == 'alumno'">
+                  <div class="container">
+                    <div class="text-center mb-5">
+                        <h1 class="display-5 fw-bold">¡Hola, <span th:text="${nombreUsuario}">Ezequiel</span>!</h1>
+                        <p class="lead text-muted">Gestioná tus clases, accedé a materiales y descubrí nuevos profesores.</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Clases -->
+                        <div class="col-md-4">
+                        <div class="dashboard-card p-4">
+                            <h5 class="card-title text-success"><i class="bi bi-calendar3"></i> Clases Reservadas</h5>
+                            <p class="text-muted">No tenés clases reservadas.</p>
+                            <a class="btn btn-outline-success w-100 mt-3" href="#">Ver todas</a>
+                        </div>
+                        </div>
+
+                        <!-- Material -->
+                        <div class="col-md-4">
+                        <div class="dashboard-card p-4">
+                            <h5 class="card-title text-success"><i class="bi bi-file-earmark-text"></i> Material de Estudio</h5>
+                            <div>
+                            <strong>Ejercicios de Programación</strong><br>
+                            <small class="text-muted">PDF - Hace 2 días</small><br>
+                            <small>Prof. Prueba 1</small>
+                            </div>
+                            <hr>
+                            <div>
+                            <strong>Apuntes de Diseño</strong><br>
+                            <small class="text-muted">DOCX - Hace 5 días</small><br>
+                            <small>Prof. Prueba 2</small>
+                            </div>
+                            <a class="btn btn-outline-success w-100 mt-3" href="#">Ver todos</a>
+                        </div>
+                        </div>
+
+                        <!-- Mensajes -->
+                        <div class="col-md-4">
+                        <div class="dashboard-card p-4">
+                            <h5 class="card-title text-success"><i class="bi bi-chat-dots"></i> Mensajes</h5>
+                            <div>
+                            <strong>Prof. Prueba 1</strong><br>
+                            <small>Mensaje de prueba 1</small><br>
+                            <small class="text-muted">Hace 3 horas</small>
+                            </div>
+                            <hr>
+                            <div>
+                            <strong>Prof. Prueba 2</strong><br>
+                            <small>Mensaje de prueba 2…</small><br>
+                            <small class="text-muted">Ayer</small>
+                            </div>
+                            <a class="btn btn-outline-success w-100 mt-3" href="#">Ver todos</a>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+            </section>
+
+ 
+
+            <!-- Usuario Loggeado como Profesor-->
+           <section class="main-section logged-in" th:if="${nombreUsuario} != null and ${rol} == 'profesor'">
+                <div class="container py-5">
+
+                    <!-- Encabezado de bienvenida -->
+                    <div class="text-center mb-5">
+                    <h2 class="fw-bold">Bienvenido Profesor, <span class="text-success" th:text="${nombreUsuario}">Profesor</span></h2>
+                    <p class="text-muted">Gestioná tus clases y horarios disponibles.</p>
+                    </div>
+
+                    <!-- Tarjetas principales -->
+                    <div class="row g-4">
+                    <!-- Mis clases programadas -->
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm rounded-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-success"><i class="bi bi-calendar3"></i> Mis clases Programadas</h5>
+
+                            <div th:if="${clasesProfesor != null and !clasesProfesor.isEmpty()}">
+                            <div class="border-bottom py-2" th:each="clase : ${clasesProfesor}">
+                                <div><strong th:text="${temaProfesor != null ? temaProfesor.nombre : 'Sin tema'}">Materia</strong></div>
+                                <small class="d-block" th:if="${clase.alumno != null}">
+                                <i class="bi bi-person"></i> <span th:text="${clase.alumno.nombre + ' ' + clase.alumno.apellido}">Alumno</span>
+                                </small>
+                                <small class="d-block"><i class="bi bi-clock"></i> <span th:text="${clase.diaSemana + ', ' + clase.hora}">Horario</span></small>
+                                <small class="d-block" th:if="${clase.fechaEspecifica != null}">
+                                <i class="bi bi-calendar"></i> <span th:text="${clase.fechaEspecifica}">Fecha</span>
+                                </small>
+                            </div>
+                            </div>
+                            <div th:if="${clasesProfesor == null or clasesProfesor.isEmpty()}">
+                            <p class="text-muted mt-2">No tenés clases programadas</p>
+                            </div>
+
+                            <a th:href="@{/profesor/todas-mis-clases}" class="btn btn-outline-success w-100 mt-3">Ver todas mis clases</a>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Especialidad elegida -->
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm rounded-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-success"><i class="bi bi-book"></i> Especialidad Elegida</h5>
+                            <div class="border-bottom py-2">
+                            <strong th:text="${temaProfesor != null ? temaProfesor.nombre : 'Sin tema asignado'}">Especialidad</strong>
+                            </div>
+                            <a href="profesor/perfil/editar" class="btn btn-outline-success w-100 mt-3">Editar perfil</a>
+                        </div>
+                        </div>
+                    </div>
+
+                </div>
+                </section>
+
+
+            <!-- Footer -->
+            <footer class="footer-redesign">
+                <div class="footer-container">
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Clases-Ya</span>
+                        </div>
+                        <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+                    </div>
+                    
+                    <div class="footer-bottom">
+                        <p class="footer-copyright">© 2025 Taller Web</p>
+                        <div class="footer-team">
+                            <p class="team-label">Desarrollado por:</p>
+                            <div class="team-members">
+                                <span class="team-member">Angel Leyes</span>
+                                <span class="team-member">Ezequiel Mendoza</span>
+                                <span class="team-member">Fede Hodara</span>
+                                <span class="team-member">Lucas Rios</span>
+                                <span class="team-member">Luka Cambriglia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
-      </div>
     </div>
-  </section>
 
-  <footer class="footer text-white py-4 mt-5">
-    <div class="container text-center">
-      <p class="mb-2">© 2025 Clases-Ya. Todos los derechos reservados.</p>
-      <ul class="list-inline mt-2 mb-0">
-        <li class="list-inline-item">Angel Leyes</li>
-        <li class="list-inline-item">Ezequiel Mendoza</li>
-        <li class="list-inline-item">Fede Hodara</li>
-        <li class="list-inline-item">Lucas Rios</li>
-        <li class="list-inline-item">Luka Cambriglia</li>
-      </ul>
-    </div>
-  </footer>
-
-</main>
-</div>
-</div>
-<!-- /.container -->
-</div>
-<!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-
+    <!-- Scripts -->
+    <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/carousel.js}"></script>
+    <script th:src="@{/js/contact-form.js}"></script>
 </body>
 </html>

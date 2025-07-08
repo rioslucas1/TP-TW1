@@ -19,7 +19,7 @@ public class Clase {
     @JoinColumn(name = "profesor_id")
     private Profesor profesor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "alumno_id")
     private Alumno alumno;
 

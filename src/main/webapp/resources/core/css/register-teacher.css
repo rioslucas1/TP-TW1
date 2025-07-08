@@ -1,0 +1,576 @@
+/* ===================================
+   REGISTER TEACHER PAGE STYLES
+   =================================== */
+
+/* Register Teacher Wrapper - Optimized for full visibility */
+.register-teacher-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem; /* Reducido de 2rem */
+    background: linear-gradient(135deg, var(--primary-color) 0%, #374151 50%, var(--accent-color) 100%);
+}
+
+/* Main Register Teacher Box - More compact */
+.register-teacher-box {
+    width: 100%;
+    max-width: 1000px; /* Aumentado ligeramente para mejor distribución */
+    background-color: var(--bg-white);
+    padding: 2rem 2.5rem; /* Reducido de 3rem */
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    font-size: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-teacher-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.15), 0 15px 15px -5px rgba(0, 0, 0, 0.08);
+}
+
+/* Register Header - More compact */
+.register-header {
+    text-align: center;
+    margin-bottom: 1.5rem; /* Reducido de 2.5rem */
+}
+
+.user-icon {
+    width: 60px; /* Reducido de 72px */
+    height: 60px;
+    margin-bottom: 0.75rem; /* Reducido de 1rem */
+    border-radius: 50%;
+    border: 3px solid var(--secondary-color);
+    padding: 6px; /* Reducido de 8px */
+    background-color: #f8fafc;
+}
+
+.section-title {
+    font-size: 1.5rem; /* Reducido de 1.75rem */
+    font-weight: 600;
+    margin-bottom: 0.25rem; /* Reducido de 0.5rem */
+    color: var(--primary-color);
+}
+
+.register-subtitle {
+    color: var(--text-light);
+    font-size: 0.9rem; /* Reducido de 0.95rem */
+    margin: 0;
+}
+
+/* Form Styles - More compact */
+.register-teacher-form {
+    margin-bottom: 1.5rem; /* Reducido de 2rem */
+}
+
+/* Two column layout with reduced gap */
+.form-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem; /* Reducido de 3rem */
+    margin-bottom: 1.5rem; /* Reducido de 2rem */
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Left column sections */
+.form-column.left .form-section {
+    margin-bottom: 2rem;
+}
+
+/* Right column sections */
+.form-column.right .form-section {
+    margin-bottom: 2rem;
+}
+
+/* Map section - much more compact */
+.form-section.full-width {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem; /* Reducido de 1rem */
+    margin-bottom: 1rem;
+}
+
+/* Form Sections - Much more compact */
+.form-section {
+    margin-bottom: 1rem; /* Reducido de 1.5rem */
+    padding-bottom: 1rem; /* Reducido de 1.5rem */
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 1rem; /* Reducido de 2rem */
+}
+
+.section-subtitle {
+    font-size: 1rem; /* Reducido de 1.1rem */
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem; /* Reducido de 1.5rem */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-subtitle i {
+    color: var(--secondary-color);
+    font-size: 1rem;
+}
+
+/* Form Row for Name and Surname */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem; /* Reducido de 1.5rem */
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+.form-label {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    display: block;
+}
+
+/* Input Container with Icon */
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    z-index: 2;
+    color: var(--text-light);
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+    font-size: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    background-color: #ffffff;
+}
+
+.form-input:focus + .input-icon,
+.form-select:focus + .input-icon,
+.input-container:focus-within .input-icon {
+    color: var(--secondary-color);
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+    font-size: 0.95rem;
+}
+
+/* Select Dropdown Styling */
+.form-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+}
+
+.form-select:focus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2310b981' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Password Strength Indicator */
+.password-strength {
+    margin-top: 0.5rem;
+}
+
+.strength-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    background-color: #ef4444;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.strength-fill.weak {
+    width: 25%;
+    background-color: #ef4444;
+}
+
+.strength-fill.fair {
+    width: 50%;
+    background-color: #f59e0b;
+}
+
+.strength-fill.good {
+    width: 75%;
+    background-color: #eab308;
+}
+
+.strength-fill.strong {
+    width: 100%;
+    background-color: var(--secondary-color);
+}
+
+.strength-text {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+/* Map Styles - Reduced height */
+.map-element {
+    height: 180px; /* Reducido de 250px */
+    width: 100%;
+    z-index: 1;
+}
+
+.map-instructions {
+    font-size: 0.85rem; /* Reducido de 0.9rem */
+    color: var(--text-light);
+    margin-bottom: 0.75rem; /* Reducido de 1rem */
+    margin-top: 0.25rem; /* Reducido de 0.5rem */
+}
+
+.map-container {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e5e7eb;
+    transition: border-color 0.3s ease;
+}
+
+.map-container:hover {
+    border-color: var(--secondary-color);
+}
+
+.map-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+}
+
+.map-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Map placeholder - smaller */
+.map-placeholder i {
+    font-size: 2rem; /* Reducido de 3rem */
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem; /* Reducido de 1rem */
+    display: block;
+}
+
+.map-placeholder p {
+    font-size: 1rem; /* Reducido de 1.1rem */
+    margin: 0;
+    font-weight: 500;
+}
+
+.location-info {
+    margin-top: 0.5rem; /* Reducido de 0.75rem */
+    padding: 0.4rem 0.6rem; /* Reducido */
+    background-color: #d1fae5;
+    border: 1px solid #a7f3d0;
+    border-radius: 6px;
+    color: #065f46;
+    font-size: 0.85rem; /* Reducido de 0.9rem */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.location-info i {
+    color: var(--secondary-color);
+}
+
+/* Terms and Conditions - More compact */
+.terms-container {
+    margin-bottom: 1.5rem; /* Reducido de 2rem */
+}
+
+.form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.form-check-input {
+    margin: 0;
+    margin-top: 0.25rem;
+    flex-shrink: 0;
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.terms-link {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.terms-link:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+/* Submit Button - Slightly smaller */
+.btn-form-submit {
+    width: 100%;
+    padding: 0.75rem 1.25rem; /* Reducido de 0.875rem 1.5rem */
+    font-size: 1rem; /* Reducido de 1.1rem */
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    background: var(--secondary-color);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-form-submit:hover {
+    background: var(--accent-color);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-form-submit:active {
+    transform: translateY(0);
+}
+
+.btn-form-submit i {
+    font-size: 1rem;
+}
+
+/* Error Message */
+.error-message {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+/* Login Link - More compact */
+.login-link {
+    text-align: center;
+    padding-top: 1.5rem; /* Reducido de 2rem */
+    border-top: 1px solid #e5e7eb;
+}
+
+.login-link p {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.login-link a {
+    color: var(--secondary-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.login-link a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+/* Tablets - cambiar a una columna más temprano */
+@media (max-width: 1200px) {
+    .register-teacher-box {
+        max-width: 700px;
+    }
+
+    .form-columns {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    .register-teacher-wrapper {
+        padding: 1rem;
+    }
+
+    .register-teacher-box {
+        max-width: 100%;
+        padding: 1.5rem; /* Más compacto en mobile */
+    }
+
+    .map-element {
+        height: 150px; /* Aún más pequeño en tablet */
+    }
+}
+
+/* Mobile Phones */
+@media (max-width: 576px) {
+    .register-teacher-wrapper {
+        padding: 0.5rem;
+    }
+
+    .register-teacher-box {
+        padding: 1.25rem; /* Muy compacto en mobile */
+        border-radius: 8px;
+    }
+
+    .user-icon {
+        width: 50px;
+        height: 50px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    .map-element {
+        height: 120px; /* Muy pequeño en mobile */
+    }
+}
+
+/* Small Mobile Phones */
+@media (max-width: 400px) {
+    .register-teacher-box {
+        margin: 0.5rem;
+        padding: 1.5rem 1rem;
+    }
+
+    .form-check-label {
+        font-size: 0.85rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+    }
+}
+
+/* ===================================
+   LOADING STATES & ANIMATIONS
+   =================================== */
+
+/* Loading state for submit button */
+.btn-form-submit.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-form-submit.loading::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Form validation styles */
+.form-input.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-input.is-valid,
+.form-select.is-valid {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.input-container.is-invalid .input-icon {
+    color: #dc3545;
+}
+
+.input-container.is-valid .input-icon {
+    color: var(--secondary-color);
+}
+
+/* Map selection animation */
+@keyframes mapPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.map-container.selected {
+    border-color: var(--secondary-color);
+    animation: mapPulse 2s infinite;
+}
+
+/* Focus trap for accessibility */
+.register-teacher-box:focus-within {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 4px;
+}

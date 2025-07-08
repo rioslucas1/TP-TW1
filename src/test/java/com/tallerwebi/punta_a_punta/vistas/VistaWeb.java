@@ -4,7 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 public class VistaWeb {
-    protected Page page;
+    public Page page;
 
     public VistaWeb(Page page) {
         this.page = page;
@@ -29,4 +29,15 @@ public class VistaWeb {
     private Locator obtenerElemento(String selectorCSS){
         return page.locator(selectorCSS);
     }
+
+    public String obtenerEstiloDeElemento(String selectorCSS, String propiedadCSS){
+        return this.obtenerElemento(selectorCSS).evaluate(
+                "element => getComputedStyle(element).getPropertyValue('" + propiedadCSS + "')"
+        ).toString().trim();
+    }
+
+    protected boolean esVisible(String selectorCSS) {
+        return this.obtenerElemento(selectorCSS).isVisible();
+    }
+
 }

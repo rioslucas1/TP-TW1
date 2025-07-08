@@ -3,127 +3,187 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Taller Web I - Registrarse</title>
 
-  <title>Taller Web I</title>
-
-  <!-- Boostrap core css -->
+  <!-- Bootstrap CSS -->
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
 
-  <!-- custom style -->
+  <!-- Custom CSS Files -->
   <link rel="stylesheet" th:href="@{/css/main.css}"/>
-  <link rel="stylesheet" th:href="@{/css/login.css}"/>
+  <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+  <link rel="stylesheet" th:href="@{/css/register.css}"/>
 
+  <!-- External Icons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+<body class="bg-light">
 
-<body class="login-body">
-
-<nav class="navbar navbar-expand-lg navbar-light">
-  <div class="container">
-    <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/home}">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Nuestros tutores</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
-        </li>
-      </ul>
-
-      <div class="d-flex">
-        <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
-        <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
+<div class="flex-grow-1">
+  <!-- Navigation -->
+  <nav class="navbar-redesign">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <i class="fas fa-graduation-cap nav-logo-icon"></i>
+        <span class="nav-logo-text">Clases-Ya</span>
+      </div>
+      <div class="nav-menu" th:if="${nombreUsuario} == null">
+        <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+        <a th:href="@{/verTutores}" class="nav-link-redesign">Nuestros Tutores</a>
+        <a th:href="@{/registrarprofesor}" class="nav-link-redesign">Convertirse en Tutor</a>
+        <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+      </div>
+      <div class="nav-buttons" th:if="${nombreUsuario} == null">
+        <a th:href="@{/login}" class="btn-login">Iniciar Sesión</a>
+        <a th:href="@{/nuevo-usuario}" class="btn-register">Registrarse</a>
+      </div>
+      <div class="nav-menu" th:if="${nombreUsuario} != null">
+        <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+        <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+        <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+        <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+        <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+        <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+      </div>
+      <div class="nav-user-info" th:if="${nombreUsuario} != null">
+        <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting"></span>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
       </div>
     </div>
+  </nav>
 
-    <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/home}">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Ver tutores</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Mi perfil</a>
-        </li>
-      </ul>
-
-      <div class="d-flex align-items-center">
-        <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
-        <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+  <!-- Register Section -->
+  <main class="register-wrapper">
+    <div class="register-box">
+      <div class="register-header">
+        <img th:src="@{/img/iconoUsuario.png}" alt="Usuario" class="user-icon">
+        <h3 class="section-title">Registrarse</h3>
+        <p class="register-subtitle">Crea tu cuenta para comenzar</p>
       </div>
 
-    </div>
-  </div>
-</nav>
+      <form class="register-form" th:action="@{/registrarme}" method="POST" th:object="${datosRegistro}">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre" class="form-label">Nombre</label>
+            <div class="input-container">
+                            <span class="input-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+              <input th:field="*{nombre}"
+                     type="text"
+                     id="nombre"
+                     class="form-input form-control"
+                     placeholder="Tu nombre"
+                     required />
+            </div>
+          </div>
 
-<main role="main" class="container">
-
-    <div class="login-container">
-      <div id="registrobox" class="loginbox">
-        <div class="user-icon">
-          <img th:src="@{/img/iconoUsuario.png}" alt="iconousuario">
+          <div class="form-group">
+            <label for="apellido" class="form-label">Apellido</label>
+            <div class="input-container">
+                            <span class="input-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+              <input th:field="*{apellido}"
+                     type="text"
+                     id="apellido"
+                     class="form-input form-control"
+                     placeholder="Tu apellido"
+                     required />
+            </div>
+          </div>
         </div>
-        <h3 class="login-title">Registrarse</h3>
-        <form action="#" th:action="@{/registrarme}" method="POST" th:object="${datosRegistro}">
-          <div class="form-contenedor mb-3">
-            <label for="nombre">NOMBRE</label>
-            <div class="input-contenedor">
-              <span class="input-contenedor-text"><i class="fas fa-user"></i></span>
-              <input th:field="*{nombre}" id="nombre" class="form-control" required/>
-            </div>
-          </div>
-          <div class="form-contenedor mb-3">
-            <label for="apellido">APELLIDO</label>
-            <div class="input-contenedor">
-              <span class="input-contenedor-text"><i class="fas fa-user"></i></span>
-              <input th:field="*{apellido}" id="apellido" class="form-control" required/>
-            </div>
-          </div>
-          <div class="form-contenedor mb-3">
-            <label for="email">EMAIL</label>
-            <div class="input-contenedor">
-              <span class="input-contenedor-text"><i class="fas fa-envelope"></i></span>
-              <input th:field="*{email}" id="email" class="form-control" required/>
-            </div>
-          </div>
 
-          <div class="form-contenedor mb-4">
-            <label for="password">CONTRASEÑA</label>
-            <div class="input-contenedor">
-              <span class="input-contenedor-text"><i class="fas fa-lock"></i></span>
-              <input th:field="*{password}" type="password" id="password" class="form-control" required/>
-            </div>
+        <div class="form-group">
+          <label for="email" class="form-label">Correo Electrónico</label>
+          <div class="input-container">
+                        <span class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+            <input th:field="*{email}"
+                   type="email"
+                   id="email"
+                   class="form-input form-control"
+                   placeholder="correo@ejemplo.com"
+                   required />
           </div>
-
-          <div class="d-grid gap-2">
-            <button id="btn-login" class="btn btn-login" type="submit">Registrarse</button>
-          </div>
-
-          <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="${error}">
-          </p>
-        </form>
-        <div class="registro-link mt-3">
-          <p>¿Ya tenes cuenta? <a id="ir-a-login" th:href="@{/login}">Iniciar Sesión</a></p>
         </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Contraseña</label>
+          <div class="input-container">
+                        <span class="input-icon">
+                            <i class="fas fa-lock"></i>
+                        </span>
+            <input th:field="*{password}"
+                   type="password"
+                   id="password"
+                   class="form-input form-control"
+                   placeholder="Mínimo 3 caracteres"
+                   required />
+          </div>
+          <div class="password-strength">
+            <div class="strength-bar">
+              <div id="strengthFill" class="strength-fill"></div>
+            </div>
+            <span id="strengthText"  class="strength-text">Fortaleza de la contraseña</span>
+          </div>
+        </div>
+
+        <div class="terms-container">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="terms" required />
+            <label for="terms" class="form-check-label">
+              Acepto los <a href="#" class="terms-link">términos y condiciones</a> y la <a href="#" class="terms-link">política de privacidad</a>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-form-submit">
+          <i class="fas fa-user-plus"></i>
+          <span>Crear Cuenta</span>
+        </button>
+
+        <div th:if="${error != null}" class="alert alert-danger error-message" th:text="${error}"></div>
+      </form>
+
+      <div class="login-link">
+        <p>¿Ya tienes cuenta? <a th:href="@{/login}">Iniciar Sesión</a></p>
       </div>
     </div>
   </main>
+</div>
 
+<!-- Footer -->
+<footer class="footer-redesign">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Clases-Ya</span>
+      </div>
+      <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">© 2025 Taller Web</p>
+      <div class="footer-team">
+        <p class="team-label">Desarrollado por:</p>
+        <div class="team-members">
+          <span class="team-member">Angel Leyes</span>
+          <span class="team-member">Ezequiel Mendoza</span>
+          <span class="team-member">Fede Hodara</span>
+          <span class="team-member">Lucas Rios</span>
+          <span class="team-member">Luka Cambriglia</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
 
-</main>
-<!-- /.container -->
+<!-- Scripts -->
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/main.js}"></script>
+<script type="text/javascript" th:src="@{/js/register.js}"></script>
 
-<!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 :root {
-    --color-primary: #0098c7; /* Azul original */
-    --color-secondary: #87ceeb; /* Celeste */
-    --color-primary-dark: #0098c7; /* Azul más oscuro */
+    --color-primary: #10b981; /* Azul original */
+    --color-secondary: #10b981; /* Celeste */
+    --color-primary-dark: #1e293b; /* Azul más oscuro */
     --color-secondary-dark: #5cacee;
     --color-white: #ffffff;
     --color-gray: #f5f5f5;
@@ -35,7 +35,8 @@ body {
 }
 
 header {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  /*  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));*/
+  background: var(--color-primary);
     color: var(--color-white);
     padding: 20px;
     text-align: center;
@@ -170,7 +171,7 @@ h1 {
     height: 500px;
     width: 100%;
     border-radius: 8px;
-    border: 3px solid var(--color-secondary);
+    border: 3px solid var(--color-primary);
 }
 
 .map-title {
