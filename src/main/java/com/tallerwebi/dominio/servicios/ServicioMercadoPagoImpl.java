@@ -20,10 +20,12 @@ public class ServicioMercadoPagoImpl implements ServicioMercadoPago{
                 .unitPrice(new BigDecimal("1000.00"))
                 .build();
 
+                // NOTE: Esta URL tiene que ser remplazada por la URL generada en NGROK localmente.
+                // El comando para iniciar NGROK Una vez instalado es ``` NGROK http 8080 ```
         PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                .success("https://cd46-190-175-76-56.ngrok-free.app/spring/suscripcion/resultado")
-                .failure("https://cd46-190-175-76-56.ngrok-free.app/spring/suscripcion/resultado")
-                .pending("https://cd46-190-175-76-56.ngrok-free.app/spring/suscripcion/resultado")
+                .success("https://49c53f859287.ngrok-free.app/spring/suscripcion/resultado")
+                .failure("https://49c53f859287.ngrok-free.app/spring/suscripcion/resultado")
+                .pending("https://49c53f859287.ngrok-free.app/spring/suscripcion/resultado")
                 .build();
 
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
