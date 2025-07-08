@@ -12,10 +12,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.*;
 import java.time.format.DateTimeFormatter;
 
 
@@ -71,6 +70,32 @@ public class ControladorDisponibilidad {
             modelo.put("emailProfesor", usuario.getEmail());
             modelo.put("nombreUsuario", usuario.getNombre());
             modelo.put("estadosMap", estadosMap);
+
+            Map<String, Boolean> horasHabilitadasMap = new HashMap<>();
+            LocalDate hoy = LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+            LocalTime ahora = LocalTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+
+            for (String dia : DIAS_SEMANA) {
+                LocalDate fechaDia = calcularFechaPorDiaSemanaEnSemana(dia, fechaInicioSemana);
+                for (String horaStr : Arrays.asList(
+                        "06:00","07:00","08:00","09:00","10:00","11:00","12:00",
+                        "13:00","14:00","15:00","16:00","17:00","18:00",
+                        "19:00","20:00","21:00","22:00","23:00")) {
+
+                    LocalTime hora = LocalTime.parse(horaStr);
+                    boolean habilitado = true;
+
+                    if (fechaDia.isBefore(hoy)) {
+                        habilitado = false;
+                    } else if (fechaDia.isEqual(hoy) && hora.isBefore(ahora)) {
+                        habilitado = false;
+                    }
+
+                    horasHabilitadasMap.put(dia + "-" + horaStr, habilitado);
+                }
+            }
+
+            modelo.put("horasHabilitadasMap", horasHabilitadasMap);
 
         } catch (Exception e) {
             System.err.println("Error al cargar calendario: " + e.getMessage());
