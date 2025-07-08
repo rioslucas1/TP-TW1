@@ -9,8 +9,8 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
 
     <!-- Custom styles -->
-    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    <link rel="stylesheet" href="home-redesign.css"/>
+    <link rel="stylesheet" href="sidebar.css"/>
 
     <!-- Icons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
@@ -440,6 +440,35 @@
                         </div>
                     </div>
                 </div>
+                <div class="profesores-section">
+                    <div class="profesores-header">
+                        <h4><i class="bi bi-search-text-white"></i> Encontrar Profesores</h4>
+                        <a href="#" class="btn-ver-todos">Ver todos <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-3" th:each="profesor : ${listaProfesores}">
+                            <div class="card text-center p-3 h-100 profesor-card">
+                                <div class="profesor-avatar rounded-circle mx-auto">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <h6 th:text="${profesor.nombre + ' ' + profesor.apellido}">Profesor</h6>
+                                <div class="rating">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star"></i>
+                                </div>
+                                <div>
+                                    <span class="badge-tema" th:if="${profesor.tema != null}" th:text="${profesor.tema.nombre}">Tema</span>
+                                    <span class="badge-tema" th:if="${profesor.tema == null}">Sin tema asignado</span>
+                                </div>
+                                <a class="nav-link" th:href="@{/calendario-reserva(emailProfesor=${profesor.email})}">Ver Calendario</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
