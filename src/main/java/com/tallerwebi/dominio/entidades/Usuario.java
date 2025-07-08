@@ -40,10 +40,16 @@ public abstract class Usuario {
     @Column
     private String rol;
 
-    @Lob
     @Column(name = "descripcion")
     private String descripcion;
 
+    @Column(name = "habilitado")
+    private Boolean habilitado = false;
+
+    @Column(name = "subscription_id")
+    private String subscriptionId;
+
+    //getters y setters
     public Long getId() {
         return id;
     }
@@ -112,7 +118,6 @@ public abstract class Usuario {
         this.activo = false;
     }
 
-
     public String getFotoPerfil() {
         return fotoPerfil;
     }
@@ -137,8 +142,33 @@ public abstract class Usuario {
         this.descripcion = descripcion;
     }
 
+    public Boolean getHabilitado() {
+        return habilitado;
+    }
 
+    public void setHabilitado(Boolean habilitado) {
+        this.habilitado = habilitado;
+    }
 
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
 
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
+
+    // Métodos de conveniencia para suscripción
+    public boolean tieneSuscripcionActiva() {
+        return habilitado != null && habilitado;
+    }
+
+    public void habilitarSuscripcion() {
+        this.habilitado = true;
+    }
+
+    public void deshabilitarSuscripcion() {
+        this.habilitado = false;
+    }
 }
 
