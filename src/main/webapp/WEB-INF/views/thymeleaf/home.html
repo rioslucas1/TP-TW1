@@ -472,22 +472,22 @@
 
 
         <!-- Usuario Loggeado como Profesor-->
-        <section class="main-section logged-in" th:if="${nombreUsuario} != null and ${rol} == 'profesor'">
-            <div class="container py-5">
+        <section class="dashboard-wrapper" th:if="${nombreUsuario} != null and ${rol} == 'profesor'">
+            <div class="container">
 
                 <!-- Encabezado de bienvenida -->
                 <div class="text-center mb-5">
-                    <h2 class="fw-bold">Bienvenido Profesor, <span class="text-success" th:text="${nombreUsuario}">Profesor</span></h2>
-                    <p class="text-muted">Gestioná tus clases y horarios disponibles.</p>
+                    <h2 class="display-5 fw-bold">Bienvenido Profesor, <span th:text="${nombreUsuario}">Profesor</span></h2>
+                    <p class="lead text-muted">Gestioná tus clases y horarios disponibles.</p>
                 </div>
 
                 <!-- Tarjetas principales -->
                 <div class="row g-4">
                     <!-- Mis clases programadas -->
                     <div class="col-md-4">
-                        <div class="card h-100 border-0 shadow-sm rounded-3">
+                        <div class="dashboard-card p-4">
                             <div class="card-body">
-                                <h5 class="card-title text-success"><i class="bi bi-calendar3"></i> Mis clases Programadas</h5>
+                                <h5 class="card-title "><i class="bi bi-calendar3"></i> Mis clases Programadas</h5>
 
                                 <div th:if="${clasesProfesor != null and !clasesProfesor.isEmpty()}">
                                     <div class="border-bottom py-2" th:each="clase : ${clasesProfesor}">
@@ -512,7 +512,7 @@
 
                     <!-- Especialidad elegida -->
                     <div class="col-md-4">
-                        <div class="card h-100 border-0 shadow-sm rounded-3">
+                        <div class="dashboard-card p-4">
                             <div class="card-body">
                                 <h5 class="card-title text-success"><i class="bi bi-book"></i> Especialidad Elegida</h5>
                                 <div class="border-bottom py-2">

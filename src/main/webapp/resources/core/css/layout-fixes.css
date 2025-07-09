@@ -1,4 +1,4 @@
-/* Ajustes específicos para el layout */
+/* Ajustes específicos para el layout del chat */
 body {
     margin: 0;
     padding: 0;
@@ -25,12 +25,18 @@ body {
     z-index: 1000 !important;
 }
 
-/* Ajustar el contenido principal */
+/* Ajustar el contenido principal para chat */
 .main-content {
     margin-left: 280px !important;
     margin-top: 80px !important;
     min-height: calc(100vh - 80px) !important;
+    padding: 0 !important; /* Sin padding para que el chat ocupe todo el espacio */
+}
+
+/* Ajustar la sección del chat */
+.chat-main-section {
     padding: 2rem !important;
+    min-height: calc(100vh - 80px - 4rem) !important; /* Restando navbar y padding */
 }
 
 /* Responsive para móviles */
@@ -45,13 +51,13 @@ body {
     }
 
     .navbar-redesign .nav-container {
-        flex-direction: column;
+        flex-direction: row !important;
         gap: 1rem;
     }
 
-    .navbar-redesign .nav-menu {
-        flex-direction: column;
-        gap: 1rem;
+    /* Mostrar el brand en móviles */
+    .nav-brand.d-md-none {
+        display: flex !important;
     }
 }
 
@@ -78,4 +84,9 @@ body {
         align-items: center;
         justify-content: center;
     }
+}
+
+/* Ajustes específicos para el footer en chat */
+.footer-redesign {
+    margin-top: auto;
 }
