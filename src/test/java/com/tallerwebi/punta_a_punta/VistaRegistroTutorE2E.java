@@ -47,7 +47,7 @@ public class VistaRegistroTutorE2E {
         assertThat("ClasesYa", equalToIgnoringCase(texto));
     }
 
-   /* @Test
+    @Test
     void deberiaRegistrarNuevoTutorCorrectamente() {
         vistaRegistroTutor.completarNombre("Angel");
         vistaRegistroTutor.completarApellido("Leyes");
@@ -61,12 +61,12 @@ public class VistaRegistroTutorE2E {
         assertThat(urlActual, containsStringIgnoringCase("http://localhost:8080/spring/login"));
     }
 
-   /* @Test
+     @Test
     void deberiaMostrarErrorSiNoSeCompletaElFormulario() {
         vistaRegistroTutor.enviarFormulario();
 
         String textoError = vistaRegistroTutor.obtenerTextoDeAlertaError();
 
         assertThat(textoError, containsStringIgnoringCase("Todos los campos son obligatorios"));
-    }*/
+    }
 }

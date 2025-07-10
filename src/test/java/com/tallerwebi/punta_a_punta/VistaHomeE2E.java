@@ -48,13 +48,14 @@ public class VistaHomeE2E {
     @Test
     void deberiaMostrarClasesYaEnNavbar() {
         String texto = vistaHome.obtenerTextoNavbar();
-        assertThat(texto, containsStringIgnoringCase("ClasesYa"));
+        assertThat(texto, containsStringIgnoringCase("Clases-Ya"));
     }
 
     @Test
     void deberiaMostrarTituloPrincipal() {
         String titulo = vistaHome.obtenerTituloPrincipal();
-        assertThat(titulo, containsStringIgnoringCase("Bienvenido a"));
+        assertThat(titulo, containsStringIgnoringCase("Conecta con los Mejores\n" + //
+                        "                        Profesores"));
     }
 
     @Test
