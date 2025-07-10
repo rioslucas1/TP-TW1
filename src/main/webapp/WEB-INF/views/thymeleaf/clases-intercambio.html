@@ -3,169 +3,309 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Historial de Clases - ClasesYa</title>
 
-    <title>Historial de Clases</title>
-
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
 
+    <!-- Custom CSS Files -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
     <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
-    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/layout-fixes.css}"/>
+    <link rel="stylesheet" th:href="@{/css/historial-clases.css}"/>
+
+    <!-- External Icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
-<div class="d-flex">
-    <div class="sidebar-custom d-flex flex-column p-3" th:if="${nombreUsuario} != null">
-        <a th:href="@{/home}" class="sidebar-logo mb-4">
-            <i class='bx bx-layer'></i>
-            <span>ClasesYa</span>
-        </a>
-        <nav class="nav flex-column gap-2">
-            <a th:href="@{/home}" class="nav-link-custom"><i class='bx bx-grid-alt'></i> Dashboard</a>
-            <a th:href="@{/clases-intercambio}" class="nav-link-custom active"><i class='bx bx-user'></i> Historial</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-message-square-detail'></i> Mensajes</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-bookmark'></i> Guardados</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-folder'></i> Archivos Compartidos</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-bar-chart-alt-2'></i> Estadísticas</a>
-        </nav>
-        <div class="mt-auto">
-            <a th:href="@{/logout}" class="nav-link-custom"><i class='bx bx-log-out'></i> Cerrar sesión</a>
+
+<!-- Navigation -->
+<nav class="navbar-redesign">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
+        </div>
+        <div class="nav-menu">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign">Mi Perfil</a>
+            <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+            <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+        <div class="nav-user-info" th:if="${nombreUsuario != null}">
+            <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting">Hola, Usuario</span>
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Botón toggle para móviles -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" th:if="${nombreUsuario != null}">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<aside class="sidebar-nav" th:if="${nombreUsuario} != null">
+    <nav class="sidebar-menu">
+        <ul class="sidebar-menu-list">
+            <li class="sidebar-menu-item active">
+                <a th:href="@{/home}" class="sidebar-menu-link">
+                    <i class="fas fa-th-large sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/todas-mis-clases}" href="#" class="sidebar-menu-link">
+                    <i class="fas fa-calendar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Historial de clases</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chat}" class="sidebar-menu-link">
+                    <i class="fas fa-comments sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mensajes</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-folder sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Archivos Compartidos</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <h1 style="color:#ffffff" class="page-title">
+                    <i class="fas fa-history me-3"></i>
+                    Historial de Clases
+                </h1>
+                <p class="page-subtitle">Revisa todas tus clases pasadas y programadas</p>
+            </div>
         </div>
     </div>
 
-    <div class="flex-grow-1">
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container">
-                <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home}">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/verTutores}">Nuestros tutores</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex">
-                        <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
-                        <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
-                    </div>
+    <!-- Content -->
+    <div class="container my-5">
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(clases)}" class="empty-history-state">
+            <div class="empty-state-content">
+                <div class="empty-state-icon">
+                    <i class="fas fa-calendar-times"></i>
                 </div>
-
-                <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home}">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/verTutores}">Ver tutores</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               th:href="@{/profesor/perfil}"
-                               th:if="${rol == 'profesor'}">Mi perfil</a>
-                            <a class="nav-link"
-                               th:href="@{/perfil}"
-                               th:if="${rol == 'alumno'}">Mi perfil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               th:href="@{/calendario-profesor}"
-                               th:if="${nombreUsuario != null and rol == 'profesor'}">
-                                Calendario
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/mapa}">Ver mapa</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex align-items-center">
-                        <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
-                        <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
-                    </div>
+                <h3 class="empty-state-title">No hay clases en tu historial</h3>
+                <p class="empty-state-text">
+                    <span th:if="${rol == 'alumno'}">Cuando reserves y tomes clases, aparecerán aquí</span>
+                    <span th:if="${rol == 'profesor'}">Cuando dictes clases, aparecerán aquí</span>
+                </p>
+                <div class="empty-state-actions">
+                    <a th:if="${rol == 'alumno'}" th:href="@{/verTutores}" class="btn-empty-action">
+                        <i class="fas fa-search"></i>
+                        Buscar Tutores
+                    </a>
+                    <a th:if="${rol == 'profesor'}" th:href="@{/calendario-profesor}" class="btn-empty-action">
+                        <i class="fas fa-calendar-plus"></i>
+                        Configurar Disponibilidad
+                    </a>
                 </div>
             </div>
-        </nav>
+        </div>
 
-        <main role="main" class="container py-5">
-            <section class="historial-clases-section">
-                <div class="text-center mb-5">
-                    <h2 class="fw-bold text-primary">Historial de Clases</h2>
-                    <div class="mx-auto mt-2"
-                         style="width: 80px; height: 4px; background-color: #00729A; border-radius: 2px;"></div>
-                </div>
+        <!-- Classes Table -->
+        <div th:if="${!#lists.isEmpty(clases)}" class="history-table-container">
+            <div class="table-wrapper">
+                <table class="history-table">
+                    <thead>
+                    <tr>
+                        <th class="table-header">
+                            <i class="fas fa-book me-2"></i>
+                            Tema
+                        </th>
+                        <th class="table-header">
+                            <i class="fas fa-chalkboard-teacher me-2"></i>
+                            Profesor
+                        </th>
+                        <th class="table-header">
+                            <i class="fas fa-user-graduate me-2"></i>
+                            Alumno
+                        </th>
+                        <th class="table-header">
+                            <i class="fas fa-calendar me-2"></i>
+                            Fecha
+                        </th>
+                        <th class="table-header">
+                            <i class="fas fa-clock me-2"></i>
+                            Hora
+                        </th>
+                        <th class="table-header">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Estado
+                        </th>
+                        <th class="table-header">
+                            <i class="fas fa-cogs me-2"></i>
+                            Acciones
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="table-row" th:each="clase : ${clases}">
+                        <td class="table-cell">
+                            <div class="cell-content">
+                                <span class="subject-badge" th:text="${clase.profesor?.tema?.nombre ?: 'Sin tema'}">Tema</span>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="cell-content">
+                                <div class="person-info">
+                                    <div class="person-avatar">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </div>
+                                    <div class="person-details">
+                                        <span class="person-name" th:text="${clase.profesor?.nombre + ' ' + clase.profesor?.apellido ?: 'N/A'}">Profesor</span>
+                                        <span class="person-email" th:text="${clase.profesor?.email ?: ''}">email</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="cell-content">
+                                <div class="person-info">
+                                    <div class="person-avatar">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <div class="person-details">
+                                        <span class="person-name" th:text="${clase.alumno?.nombre + ' ' + clase.alumno?.apellido ?: 'N/A'}">Alumno</span>
+                                        <span class="person-email" th:text="${clase.alumno?.email ?: ''}">email</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="cell-content">
+                                <span class="date-text" th:text="${clase.fechaFormateada}">Fecha</span>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="cell-content">
+                                <span class="time-text" th:text="${clase.hora ?: 'N/A'}">Hora</span>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="cell-content">
+                                    <span class="status-badge"
+                                          th:classappend="${clase.estado != null and clase.estado.name() == 'CONFIRMADA'} ? 'status-confirmed' :
+                                                         (${clase.estado != null and clase.estado.name() == 'PENDIENTE'} ? 'status-pending' : 'status-cancelled')"
+                                          th:text="${clase.estado ?: 'N/A'}">Estado</span>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="cell-content">
+                                <div class="action-buttons">
+                                    <!-- Botón "Unirse a Meet" si ya existe enlace -->
+                                    <a th:if="${clase.enlace_meet != null}"
+                                       th:href="${clase.enlace_meet}"
+                                       target="_blank"
+                                       class="btn-action btn-meet">
+                                        <i class="fas fa-video"></i>
+                                        <span class="btn-text">Unirse a Meet</span>
+                                    </a>
 
-                <div th:if="${#lists.isEmpty(clases)}" class="text-center py-5">
-                    <div class="alert alert-info" role="alert">
-                        <i class="bi bi-info-circle me-2"></i>
-                        No hay clases en tu historial.
-                    </div>
-                </div>
+                                    <!-- Botón "Iniciar reunión Meet" (SOLO PROFESOR, si no existe enlace) -->
+                                    <form th:if="${rol == 'profesor' and clase.enlace_meet == null}"
+                                          th:action="@{'/clase/' + ${clase.id} + '/crear-reunion-meet'}"
+                                          method="post"
+                                          class="meet-form">
+                                        <input type="hidden" name="emailProfesor" th:value="${clase.profesor?.email}" />
+                                        <input type="hidden" name="emailAlumno" th:value="${clase.alumno?.email}" />
+                                        <button type="submit" class="btn-action btn-create-meet">
+                                            <i class="fas fa-video"></i>
+                                            <span class="btn-text">Iniciar Meet</span>
+                                        </button>
+                                    </form>
 
-                <div th:if="${!#lists.isEmpty(clases)}" class="table-responsive">
-                    <table class="table table-hover table-striped shadow-sm rounded-3 overflow-hidden">
-                        <thead class="bg-primary text-white">
-                        <tr>
-                            <th scope="col">Tema</th>
-                            <th scope="col">Profesor</th>
-                            <th scope="col">Alumno</th>
-                            <th scope="col">Fecha</th>
-                            <th scope="col">Hora</th>
-                            <th scope="col">Modalidad</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="clase : ${clases}">
-                            <td th:text="${clase.profesor?.tema?.nombre ?: 'N/A'}">Matemáticas</td>
-                            <td th:text="${clase.profesor?.nombre + ' ' + clase.profesor?.apellido ?: 'N/A'}">Profesor
-                                Ejemplo
-                            </td>
-                            <td th:text="${clase.alumno?.nombre + ' ' + clase.alumno?.apellido ?: 'N/A'}">Alumno
-                                Ejemplo
-                            </td>
-<!--                            <td th:text="${clase.hora ?: 'N/A'}">HH:MM</td>-->
-<!--                            <td th:text="${clase.modalidad ?: 'N/A'}">Virtual</td>-->
-<!--                            <td th:text="${clase.estado ?: 'N/A'}">Completada</td>-->
-                            <td>
-                                <a href="#" class="btn btn-outline-info btn-sm">Ver Detalles</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-
-        <footer class="footer text-white py-4 mt-5">
-            <div class="container text-center">
-                <p class="mb-2">© 2025 Clases-Ya. Todos los derechos reservados.</p>
-                <ul class="list-inline mt-2 mb-0">
-                    <li class="list-inline-item">Angel Leyes</li>
-                    <li class="list-inline-item">Ezequiel Mendoza</li>
-                    <li class="list-inline-item">Fede Hodara</li>
-                    <li class="list-inline-item">Lucas Rios</li>
-                    <li class="list-inline-item">Luka Cambriglia</li>
-                </ul>
+                                    <!-- Mensaje si no hay acciones disponibles -->
+                                    <span th:if="${rol != 'profesor' and clase.enlace_meet == null}"
+                                          class="no-actions">
+                                            <i class="fas fa-clock"></i>
+                                            <span class="btn-text">Esperando profesor</span>
+                                        </span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </footer>
+        </div>
     </div>
-</div>
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+</main>
+
+<!-- Footer -->
+<footer class="footer-redesign">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Clases-Ya</span>
+            </div>
+            <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Taller Web</p>
+            <div class="footer-team">
+                <p class="team-label">Desarrollado por:</p>
+                <div class="team-members">
+                    <span class="team-member">Angel Leyes</span>
+                    <span class="team-member">Ezequiel Mendoza</span>
+                    <span class="team-member">Fede Hodara</span>
+                    <span class="team-member">Lucas Rios</span>
+                    <span class="team-member">Luka Cambriglia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar-nav').classList.toggle('open');
+    }
+
+    // Animación para las filas de la tabla
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableRows = document.querySelectorAll('.table-row');
+
+        tableRows.forEach((row, index) => {
+            row.style.animationDelay = `${index * 0.05}s`;
+            row.classList.add('fade-in-up');
+        });
+
+        // Efecto hover para botones de acción
+        const actionButtons = document.querySelectorAll('.btn-action');
+        actionButtons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

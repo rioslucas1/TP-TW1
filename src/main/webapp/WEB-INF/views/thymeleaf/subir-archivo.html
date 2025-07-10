@@ -1,0 +1,372 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Subir Material - ClasesYa</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+    <!-- Custom CSS Files -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    <link rel="stylesheet" th:href="@{/css/layout-fixes.css}"/>
+    <link rel="stylesheet" th:href="@{/css/profile.css}"/>
+    <link rel="stylesheet" th:href="@{/css/archivos.css}"/>
+
+    <!-- External Icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar-redesign">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
+        </div>
+        <div class="nav-menu">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+            <a th:href="@{/calendario-profesor}" class="nav-link-redesign">Calendario</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+        <div class="nav-user-info" th:if="${nombreUsuario != null}">
+            <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting">Hola, Usuario</span>
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Botón toggle para móviles -->
+<button class="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<aside class="sidebar-nav">
+    <nav class="sidebar-menu">
+        <ul class="sidebar-menu-list">
+            <li class="sidebar-menu-item active">
+                <a th:href="@{/home}" class="sidebar-menu-link">
+                    <i class="fas fa-th-large sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/todas-mis-clases}" class="sidebar-menu-link">
+                    <i class="fas fa-calendar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Historial de clases</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chat}" class="sidebar-menu-link">
+                    <i class="fas fa-comments sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mensajes</span>
+                </a>
+            </li>
+            <!-- <li class="sidebar-menu-item">
+                 <a href="#" class="sidebar-menu-link">
+                     <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                     <span class="sidebar-menu-text">Guardados</span>
+                 </a>
+             </li>-->
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-folder sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Archivos Compartidos</span>
+                </a>
+            </li>
+            <!-- <li class="sidebar-menu-item active">
+                 <a th:href="@{/perfil}" class="sidebar-menu-link">
+                     <i class="fas fa-user sidebar-menu-icon"></i>
+                     <span class="sidebar-menu-text">Mi Perfil</span>
+                 </a>
+             </li>
+             <li class="sidebar-menu-item">
+                 <a href="#" class="sidebar-menu-link">
+                     <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                     <span class="sidebar-menu-text">Estadísticas</span>
+                 </a>
+             </li>-->
+        </ul>
+    </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Page Header -->
+    <div class="files-header">
+        <div class="container">
+            <div class="files-header-content">
+                <h1 style="color: #ffffff;" class="files-title">
+                    <i class="fas fa-cloud-upload-alt me-3"></i>
+                    Subir Material Educativo
+                </h1>
+                <p class="files-subtitle">Comparte material educativo con tus alumnos de forma individual</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container my-5">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/archivos}" class="breadcrumb-link">
+                        <i class="fas fa-folder me-1"></i>
+                        Archivos
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Subir Material</li>
+            </ol>
+        </nav>
+
+        <!-- Alert Messages -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="upload-form-container">
+            <div class="upload-form-card">
+                <div class="upload-form-header">
+                    <h3 class="upload-form-title">
+                        <i class="fas fa-file-upload me-2"></i>
+                        Nuevo Material
+                    </h3>
+                    <p class="upload-form-description">
+                        Selecciona el alumno y el archivo que deseas compartir
+                    </p>
+                </div>
+
+                <div class="upload-form-body">
+                    <form th:action="@{/archivos/subir}" method="post" enctype="multipart/form-data" class="upload-form">
+                        <input type="hidden" name="profesorId" th:value="${profesorId}" />
+
+                        <!-- Student Selection -->
+                        <div class="form-group">
+                            <label for="alumnoId" class="form-label">
+                                <i class="fas fa-user-graduate me-2"></i>
+                                Seleccionar Alumno
+                            </label>
+                            <select id="alumnoId" name="alumnoId" class="form-select" required>
+                                <option value="">-- Selecciona un alumno --</option>
+                                <option th:each="alumno : ${alumnosDelProfesor}"
+                                        th:value="${alumno.id}"
+                                        th:text="${alumno.nombre + ' ' + alumno.apellido}">
+                                    Alumno Ejemplo
+                                </option>
+                            </select>
+                            <div class="form-help">
+                                Elige el alumno con quien quieres compartir este material
+                            </div>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="form-group">
+                            <label for="file" class="form-label">
+                                <i class="fas fa-paperclip me-2"></i>
+                                Seleccionar Archivo
+                            </label>
+                            <div class="file-upload-area" onclick="document.getElementById('file').click()">
+                                <div class="file-upload-content">
+                                    <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                    <p class="file-upload-text">
+                                        <strong>Haz clic para seleccionar</strong> o arrastra el archivo aquí
+                                    </p>
+                                    <p class="file-upload-hint">
+                                        Formatos soportados: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, JPG, PNG
+                                    </p>
+                                </div>
+                                <input type="file" id="file" name="file" class="file-input" required
+                                       accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png" />
+                            </div>
+                            <div class="selected-file" id="selectedFile" style="display: none;">
+                                <div class="selected-file-info">
+                                    <i class="fas fa-file selected-file-icon"></i>
+                                    <div class="selected-file-details">
+                                        <span class="selected-file-name"></span>
+                                        <span class="selected-file-size"></span>
+                                    </div>
+                                    <button type="button" class="btn-remove-file" onclick="removeFile()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn-upload">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                Subir Archivo
+                            </button>
+                            <a th:href="@{/archivos}" class="btn-cancel">
+                                <i class="fas fa-times me-2"></i>
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Upload Tips -->
+            <div class="upload-tips">
+                <h4 class="tips-title">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Consejos para subir archivos
+                </h4>
+                <ul class="tips-list">
+                    <li class="tip-item">
+                        <i class="fas fa-check-circle tip-icon"></i>
+                        <span>Usa nombres descriptivos para tus archivos</span>
+                    </li>
+                    <li class="tip-item">
+                        <i class="fas fa-check-circle tip-icon"></i>
+                        <span>El tamaño máximo por archivo es de 10MB</span>
+                    </li>
+                    <li class="tip-item">
+                        <i class="fas fa-check-circle tip-icon"></i>
+                        <span>Los archivos se comparten de forma individual con cada alumno</span>
+                    </li>
+                    <li class="tip-item">
+                        <i class="fas fa-check-circle tip-icon"></i>
+                        <span>Puedes subir material de apoyo, ejercicios, presentaciones y más</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="footer-redesign">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Clases-Ya</span>
+            </div>
+            <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Taller Web</p>
+            <div class="footer-team">
+                <p class="team-label">Desarrollado por:</p>
+                <div class="team-members">
+                    <span class="team-member">Angel Leyes</span>
+                    <span class="team-member">Ezequiel Mendoza</span>
+                    <span class="team-member">Fede Hodara</span>
+                    <span class="team-member">Lucas Rios</span>
+                    <span class="team-member">Luka Cambriglia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar-nav').classList.toggle('open');
+    }
+
+    // File upload functionality
+    document.getElementById('file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            showSelectedFile(file);
+        }
+    });
+
+    function showSelectedFile(file) {
+        const selectedFileDiv = document.getElementById('selectedFile');
+        const fileName = selectedFileDiv.querySelector('.selected-file-name');
+        const fileSize = selectedFileDiv.querySelector('.selected-file-size');
+        const uploadArea = document.querySelector('.file-upload-area');
+
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+
+        selectedFileDiv.style.display = 'block';
+        uploadArea.style.display = 'none';
+    }
+
+    function removeFile() {
+        const fileInput = document.getElementById('file');
+        const selectedFileDiv = document.getElementById('selectedFile');
+        const uploadArea = document.querySelector('.file-upload-area');
+
+        fileInput.value = '';
+        selectedFileDiv.style.display = 'none';
+        uploadArea.style.display = 'block';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Drag and drop functionality
+    const uploadArea = document.querySelector('.file-upload-area');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        uploadArea.classList.add('drag-over');
+    }
+
+    function unhighlight(e) {
+        uploadArea.classList.remove('drag-over');
+    }
+
+    uploadArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files.length > 0) {
+            document.getElementById('file').files = files;
+            showSelectedFile(files[0]);
+        }
+    }
+</script>
+</body>
+</html>

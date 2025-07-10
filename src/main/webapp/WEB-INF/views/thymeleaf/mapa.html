@@ -1,252 +1,572 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mapa de Profesores</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Mapa de Profesores - ClasesYa</title>
+
+    <!-- External Libraries -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <link rel="stylesheet" th:href="@{/css/profesores.css}"/>
+
+    <!-- Custom CSS Files -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    <link rel="stylesheet" th:href="@{/css/layout-fixes.css}"/>
+    <link rel="stylesheet" th:href="@{/css/mapa.css}"/>
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
+
 <body>
-<div class="d-flex">
-    <div class="sidebar-custom">
-        <a href="#" class="sidebar-logo">
-            <i class='bx bx-layer'></i>
-            <span>ClasesYa</span>
-        </a>
 
-        <nav class="nav">
-            <a href="#" class="nav-link-custom active">
-                <i class='bx bx-grid-alt'></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-user'></i>
-                <span>Historial</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-message-square-detail'></i>
-                <span>Mensajes</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-bookmark'></i>
-                <span>Guardados</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-folder'></i>
-                <span>Archivos Compartidos</span>
-            </a>
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-bar-chart-alt-2'></i>
-                <span>Estadísticas</span>
-            </a>
-        </nav>
+<!-- Navigation -->
+<nav class="navbar-redesign">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
+        </div>
 
-        <div class="mt-auto">
-            <a href="#" class="nav-link-custom">
-                <i class='bx bx-log-out'></i>
-                <span>Cerrar sesión</span>
-            </a>
+        <div class="nav-menu" th:if="${nombreUsuario} == null">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Nuestros Tutores</a>
+            <a th:href="@{/registrarprofesor}" class="nav-link-redesign">Convertirse en Tutor</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+
+        <div class="nav-buttons" th:if="${nombreUsuario} == null">
+            <a th:href="@{/login}" class="btn-login">Iniciar Sesión</a>
+            <a th:href="@{/nuevo-usuario}" class="btn-register">Registrarse</a>
+        </div>
+
+        <div class="nav-menu" th:if="${nombreUsuario} != null">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign">Mi Perfil</a>
+            <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+        <div class="nav-user-info">
+            <span th:if="${nombreUsuario != null}" th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting">Hola, Usuario</span>
+            <a th:if="${nombreUsuario != null}" th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+
         </div>
     </div>
+</nav>
 
-    <div class="container">
-        <header>
-            <h1>Ubicación de Profesores</h1>
-            <p>Sistema de localización de profesores por materia</p>
+<!-- Botón toggle para móviles -->
+<button class="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
 
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Buscar profesor por nombre o materia..." class="search-input">
-                <button id="searchButton" class="search-button">
-                    <i class='bx bx-search'></i> Buscar
-                </button>
+<!-- Sidebar -->
+<aside class="sidebar-nav">
+    <nav class="sidebar-menu">
+        <ul class="sidebar-menu-list">
+            <li class="sidebar-menu-item active">
+                <a th:href="@{/home}" class="sidebar-menu-link">
+                    <i class="fas fa-th-large sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/todas-mis-clases}" class="sidebar-menu-link">
+                    <i class="fas fa-calendar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Historial de clases</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chat}" class="sidebar-menu-link">
+                    <i class="fas fa-comments sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mensajes</span>
+                </a>
+            </li>
+           <!-- <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Guardados</span>
+                </a>
+            </li>-->
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-folder sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Archivos Compartidos</span>
+                </a>
+            </li>
+          <!--  <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Estadísticas</span>
+                </a>
+            </li>-->
+        </ul>
+    </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header Section -->
+    <section class="map-header">
+        <div class="map-header-content">
+            <div class="map-header-text">
+                <h1 class="map-title">
+                    <i class="fas fa-map-marked-alt"></i>
+                    Ubicación de Profesores
+                </h1>
+                <p class="map-subtitle">Sistema de localización de profesores por materia</p>
             </div>
-        </header>
 
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text"
+                               id="searchInput"
+                               placeholder="Buscar profesor por nombre o materia..."
+                               class="search-input">
+                    </div>
+                    <button id="searchButton" class="search-button">
+                        <i class="fas fa-search"></i>
+                        Buscar
+                    </button>
+                    <button id="clearButton" class="clear-button" onclick="limpiarBusqueda()">
+                        <i class="fas fa-times"></i>
+                        Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
         <div class="map-container">
-            <h2 class="map-title">Mapa de Ubicaciones</h2>
-            <div id="map"></div>
+            <div class="map-header-bar">
+                <h2 class="section-title">
+                    <i class="fas fa-globe-americas"></i>
+                    Mapa Interactivo
+                </h2>
+                <div class="map-controls">
+                    <button class="map-control-btn" onclick="centrarTodosMarcadores()">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                        Ver Todo
+                    </button>
+                    <button class="map-control-btn" onclick="toggleMapType()">
+                        <i class="fas fa-layer-group"></i>
+                        Cambiar Vista
+                    </button>
+                </div>
+            </div>
+            <div id="map" class="map-display"></div>
         </div>
+    </section>
 
-        <!-- Card de profesores dinamica -->
-        <h2 class="profesores-title">Listado de Profesores</h2>
-        <div class="profesores-cards" id="profesoresContainer" th:if="${not #lists.isEmpty(datosProfesores)}">
-            <div class="profesor-card" th:each="profesor : ${datosProfesores}" th:data-nombre="${profesor.nombre + ' ' + profesor.apellido}" th:data-materia="${profesor.tema}">
-                <div class="profesor-nombre" th:text="${profesor.nombre + ' ' + profesor.apellido}">Nombre Profesor</div>
-                <div class="profesor-info">
-                    <span>Materia:</span> <span th:text="${profesor.tema}">Materia</span>
-                </div>
-                <div class="profesor-info">
-                    <span>Ubicación:</span>
-                    <span th:text="${#numbers.formatDecimal(profesor.latitud, 1, 6) + ', ' + #numbers.formatDecimal(profesor.longitud, 1, 6)}">
-                        Coordenadas
-                    </span>
-                </div>
-                <button class="btn-ver-mapa" th:onclick="'centrarMapa(' + ${profesor.latitud} + ',' + ${profesor.longitud} + ')'">
-                    Ver en mapa
-                </button>
+    <!-- Professors List Section -->
+    <section class="professors-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                Profesores Disponibles
+                <span class="professors-count" id="professorsCount">
+                    (<span th:text="${#lists.size(datosProfesores)}">0</span>)
+                </span>
+            </h2>
+            <div class="section-filters">
+                <select id="materiaFilter" class="filter-select">
+                    <option value="">Todas las materias</option>
+                    <!-- Opciones dinámicas -->
+                </select>
+                <select id="sortBy" class="filter-select">
+                    <option value="nombre">Ordenar por nombre</option>
+                    <option value="materia">Ordenar por materia</option>
+                    <option value="distancia">Ordenar por distancia</option>
+                </select>
             </div>
         </div>
 
-        <div class="no-profesores" th:if="${#lists.isEmpty(datosProfesores)}">
+        <div class="professors-grid" id="profesoresContainer">
+            <div class="professor-card"
+                 th:each="profesor : ${datosProfesores}"
+                 th:data-nombre="${profesor.nombre + ' ' + profesor.apellido}"
+                 th:data-materia="${profesor.tema}"
+                 th:data-lat="${profesor.latitud}"
+                 th:data-lng="${profesor.longitud}">
+
+                <div class="professor-card-header">
+                    <div class="professor-avatar">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="professor-status online">
+                        <i class="fas fa-circle"></i>
+                    </div>
+                </div>
+
+                <div class="professor-card-body">
+                    <h3 class="professor-name" th:text="${profesor.nombre + ' ' + profesor.apellido}">
+                        Nombre Profesor
+                    </h3>
+
+                    <div class="professor-info">
+                        <div class="info-item">
+                            <i class="fas fa-book"></i>
+                            <span th:text="${profesor.tema}">Materia</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span class="coordinates"
+                                  th:text="${#numbers.formatDecimal(profesor.latitud, 1, 4) + ', ' + #numbers.formatDecimal(profesor.longitud, 1, 4)}">
+                                Coordenadas
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-star"></i>
+                            <span class="rating">4.8 (24 reseñas)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="professor-card-footer">
+                    <button class="btn-view-map"
+                            th:attr="data-lat=${profesor.latitud}, data-lng=${profesor.longitud}, data-nombre=${profesor.nombre + ' ' + profesor.apellido}"
+                            onclick="handleCentrarMapa(this)">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Ver en Mapa
+                    </button>
+                    <button class="btn-contact">
+                        <i class="fas fa-envelope"></i>
+                        Contactar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" th:if="${#lists.isEmpty(datosProfesores)}" id="emptyState">
+            <div class="empty-state-icon">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <h3>No hay profesores disponibles</h3>
             <p>No se han encontrado profesores en el sistema.</p>
+            <button class="btn-primary" onclick="location.reload()">
+                <i class="fas fa-refresh"></i>
+                Actualizar
+            </button>
         </div>
 
-        <footer class="footer text-white py-4 mt-5">
-            <div class="container text-center">
-                <p class="mb-2">© 2025 Clases-Ya. Todos los derechos reservados.</p>
-                <ul class="list-inline mt-2 mb-0">
-                    <li class="list-inline-item">Angel Leyes</li>
-                    <li class="list-inline-item">Ezequiel Mendoza</li>
-                    <li class="list-inline-item">Fede Hodara</li>
-                    <li class="list-inline-item">Lucas Rios</li>
-                    <li class="list-inline-item">Luka Cambriglia</li>
-                </ul>
+        <!-- No Results State -->
+        <div class="empty-state" id="noResultsState" style="display: none;">
+            <div class="empty-state-icon">
+                <i class="fas fa-search"></i>
             </div>
-        </footer>
+            <h3>No se encontraron resultados</h3>
+            <p>No hay profesores que coincidan con tu búsqueda.</p>
+            <button class="btn-secondary" onclick="limpiarBusqueda()">
+                <i class="fas fa-times"></i>
+                Limpiar búsqueda
+            </button>
+        </div>
+    </section>
+</main>
 
+<!-- Footer -->
+<footer class="footer-redesign">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Clases-Ya</span>
+            </div>
+            <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Taller Web</p>
+            <div class="footer-team">
+                <p class="team-label">Desarrollado por:</p>
+                <div class="team-members">
+                    <span class="team-member">Angel Leyes</span>
+                    <span class="team-member">Ezequiel Mendoza</span>
+                    <span class="team-member">Fede Hodara</span>
+                    <span class="team-member">Lucas Rios</span>
+                    <span class="team-member">Luka Cambriglia</span>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</footer>
 
+<!-- Scripts -->
 <script th:inline="javascript">
+
+    function handleCentrarMapa(button) {
+        const lat = parseFloat(button.dataset.lat);
+        const lng = parseFloat(button.dataset.lng);
+        const nombre = button.dataset.nombre;
+        centrarMapa(lat, lng, nombre);
+    }
     /*<![CDATA[*/
     // Obtener datos de profesores desde el backend
     const profesores = [[${datosProfesores}]];
     console.log("Profesores recibidos del backend:", profesores);
 
-    // Inicializar el mapa
-    const map = L.map('map').setView([-34.6037, -58.3816], 12);
+    // Variables globales
+    let map;
     let markers = [];
+    let currentMapType = 'street';
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>'
-    }).addTo(map);
+    // Inicializar la aplicación
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeMap();
+        initializeSearch();
+        initializeFilters();
+        populateFilters();
+    });
 
-    // Función para centrar el mapa en un profesor específico
-    function centrarMapa(lat, lng) {
-        map.setView([lat, lng], 15);
-        // Resaltar el marcador correspondiente
+    // Inicializar el mapa
+    function initializeMap() {
+        map = L.map('map').setView([-34.6037, -58.3816], 12);
+
+        // Capa de mapa por defecto
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Agregar marcadores
+        addMarkersToMap();
+    }
+
+    // Agregar marcadores al mapa
+    function addMarkersToMap() {
+        if (profesores && profesores.length > 0) {
+            let bounds = [];
+
+            profesores.forEach(function(profesor) {
+                const customIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: `
+                        <div class="marker-pin">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                    `,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [0, -30]
+                });
+
+                const marker = L.marker([profesor.latitud, profesor.longitud], {
+                    icon: customIcon,
+                    title: `${profesor.nombre} ${profesor.apellido} - ${profesor.tema}`
+                })
+                    .addTo(map)
+                    .bindPopup(`
+                    <div class="custom-popup">
+                        <div class="popup-header">
+                            <h4>${profesor.nombre} ${profesor.apellido}</h4>
+                            <span class="popup-status online">En línea</span>
+                        </div>
+                        <div class="popup-body">
+                            <p><i class="fas fa-book"></i> ${profesor.tema}</p>
+                            <p><i class="fas fa-star"></i> 4.8 (24 reseñas)</p>
+                        </div>
+                        <div class="popup-footer">
+                            <button class="popup-btn primary">Contactar</button>
+                            <button class="popup-btn secondary">Ver Perfil</button>
+                        </div>
+                    </div>
+                `);
+
+                markers.push(marker);
+                bounds.push([profesor.latitud, profesor.longitud]);
+            });
+
+            // Ajustar vista para mostrar todos los marcadores
+            if (bounds.length > 0) {
+                map.fitBounds(bounds, { padding: [20, 20] });
+            }
+        }
+    }
+
+    // Centrar mapa en un profesor específico
+    function centrarMapa(lat, lng, nombre) {
+        map.setView([lat, lng], 16);
+
+        // Encontrar y abrir el popup del marcador
         markers.forEach(marker => {
             const markerLatLng = marker.getLatLng();
-            if (markerLatLng.lat === lat && markerLatLng.lng === lng) {
+            if (Math.abs(markerLatLng.lat - lat) < 0.0001 && Math.abs(markerLatLng.lng - lng) < 0.0001) {
                 marker.openPopup();
+
+                // Scroll al mapa
+                document.querySelector('.map-section').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
             }
         });
     }
 
-    // Agrego los marcadores para los profesores, leo el array y los agrego
-    if (profesores && profesores.length > 0) {
-        let sumLat = 0;
-        let sumLng = 0;
-
-        profesores.forEach(function(profesor) {
-            console.log(`Marcador: ${profesor.nombre} en [${profesor.latitud}, ${profesor.longitud}]`);
-            const customIcon = L.divIcon({
-                className: 'custom-marker',
-                html: `<div style="background-color: #FF8C00; width: 12px; height: 12px; border-radius: 50%; border: 3px solid #87CEEB;"></div>`,
-                iconSize: [18, 18],
-                iconAnchor: [9, 9]
-            });
-
-            const marker = L.marker([profesor.latitud, profesor.longitud], { icon: customIcon })
-                .addTo(map)
-                .bindPopup(`
-                    <div style="text-align: center;">
-                        <strong style="color: #FF8C00;">${profesor.nombre} ${profesor.apellido}</strong>
-                        <br>
-                        <span style="color: #5CACEE;">${profesor.tema}</span>
-                    </div>
-                `);
-
-            markers.push(marker);
-
-            sumLat += profesor.latitud;
-            sumLng += profesor.longitud;
-        });
-
-        if (profesores.length > 0) {
-            const centerLat = sumLat / profesores.length;
-            const centerLng = sumLng / profesores.length;
-            map.setView([centerLat, centerLng], 12);
+    // Centrar todos los marcadores
+    function centrarTodosMarcadores() {
+        if (markers.length > 0) {
+            const bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
+            map.fitBounds(bounds, { padding: [20, 20] });
         }
-    } else {
-        const messageControl = L.control({ position: 'center' });
-        messageControl.onAdd = function() {
-            const div = L.DomUtil.create('div', 'no-profesores-map');
-            div.innerHTML = '<p>No hay profesores para mostrar en el mapa</p>';
-            return div;
-        };
-        messageControl.addTo(map);
     }
 
-    // Busqueda con js
-    document.getElementById('searchButton').addEventListener('click', buscarProfesor);
-    document.getElementById('searchInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            buscarProfesor();
+    // Cambiar tipo de mapa
+    function toggleMapType() {
+        // Implementar cambio entre diferentes tipos de mapa
+        if (currentMapType === 'street') {
+            // Cambiar a vista satelital (requiere API key)
+            currentMapType = 'satellite';
+        } else {
+            currentMapType = 'street';
         }
-    });
+    }
 
+    // Inicializar búsqueda
+    function initializeSearch() {
+        const searchButton = document.getElementById('searchButton');
+        const searchInput = document.getElementById('searchInput');
+
+        searchButton.addEventListener('click', buscarProfesor);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarProfesor();
+            }
+        });
+
+        // Búsqueda en tiempo real
+        searchInput.addEventListener('input', function() {
+            if (this.value.length > 2 || this.value.length === 0) {
+                buscarProfesor();
+            }
+        });
+    }
+
+    // Función de búsqueda mejorada
     function buscarProfesor() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const profesorCards = document.querySelectorAll('.profesor-card');
-        let encontrado = false;
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+        const profesorCards = document.querySelectorAll('.professor-card');
+        const noResultsState = document.getElementById('noResultsState');
+        let encontrados = 0;
 
         profesorCards.forEach(card => {
             const nombre = card.getAttribute('data-nombre').toLowerCase();
             const materia = card.getAttribute('data-materia').toLowerCase();
 
-            if (nombre.includes(searchTerm) || materia.includes(searchTerm)) {
+            if (searchTerm === '' || nombre.includes(searchTerm) || materia.includes(searchTerm)) {
                 card.style.display = 'block';
-                card.classList.add('highlight');
-
-                if (!encontrado) {
-                    const btnVerMapa = card.querySelector('.btn-ver-mapa');
-                    if (btnVerMapa) {
-                        btnVerMapa.click();
-                    }
-                    encontrado = true;
-                    setTimeout(() => {
-                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 500);
+                card.classList.remove('highlight');
+                if (searchTerm !== '') {
+                    card.classList.add('highlight');
                 }
+                encontrados++;
             } else {
                 card.style.display = 'none';
                 card.classList.remove('highlight');
             }
         });
 
-        if (!encontrado) {
-            profesorCards.forEach(card => {
-                card.style.display = 'block';
-                card.classList.remove('highlight');
-            });
-
-            // Centrar el mapa en todos los marcadores
-            if (markers.length > 0) {
-                const bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
-                map.fitBounds(bounds);
-            }
-
-            alert('No se encontraron profesores que coincidan con la búsqueda.');
+        // Mostrar/ocultar estado de "no resultados"
+        if (encontrados === 0 && searchTerm !== '') {
+            noResultsState.style.display = 'block';
+        } else {
+            noResultsState.style.display = 'none';
         }
+
+        // Actualizar contador
+        updateProfessorsCount(encontrados);
     }
+
+    // Limpiar búsqueda
     function limpiarBusqueda() {
         document.getElementById('searchInput').value = '';
-        const profesorCards = document.querySelectorAll('.profesor-card');
+        document.getElementById('materiaFilter').value = '';
 
+        const profesorCards = document.querySelectorAll('.professor-card');
         profesorCards.forEach(card => {
             card.style.display = 'block';
             card.classList.remove('highlight');
         });
-        if (markers.length > 0) {
-            const bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
-            map.fitBounds(bounds);
+
+        document.getElementById('noResultsState').style.display = 'none';
+        updateProfessorsCount(profesorCards.length);
+        centrarTodosMarcadores();
+    }
+
+    // Inicializar filtros
+    function initializeFilters() {
+        const materiaFilter = document.getElementById('materiaFilter');
+        const sortBy = document.getElementById('sortBy');
+
+        materiaFilter.addEventListener('change', aplicarFiltros);
+        sortBy.addEventListener('change', aplicarFiltros);
+    }
+
+    // Poblar filtros con datos dinámicos
+    function populateFilters() {
+        const materiaFilter = document.getElementById('materiaFilter');
+        const materias = [...new Set(profesores.map(p => p.tema))];
+
+        materias.forEach(materia => {
+            const option = document.createElement('option');
+            option.value = materia;
+            option.textContent = materia;
+            materiaFilter.appendChild(option);
+        });
+    }
+
+    // Aplicar filtros
+    function aplicarFiltros() {
+        const materiaSeleccionada = document.getElementById('materiaFilter').value;
+        const ordenSeleccionado = document.getElementById('sortBy').value;
+        const profesorCards = Array.from(document.querySelectorAll('.professor-card'));
+
+        // Filtrar por materia
+        let cardsFiltradas = profesorCards.filter(card => {
+            if (materiaSeleccionada === '') return true;
+            return card.getAttribute('data-materia') === materiaSeleccionada;
+        });
+
+        // Ordenar
+        cardsFiltradas.sort((a, b) => {
+            switch(ordenSeleccionado) {
+                case 'nombre':
+                    return a.getAttribute('data-nombre').localeCompare(b.getAttribute('data-nombre'));
+                case 'materia':
+                    return a.getAttribute('data-materia').localeCompare(b.getAttribute('data-materia'));
+                case 'distancia':
+                    // Implementar ordenamiento por distancia
+                    return 0;
+                default:
+                    return 0;
+            }
+        });
+
+        // Mostrar/ocultar cards
+        profesorCards.forEach(card => {
+            card.style.display = cardsFiltradas.includes(card) ? 'block' : 'none';
+        });
+
+        updateProfessorsCount(cardsFiltradas.length);
+    }
+
+    // Actualizar contador de profesores
+    function updateProfessorsCount(count) {
+        const counter = document.querySelector('#professorsCount span');
+        if (counter) {
+            counter.textContent = count;
         }
+    }
+
+    // Toggle sidebar para móviles
+    function toggleSidebar() {
+        document.querySelector('.sidebar-nav').classList.toggle('open');
     }
     /*]]>*/
 </script>

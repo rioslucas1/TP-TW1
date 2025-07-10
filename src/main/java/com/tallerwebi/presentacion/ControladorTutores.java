@@ -54,21 +54,18 @@ public class ControladorTutores {
         try {
             List<Usuario> listaProfesores = servicioLogin.obtenerProfesores();
 
-            // Filtrado por Tema
             if (temaId != null) {
                 listaProfesores = listaProfesores.stream()
                         .filter(p -> p instanceof Profesor && ((Profesor) p).getTema() != null && ((Profesor) p).getTema().getId().equals(temaId))
                         .collect(Collectors.toList());
             }
 
-            // Filtrado por Modalidad
             if (modalidad != null) {
                 listaProfesores = listaProfesores.stream()
                         .filter(p -> p instanceof Profesor && modalidad.equals(((Profesor) p).getModalidadPreferida()))
                         .collect(Collectors.toList());
             }
 
-            // Filtrado por búsqueda (nombre o apellido)
             if (query != null && !query.trim().isEmpty()) {
                 String queryLower = query.toLowerCase();
                 listaProfesores = listaProfesores.stream()
@@ -79,11 +76,12 @@ public class ControladorTutores {
 
             Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("USUARIO");
             String nombreUsuario = usuarioLogueado != null ? usuarioLogueado.getNombre() : null;
+            String rol = usuarioLogueado != null ? usuarioLogueado.getRol().toString() : null; // <-- AGREGADO
 
             modelo.put("listaProfesores", listaProfesores);
             modelo.put("nombreUsuario", nombreUsuario);
+            modelo.put("rol", rol); // <-- AGREGADO
 
-            // Para mantener los filtros seleccionados al volver
             List<Tema> listaTemas = servicioTema.obtenerTodosLosTemas();
             modelo.put("listaTemas", listaTemas);
             modelo.put("temaIdSeleccionado", temaId);

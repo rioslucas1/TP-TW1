@@ -1,0 +1,404 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Suscripción Premium - ClasesYa</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+    <!-- Custom CSS Files -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+    <link rel="stylesheet" th:href="@{/css/layout-fixes.css}"/>
+    <link rel="stylesheet" th:href="@{/css/profile.css}"/>
+    <link rel="stylesheet" th:href="@{/css/pago-suscripcion.css}"/>
+
+    <!-- External Icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- MercadoPago SDK -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar-redesign">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
+        </div>
+        <div class="nav-menu">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+            <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+        </div>
+        <div class="nav-user-info" th:if="${nombreUsuario != null}">
+            <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting">Hola, Usuario</span>
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+        </div>
+        <div class="nav-buttons" th:if="${nombreUsuario == null}">
+            <a th:href="@{/login}" class="btn-login">Iniciar Sesión</a>
+            <a th:href="@{/nuevo-usuario}" class="btn-register">Registrarse</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="subscription-page">
+    <!-- Hero Section -->
+    <div class="subscription-hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 style="color: #ffffff;" class="hero-title">
+                    <i class="fas fa-crown"></i>
+                    Suscripción Premium
+                </h1>
+                <p class="hero-subtitle">Desbloquea todas las funcionalidades y lleva tu aprendizaje al siguiente nivel</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="subscription-container">
+        <div class="subscription-layout">
+            <!-- Left Column - Plan Details -->
+            <div class="plan-section">
+                <!-- Premium Plan Card -->
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <div class="plan-badge">
+                            <i class="fas fa-crown"></i>
+                            <span>Premium</span>
+                        </div>
+                        <div class="plan-pricing">
+                            <span class="price-currency">$</span>
+                            <span class="price-amount">1000</span>
+                            <span class="price-period">ARS/mes</span>
+                        </div>
+                    </div>
+
+                    <div class="plan-body">
+                        <h3 class="benefits-title">
+                            <i class="fas fa-star"></i>
+                            Beneficios Incluidos
+                        </h3>
+                        <div class="benefits-grid">
+                            <div class="benefit-item">
+                                <i class="fas fa-check"></i>
+                                <span>Clases ilimitadas con todos los profesores</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check"></i>
+                                <span>Acceso prioritario a nuevos tutores</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check"></i>
+                                <span>Material de estudio exclusivo</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check"></i>
+                                <span>Soporte técnico 24/7</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check"></i>
+                                <span>Certificados de finalización</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check"></i>
+                                <span>Grabación de clases</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check"></i>
+                                <span>Estadísticas detalladas de progreso</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check"></i>
+                                <span>Sin anuncios publicitarios</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="plan-footer">
+                        <div class="guarantee-badge">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Garantía de 30 días</span>
+                        </div>
+                        <p class="guarantee-text">
+                            Si no estás satisfecho, te devolvemos el 100% de tu dinero
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="comparison-card">
+                    <h3 class="comparison-title">
+                        <i class="fas fa-balance-scale"></i>
+                        Comparación de Planes
+                    </h3>
+                    <div class="comparison-table-wrapper">
+                        <table class="comparison-table">
+                            <thead>
+                            <tr>
+                                <th>Característica</th>
+                                <th>Gratuito</th>
+                                <th class="premium-column">Premium</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Clases por mes</td>
+                                <td>5 clases</td>
+                                <td class="premium-column">
+                                    <i class="fas fa-infinity"></i>
+                                    Ilimitadas
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Acceso a tutores</td>
+                                <td>Básico</td>
+                                <td class="premium-column">
+                                    <i class="fas fa-crown"></i>
+                                    Todos los tutores
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Material de estudio</td>
+                                <td>Limitado</td>
+                                <td class="premium-column">
+                                    <i class="fas fa-check"></i>
+                                    Completo
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Soporte técnico</td>
+                                <td>Email</td>
+                                <td class="premium-column">
+                                    <i class="fas fa-headset"></i>
+                                    24/7
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Certificados</td>
+                                <td>
+                                    <i class="fas fa-times text-danger"></i>
+                                    No incluido
+                                </td>
+                                <td class="premium-column">
+                                    <i class="fas fa-check"></i>
+                                    Incluido
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Payment Section -->
+            <div class="payment-section">
+                <!-- Payment Card -->
+                <div class="payment-card">
+                    <div class="payment-header">
+                        <h3 class="payment-title">
+                            <i class="fas fa-credit-card"></i>
+                            Finalizar Compra
+                        </h3>
+                        <p class="payment-subtitle">Proceso de pago seguro con MercadoPago</p>
+                    </div>
+
+                    <div class="payment-summary">
+                        <div class="summary-row">
+                            <span class="summary-label">Plan seleccionado:</span>
+                            <span class="summary-value">Premium Mensual</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Precio:</span>
+                            <span class="summary-value">$1000 ARS</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Impuestos:</span>
+                            <span class="summary-value">Incluidos</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total-row">
+                            <span class="summary-label">Total a pagar:</span>
+                            <span class="summary-value">$1000 ARS</span>
+                        </div>
+                    </div>
+
+                    <div class="payment-actions">
+                        <button id="pagar-btn" class="btn-pay">
+                            <i class="fas fa-lock"></i>
+                            Pagar con MercadoPago
+                        </button>
+                        <div id="wallet_container" class="wallet-container"></div>
+                    </div>
+
+                    <div class="payment-security">
+                        <div class="security-badges">
+                            <div class="security-badge">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Pago Seguro</span>
+                            </div>
+                            <div class="security-badge">
+                                <i class="fas fa-lock"></i>
+                                <span>SSL Encriptado</span>
+                            </div>
+                            <div class="security-badge">
+                                <i class="fas fa-credit-card"></i>
+                                <span>MercadoPago</span>
+                            </div>
+                        </div>
+                        <p class="security-text">
+                            Tu información está protegida con encriptación de nivel bancario
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="faq-card">
+                    <h4 class="faq-title">
+                        <i class="fas fa-question-circle"></i>
+                        Preguntas Frecuentes
+                    </h4>
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <i class="fas fa-chevron-right faq-icon"></i>
+                                ¿Puedo cancelar mi suscripción en cualquier momento?
+                            </div>
+                            <div class="faq-answer">
+                                Sí, puedes cancelar tu suscripción cuando quieras desde tu perfil. No hay penalizaciones.
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <i class="fas fa-chevron-right faq-icon"></i>
+                                ¿Qué métodos de pago aceptan?
+                            </div>
+                            <div class="faq-answer">
+                                Aceptamos tarjetas de crédito, débito, transferencias bancarias y efectivo a través de MercadoPago.
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <i class="fas fa-chevron-right faq-icon"></i>
+                                ¿La suscripción se renueva automáticamente?
+                            </div>
+                            <div class="faq-answer">
+                                Sí, se renueva automáticamente cada mes. Puedes desactivar la renovación automática cuando quieras.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer-redesign">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Clases-Ya</span>
+            </div>
+            <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Taller Web</p>
+            <div class="footer-team">
+                <p class="team-label">Desarrollado por:</p>
+                <div class="team-members">
+                    <span class="team-member">Angel Leyes</span>
+                    <span class="team-member">Ezequiel Mendoza</span>
+                    <span class="team-member">Fede Hodara</span>
+                    <span class="team-member">Lucas Rios</span>
+                    <span class="team-member">Luka Cambriglia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script th:inline="javascript">
+    // MercadoPago Integration
+    const publicKey = "APP_USR-d354f37e-b280-4c0f-a73d-27fc69ad6419";
+    const mp = new MercadoPago(publicKey, {locale: 'es-AR'});
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const pagarBtn = document.getElementById('pagar-btn');
+
+        pagarBtn.addEventListener('click', function() {
+            // Show loading state
+            pagarBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            pagarBtn.disabled = true;
+
+            fetch('/spring/suscripcion/crear-preferencia', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.preferenceId) {
+                        mp.checkout({
+                            preference: { id: data.preferenceId },
+                            autoOpen: true,
+                            render: {
+                                container: '#wallet_container',
+                                label: 'Pagar ahora'
+                            }
+                        });
+                    } else {
+                        throw new Error('Error al generar preferencia de pago');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al procesar el pago. Por favor, intenta nuevamente.');
+                })
+                .finally(() => {
+                    // Restore button state
+                    pagarBtn.innerHTML = '<i class="fas fa-lock"></i> Pagar con MercadoPago';
+                    pagarBtn.disabled = false;
+                });
+        });
+
+        // FAQ Accordion functionality
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            const answer = item.querySelector('.faq-answer');
+            const icon = item.querySelector('.faq-icon');
+
+            question.addEventListener('click', () => {
+                const isOpen = item.classList.contains('open');
+
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    otherItem.classList.remove('open');
+                    otherItem.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+                });
+
+                // Toggle current item
+                if (!isOpen) {
+                    item.classList.add('open');
+                    icon.style.transform = 'rotate(90deg)';
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

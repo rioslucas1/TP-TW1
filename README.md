@@ -31,7 +31,7 @@ $ mvn clean jetty:run
 ```shell
 $ mvn test -Dtest="VistaLoginE2E"
 ```
-
+docker compose up --build
 ## 8. Como correr las pruebas unitarias de javascript
 ```shell
 $ cd src/main/webapp/resources/core/js

@@ -3,177 +3,257 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Taller Web I - Registrarse como Tutor</title>
 
-  <title>Taller Web I</title>
-
-  <!-- Boostrap core css -->
+  <!-- Bootstrap CSS -->
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
 
-  <!-- custom style -->
+  <!-- Custom CSS Files -->
   <link rel="stylesheet" th:href="@{/css/main.css}"/>
-  <link rel="stylesheet" th:href="@{/css/login.css}"/>
+  <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+  <link rel="stylesheet" th:href="@{/css/register-teacher.css}"/>
 
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- External Icons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    #map {
+      height: 300px;
+      width: 100%;
+      border-radius: 10px;
+    }
+    .map-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%; width: 100%;
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 10px;
+      z-index: 1000;
+    }
+    .map-placeholder {
+      text-align: center;
+    }
+    .map-placeholder p {
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+  </style>
 </head>
+<body class="bg-light">
 
-<body class="login-body">
-
-<nav class="navbar navbar-expand-lg navbar-light">
-  <div class="container">
-    <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav" th:if="${nombreUsuario} == null">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/home}">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Nuestros tutores</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/registrarprofesor}">Convertirse un tutor</a>
-        </li>
-      </ul>
-
-      <div class="d-flex">
-        <a th:href="@{/login}" class="btn btn-iniciosesion me-2">Iniciar sesión</a>
-        <a th:href="@{/nuevo-usuario}" class="btn btn-registro">Registrarse</a>
+<div class="flex-grow-1">
+  <!-- Navigation -->
+  <nav class="navbar-redesign">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <i class="fas fa-graduation-cap nav-logo-icon"></i>
+        <span class="nav-logo-text">Clases-Ya</span>
+      </div>
+      <div class="nav-menu" th:if="${nombreUsuario} == null">
+        <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+        <a th:href="@{/verTutores}" class="nav-link-redesign">Nuestros Tutores</a>
+        <a th:href="@{/registrarprofesor}" class="nav-link-redesign">Convertirse en Tutor</a>
+        <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+      </div>
+      <div class="nav-buttons" th:if="${nombreUsuario} == null">
+        <a th:href="@{/login}" class="btn-login">Iniciar Sesión</a>
+        <a th:href="@{/nuevo-usuario}" class="btn-register">Registrarse</a>
+      </div>
+      <div class="nav-menu" th:if="${nombreUsuario} != null">
+        <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+        <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+        <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+        <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+        <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+        <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+      </div>
+      <div class="nav-user-info" th:if="${nombreUsuario} != null">
+        <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting"></span>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
       </div>
     </div>
+  </nav>
 
-    <div class="collapse navbar-collapse" id="navbarNavLogeado" th:if="${nombreUsuario} != null">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/home}">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Ver tutores</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Mi perfil</a>
-        </li>
-      </ul>
-
-      <div class="d-flex align-items-center">
-        <span th:text="'Hola, ' + ${nombreUsuario}" class="me-3"></span>
-        <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar sesión</a>
+  <!-- Register Teacher Section -->
+  <main class="register-teacher-wrapper">
+    <div class="register-teacher-box">
+      <div class="register-header">
+        <img th:src="@{/img/iconoUsuario.png}" alt="Usuario" class="user-icon">
+        <h3 class="section-title">Registrarse como Tutor</h3>
+        <p class="register-subtitle">Comparte tu conocimiento y enseña a otros</p>
       </div>
 
-    </div>
-  </div>
-</nav>
+      <form class="register-teacher-form" th:action="@{/registrarprofesor}" method="POST" th:object="${datosRegistro}">
+        <div class="form-columns">
+          <!-- Left Column -->
+          <div class="form-column left">
+            <!-- Información Personal -->
+            <div class="form-section">
+              <h4 class="section-subtitle">
+                <i class="fas fa-user-circle"></i> Información Personal
+              </h4>
 
-<!-- /.form register -->
+              <div class="form-group">
+                <label for="nombre" class="form-label">Nombre</label>
+                <div class="input-container">
+                  <span class="input-icon"><i class="fas fa-user"></i></span>
+                  <input th:field="*{nombre}" type="text" id="nombre" class="form-input form-control" placeholder="Tu nombre" required />
+                </div>
+              </div>
 
-<main role="main" class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
-  <div class="row justify-content-center w-100">
-    <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
-      <div id="registrobox" class="loginbox">
-      <div class="user-icon">
-        <img th:src="@{/img/iconoUsuario.png}" alt="iconousuario">
-      </div>
-      <h3 class="login-title">Registrarse</h3>
-        <form action="#" th:action="@{/registrarprofesor}" method="POST" th:object="${datosRegistro}">
-        <div class="form-contenedor mb-3">
-          <label for="nombre">NOMBRE</label>
-          <div class="input-contenedor">
-            <span class="input-contenedor-text"><i class="fas fa-user"></i></span>
-            <input th:field="*{nombre}" id="nombre" class="form-control" required/>
-          </div>
-        </div>
-        <div class="form-contenedor mb-3">
-          <label for="apellido">APELLIDO</label>
-          <div class="input-contenedor">
-            <span class="input-contenedor-text"><i class="fas fa-user"></i></span>
-            <input th:field="*{apellido}" id="apellido" class="form-control" required/>
-          </div>
-        </div>
-        <div class="form-contenedor mb-3">
-          <label for="email">EMAIL</label>
-          <div class="input-contenedor">
-            <span class="input-contenedor-text"><i class="fas fa-envelope"></i></span>
-            <input th:field="*{email}" id="email" class="form-control" required/>
-          </div>
-        </div>
+              <div class="form-group">
+                <label for="apellido" class="form-label">Apellido</label>
+                <div class="input-container">
+                  <span class="input-icon"><i class="fas fa-user"></i></span>
+                  <input th:field="*{apellido}" type="text" id="apellido" class="form-input form-control" placeholder="Tu apellido" required />
+                </div>
+              </div>
 
-        <div class="form-contenedor mb-3">
-          <label for="tema">TEMA</label>
-          <div class="input-contenedor">
-            <span class="input-contenedor-text"><i class="fas fa-book"></i></span>
-            <select th:field="*{temaId}" id="tema" class="form-control" required>
-              <option value="" disabled selected>Seleccione un tema</option>
-              <option th:each="tema : ${temas}" th:value="${tema.id}" th:text="${tema.nombre}"></option>
-            </select>
-          </div>
-        </div>
-          <input type="hidden" id="latitud" th:field="*{latitud}" />
-          <input type="hidden" id="longitud" th:field="*{longitud}" />
+              <div class="form-group">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <div class="input-container">
+                  <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                  <input th:field="*{email}" type="email" id="email" class="form-input form-control" placeholder="correo@ejemplo.com" required />
+                </div>
+              </div>
+            </div>
 
-          <div class="form-contenedor mb-4">
-          <label for="password">CONTRASEÑA</label>
-          <div class="input-contenedor">
-            <span class="input-contenedor-text"><i class="fas fa-lock"></i></span>
-            <input th:field="*{password}" type="password" id="password" class="form-control" required/>
-          </div>
-        </div>
+            <!-- Información de Enseñanza -->
+            <div class="form-section">
+              <h4 class="section-subtitle">
+                <i class="fas fa-chalkboard-teacher"></i> Información de Enseñanza
+              </h4>
 
-          <div class="form-contenedor mb-4">
-            <label for="map">Seleccioná tu ubicación en el mapa</label>
-            <div id="map" style="height: 300px; border-radius: 10px;"></div>
+              <div class="form-group">
+                <label for="tema" class="form-label">Tema que enseñas</label>
+                <div class="input-container">
+                  <span class="input-icon"><i class="fas fa-book"></i></span>
+                  <select th:field="*{temaId}" id="tema" class="form-select form-control" required>
+                    <option value="" disabled selected>Selecciona un tema</option>
+                    <option th:each="tema : ${temas}" th:value="${tema.id}" th:text="${tema.nombre}"></option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
 
+          <!-- Right Column -->
+          <div class="form-column right">
+            <!-- Seguridad -->
+            <div class="form-section">
+              <h4 class="section-subtitle">
+                <i class="fas fa-shield-alt"></i> Seguridad
+              </h4>
 
-          <div class="d-grid gap-2">
-          <button id="btn-login" class="btn btn-login" type="submit">Registrarse</button>
+              <div class="form-group">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-container">
+                  <span class="input-icon"><i class="fas fa-lock"></i></span>
+                  <input th:field="*{password}" type="password" id="password" class="form-input form-control" placeholder="Mínimo 6 caracteres" required />
+                </div>
+              </div>
+            </div>
+
+            <!-- Términos -->
+            <div class="form-section">
+              <h4 class="section-subtitle">
+                <i class="fas fa-file-contract"></i> Términos y Condiciones
+              </h4>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="terms" required />
+                <label for="terms" class="form-check-label">
+                  Acepto los <a href="#" class="terms-link">términos y condiciones</a> y la <a href="#" class="terms-link">política de privacidad</a>.
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="${error}">
-        </p>
+        <!-- Ubicación -->
+        <div class="form-section full-width">
+          <h4 class="section-subtitle">
+            <i class="fas fa-map-marker-alt"></i> Ubicación
+          </h4>
+          <div class="form-group position-relative">
+            <label for="map" class="form-label">Selecciona tu ubicación en el mapa</label>
+            <p class="map-instructions">Haz clic en el mapa para marcar tu ubicación de enseñanza</p>
+            <div class="map-container position-relative">
+              <div id="map"></div>
+              <div class="map-overlay" id="mapOverlay">
+                <div class="map-placeholder">
+                  <i class="fas fa-map-marked-alt fa-2x"></i>
+                  <p>Haz clic para activar el mapa</p>
+                </div>
+              </div>
+            </div>
+            <div id="locationInfo" class="text-success mt-2" style="display:none;">
+              <i class="fas fa-check-circle"></i> Ubicación seleccionada correctamente
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="latitud" th:field="*{latitud}" />
+        <input type="hidden" id="longitud" th:field="*{longitud}" />
+
+        <button type="submit" class="btn-form-submit">
+          <i class="fas fa-chalkboard-teacher"></i> Registrarse como Tutor
+        </button>
+
+        <div th:if="${error != null}" class="alert alert-danger error-message" th:text="${error}"></div>
       </form>
-      <div class="registro-link mt-3">
-        <p>¿Ya tenes cuenta? <a id="ir-a-login" th:href="@{/login}">Iniciar Sesión</a></p>
+
+      <div class="login-link">
+        <p>¿Ya tienes cuenta? <a th:href="@{/login}">Iniciar Sesión</a></p>
       </div>
     </div>
-  </div>
-  </div>
-</main>
+  </main>
+</div>
 
+<!-- Footer -->
+<footer class="footer-redesign">
+  <!-- Tu footer sin cambios -->
+</footer>
 
-</main>
-<!-- /.container -->
-
-<!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-<!-- Leaflet CSS y JS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Scripts -->
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const map = L.map('map').setView([-34.6037, -58.3816], 13); // Buenos Aires por defecto
-
+    const map = L.map('map').setView([-34.6037, -58.3816], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap',
+      attribution: '© OpenStreetMap'
     }).addTo(map);
 
     let marker;
+    const overlay = document.getElementById('mapOverlay');
+
+    overlay.addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
 
     map.on('click', function (e) {
       const lat = e.latlng.lat;
       const lng = e.latlng.lng;
-
-      // Actualiza campos ocultos
       document.getElementById('latitud').value = lat;
       document.getElementById('longitud').value = lng;
 
-      // Coloca el marcador
       if (marker) {
         marker.setLatLng(e.latlng);
       } else {
         marker = L.marker(e.latlng).addTo(map);
       }
+
+      document.getElementById('locationInfo').style.display = 'block';
     });
   });
 </script>

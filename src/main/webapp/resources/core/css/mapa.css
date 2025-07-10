@@ -1,0 +1,679 @@
+/* ===================================
+   MAPA PAGE STYLES - TEMA CLASES-YA
+   =================================== */
+
+/* Usar las variables existentes del tema */
+.main-content {
+    flex: 1;
+    margin-left: 280px !important;
+    padding-top: 80px !important;
+    min-height: calc(100vh - 80px) !important;
+    background-color: var(--bg-light) !important;
+}
+
+/* Map Header Section - Usar el mismo gradiente del perfil */
+.map-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #374151 100%) !important;
+    color: var(--text-white) !important;
+    padding: 40px 0 !important;
+    margin-bottom: 2rem !important;
+}
+
+.map-header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.map-header-text {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.map-title {
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1rem !important;
+    color: #ffffff !important; /* Blanco puro para máxima visibilidad */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important; /* Sombra para mejor contraste */
+}
+
+.map-title i {
+    color: var(--secondary-color) !important; /* Verde para el ícono */
+}
+
+.map-subtitle {
+    font-size: 1.1rem !important;
+    opacity: 0.95 !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Search Section */
+.search-section {
+    display: flex;
+    justify-content: center;
+}
+
+.search-container {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 600px;
+    width: 100%;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    z-index: 2;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--bg-white);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.search-button,
+.clear-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-button {
+    background: var(--secondary-color);
+    color: var(--text-white);
+}
+
+.search-button:hover {
+    background: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+.clear-button {
+    background: transparent;
+    color: var(--text-white);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.clear-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Map Section */
+.map-section {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    padding: 0 2rem;
+}
+
+.map-container {
+    background: var(--bg-white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.map-header-bar {
+    padding: 1.5rem 2rem;
+    background: var(--bg-white);
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title i {
+    color: var(--secondary-color);
+}
+
+.map-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.map-control-btn {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.map-control-btn:hover {
+    background: var(--secondary-color);
+    color: var(--text-white);
+    border-color: var(--secondary-color);
+}
+
+.map-display {
+    height: 500px;
+    width: 100%;
+}
+
+/* Custom Map Markers */
+.custom-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.marker-pin {
+    background: var(--secondary-color);
+    width: 30px;
+    height: 30px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--bg-white);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.marker-pin i {
+    transform: rotate(45deg);
+    color: var(--text-white);
+    font-size: 0.9rem;
+}
+
+/* Custom Popup Styles */
+.custom-popup {
+    font-family: inherit;
+    min-width: 200px;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.popup-header h4 {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 1rem;
+}
+
+.popup-status {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.popup-body p {
+    margin: 0.3rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.popup-body i {
+    color: var(--secondary-color);
+    width: 12px;
+}
+
+.popup-footer {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+}
+
+.popup-btn {
+    flex: 1;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.popup-btn.primary {
+    background: var(--secondary-color);
+    color: var(--text-white);
+}
+
+.popup-btn.secondary {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid #e5e7eb;
+}
+
+.popup-btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Professors Section */
+.professors-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.professors-count {
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.section-filters {
+    display: flex;
+    gap: 1rem;
+}
+
+.filter-select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: var(--bg-white);
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+/* Professors Grid */
+.professors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.professor-card {
+    background: var(--bg-white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f1f5f9;
+}
+
+.professor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.professor-card.highlight {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    animation: pulse-highlight 2s infinite;
+}
+
+@keyframes pulse-highlight {
+    0%,
+    100% {
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3);
+    }
+}
+
+.professor-card-header {
+    padding: 1.5rem 1.5rem 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.professor-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-white);
+    font-size: 1.5rem;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.professor-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.professor-status.online {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.professor-status i {
+    font-size: 0.5rem;
+}
+
+.professor-card-body {
+    padding: 1rem 1.5rem;
+    text-align: center;
+}
+
+.professor-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.professor-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.info-item i {
+    color: var(--secondary-color);
+    width: 16px;
+    text-align: center;
+}
+
+.coordinates {
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.rating {
+    color: #f59e0b;
+    font-weight: 500;
+}
+
+.professor-card-footer {
+    padding: 0 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-view-map,
+.btn-contact {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.btn-view-map {
+    background: var(--secondary-color);
+    color: var(--text-white);
+}
+
+.btn-view-map:hover {
+    background: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+.btn-contact {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid #e5e7eb;
+}
+
+.btn-contact:hover {
+    background: var(--text-light);
+    color: var(--text-white);
+    border-color: var(--text-light);
+}
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--bg-white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    background: #f8fafc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    border: 2px solid #e2e8f0;
+}
+
+.empty-state-icon i {
+    font-size: 2rem;
+    color: #cbd5e1;
+}
+
+.empty-state h3 {
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--secondary-color);
+    color: var(--text-white);
+}
+
+.btn-primary:hover {
+    background: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+    background: #f8fafc;
+    border-color: #d1d5db;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .professors-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .section-filters {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0 !important;
+        padding-top: 80px !important;
+    }
+
+    .map-header {
+        padding: 2rem 0;
+    }
+
+    .map-header-content {
+        padding: 0 1rem;
+    }
+
+    .map-title {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .search-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .search-button,
+    .clear-button {
+        justify-content: center;
+    }
+
+    .map-section,
+    .professors-section {
+        padding: 0 1rem 1rem;
+    }
+
+    .map-header-bar {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .map-controls {
+        justify-content: center;
+    }
+
+    .map-display {
+        height: 400px;
+    }
+
+    .professors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-filters {
+        flex-direction: column;
+    }
+
+    .professor-card-footer {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .map-header-content {
+        padding: 0 0.5rem;
+    }
+
+    .map-section,
+    .professors-section {
+        padding: 0 0.5rem 1rem;
+    }
+
+    .map-header-bar {
+        padding: 1rem;
+    }
+
+    .professor-card-header {
+        padding: 1rem 1rem 0;
+    }
+
+    .professor-card-body {
+        padding: 0.75rem 1rem;
+    }
+
+    .professor-card-footer {
+        padding: 0 1rem 1rem;
+    }
+}

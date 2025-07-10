@@ -7,347 +7,432 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+    <!-- Custom CSS Files -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
-    <link rel="stylesheet" th:href="@{/css/perfil.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    <link rel="stylesheet" th:href="@{/css/layout-fixes.css}"/>
+    <link rel="stylesheet" th:href="@{/css/profile.css}"/>
+
+    <!-- External Icons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/home}">Clases<span>Ya</span></a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" th:href="@{/home}">
-                <i class='bx bx-home'></i> Inicio
-            </a>
-            <a class="nav-link" th:href="@{/logout}">
-                <i class='bx bx-log-out'></i> Cerrar sesión
-            </a>
+
+<!-- Navigation -->
+<nav class="navbar-redesign">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
+        </div>
+        <div class="nav-menu">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign">Mi Perfil</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+        <div class="nav-user-info">
+            <span th:text="'Hola, ' + ${alumno.nombre}" class="user-greeting">Hola, Usuario</span>
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
         </div>
     </div>
 </nav>
 
-<div class="profile-header">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-3 text-center">
-                <div class="photo-upload-container" th:if="${esEdicion}">
-                    <div class="profile-avatar">
+<!-- Botón toggle para móviles -->
+<button class="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<aside class="sidebar-nav">
+    <nav class="sidebar-menu">
+        <ul class="sidebar-menu-list">
+            <li class="sidebar-menu-item active">
+                <a th:href="@{/home}" class="sidebar-menu-link">
+                    <i class="fas fa-th-large sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/todas-mis-clases}" class="sidebar-menu-link">
+                    <i class="fas fa-calendar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Historial de clases</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chat}" class="sidebar-menu-link">
+                    <i class="fas fa-comments sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mensajes</span>
+                </a>
+            </li>
+           <!-- <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Guardados</span>
+                </a>
+            </li>-->
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-folder sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Archivos Compartidos</span>
+                </a>
+            </li>
+           <!-- <li class="sidebar-menu-item active">
+                <a th:href="@{/perfil}" class="sidebar-menu-link">
+                    <i class="fas fa-user sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mi Perfil</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Estadísticas</span>
+                </a>
+            </li>-->
+        </ul>
+    </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="photo-upload-container" th:if="${esEdicion}">
+                        <div class="profile-avatar">
+                            <img th:if="${alumno.fotoPerfil != null and !alumno.fotoPerfil.isEmpty()}"
+                                 th:src="${alumno.fotoPerfil}"
+                                 alt="Foto de perfil" />
+                            <i th:if="${alumno.fotoPerfil == null or alumno.fotoPerfil.isEmpty()}"
+                               class='bx bx-user'></i>
+                        </div>
+                        <div class="photo-upload-overlay" onclick="document.getElementById('photoInput').click()">
+                            <i class='bx bx-camera'></i>
+                        </div>
+                        <input type="file"
+                               id="photoInput"
+                               accept="image/*"
+                               onchange="previewPhoto(this)" />
+                    </div>
+
+                    <div class="profile-avatar" th:if="${!esEdicion}">
                         <img th:if="${alumno.fotoPerfil != null and !alumno.fotoPerfil.isEmpty()}"
                              th:src="${alumno.fotoPerfil}"
                              alt="Foto de perfil" />
                         <i th:if="${alumno.fotoPerfil == null or alumno.fotoPerfil.isEmpty()}"
                            class='bx bx-user'></i>
                     </div>
-                    <div class="photo-upload-overlay" onclick="document.getElementById('photoInput').click()">
-                        <i class='bx bx-camera'></i>
-                    </div>
-                    <input type="file"
-                           id="photoInput"
-                           accept="image/*"
-                           onchange="previewPhoto(this)" />
                 </div>
-
-                <div class="profile-avatar" th:if="${!esEdicion}">
-                    <img th:if="${alumno.fotoPerfil != null and !alumno.fotoPerfil.isEmpty()}"
-                         th:src="${alumno.fotoPerfil}"
-                         alt="Foto de perfil" />
-                    <i th:if="${alumno.fotoPerfil == null or alumno.fotoPerfil.isEmpty()}"
-                       class='bx bx-user'></i>
+                <div class="col-md-6">
+                    <h1 style="color: #ffffff;" th:text="${alumno.nombre + ' ' + alumno.apellido}">Angel Antonio Leyes Delvalle</h1>
+                    <p th:text="${alumno.email}">angelleyesdkd@gmail.com</p>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <h1 class="mb-2" th:text="${alumno.nombre + ' ' + alumno.apellido}">Nombre del Alumno</h1>
-                <p class="mb-1" th:text="${alumno.email}">email@ejemplo.com</p>
-                <div class="d-flex align-items-center" th:if="${alumno.modalidadPreferida != null}">
-                        <span class="modalidad-icon"
-                              th:classappend="${alumno.modalidadPreferida.name().toLowerCase() == 'presencial'} ? 'modalidad-presencial' :
-                                             (${alumno.modalidadPreferida.name().toLowerCase() == 'virtual'} ? 'modalidad-virtual' : 'modalidad-ambas')">
-                            <i class='bx'
-                               th:classappend="${alumno.modalidadPreferida.name().toLowerCase() == 'presencial'} ? 'bx-group' :
-                                             (${alumno.modalidadPreferida.name().toLowerCase() == 'virtual'} ? 'bx-desktop' : 'bx-book')"></i>
-                        </span>
-                    <span th:text="${alumno.modalidadPreferida.name() == 'PRESENCIAL'} ? 'Presencial' :
-                                      (${alumno.modalidadPreferida.name() == 'VIRTUAL'} ? 'Virtual' : 'Ambas modalidades')">
-                            Modalidad
-                        </span>
+                <div class="col-md-3">
+                    <a th:if="${!esEdicion}"
+                       th:href="@{/perfil/editar}"
+                       class="btn-edit-profile">
+                        <i class='bx bx-edit'></i> Editar Perfil
+                    </a>
+                    <a th:if="${esEdicion}"
+                       th:href="@{/perfil}"
+                       class="btn-edit-profile">
+                        <i class='bx bx-x'></i> Cancelar
+                    </a>
                 </div>
-            </div>
-            <div class="col-md-3 text-center text-md-end">
-                <a th:if="${!esEdicion}"
-                   th:href="@{/perfil/editar}"
-                   class="btn btn-light btn-lg">
-                    <i class='bx bx-edit'></i> Editar Perfil
-                </a>
-                <a th:if="${esEdicion}"
-                   th:href="@{/perfil}"
-                   class="btn btn-outline-light btn-lg">
-                    <i class='bx bx-x'></i> Cancelar
-                </a>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container my-5">
-    <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class='bx bx-check-circle me-2'></i>
-        <span th:text="${exito}">Mensaje de éxito</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <!-- Content -->
+    <div class="container my-5">
+        <!-- Alerts -->
+        <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class='bx bx-check-circle me-2'></i>
+            <span th:text="${exito}">Mensaje de éxito</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
 
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class='bx bx-error me-2'></i>
-        <span th:text="${error}">Mensaje de error</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class='bx bx-error me-2'></i>
+            <span th:text="${error}">Mensaje de error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card profile-card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class='bx bx-user me-2'></i>
-                        Información Personal
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <form th:if="${esEdicion}"
-                          th:action="@{/perfil/actualizar}"
-                          method="post"
-                          id="perfilForm">
+        <div class="profile-content-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Información Personal -->
+                <div class="profile-section">
+                    <div class="profile-section-header">
+                        <h3 class="profile-section-title">
+                            <i class='bx bx-user'></i>
+                            Información Personal
+                        </h3>
+                    </div>
+                    <div class="profile-section-body">
+                        <form th:if="${esEdicion}"
+                              th:action="@{/perfil/actualizar}"
+                              method="post"
+                              id="perfilForm">
 
-                        <input type="hidden" id="fotoBase64" name="fotoBase64" />
+                            <input type="hidden" id="fotoBase64" name="fotoBase64" />
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="nombre" class="form-label">Nombre *</label>
-                                <input type="text"
-                                       class="form-control"
-                                       id="nombre"
-                                       name="nombre"
-                                       th:value="${alumno.nombre}"
-                                       required>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">Nombre *</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="nombre"
+                                           name="nombre"
+                                           th:value="${alumno.nombre}"
+                                           required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="apellido" class="form-label">Apellido *</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="apellido"
+                                           name="apellido"
+                                           th:value="${alumno.apellido}"
+                                           required>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="apellido" class="form-label">Apellido *</label>
-                                <input type="text"
-                                       class="form-control"
-                                       id="apellido"
-                                       name="apellido"
-                                       th:value="${alumno.apellido}"
-                                       required>
+
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <textarea class="form-control"
+                                          id="descripcion"
+                                          name="descripcion"
+                                          rows="4"
+                                          placeholder="Contanos sobre vos..."
+                                          th:text="${alumno.descripcion}"></textarea>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="descripcion" class="form-label">Descripción</label>
-                            <textarea class="form-control"
-                                      id="descripcion"
-                                      name="descripcion"
-                                      rows="4"
-                                      placeholder="Contanos sobre vos..."
-                                      th:text="${alumno.descripcion}"></textarea>
-                        </div>
+                            <div class="mb-3">
+                                <label for="modalidadPreferida" class="form-label">Modalidad Preferida</label>
+                                <select class="form-select" id="modalidadPreferida" name="modalidadPreferida">
+                                    <option value="">Selecciona una modalidad</option>
+                                    <option value="PRESENCIAL"
+                                            th:selected="${alumno.modalidadPreferida != null && alumno.modalidadPreferida.name() == 'PRESENCIAL'}">
+                                        Presencial
+                                    </option>
+                                    <option value="VIRTUAL"
+                                            th:selected="${alumno.modalidadPreferida != null && alumno.modalidadPreferida.name() == 'VIRTUAL'}">
+                                        Virtual
+                                    </option>
+                                    <option value="AMBAS"
+                                            th:selected="${alumno.modalidadPreferida != null && alumno.modalidadPreferida.name() == 'AMBAS'}">
+                                        Ambas modalidades
+                                    </option>
+                                </select>
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="modalidadPreferida" class="form-label">Modalidad Preferida</label>
-                            <select class="form-select" id="modalidadPreferida" name="modalidadPreferida">
-                                <option value="">Selecciona una modalidad</option>
-                                <option value="PRESENCIAL"
-                                        th:selected="${alumno.modalidadPreferida != null && alumno.modalidadPreferida.name() == 'PRESENCIAL'}">
-                                    Presencial
-                                </option>
-                                <option value="VIRTUAL"
-                                        th:selected="${alumno.modalidadPreferida != null && alumno.modalidadPreferida.name() == 'VIRTUAL'}">
-                                    Virtual
-                                </option>
-                                <option value="AMBAS"
-                                        th:selected="${alumno.modalidadPreferida != null && alumno.modalidadPreferida.name() == 'AMBAS'}">
-                                    Ambas modalidades
-                                </option>
-                            </select>
-                        </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class='bx bx-save me-2'></i>
+                                    Guardar Cambios
+                                </button>
+                                <a th:href="@{/perfil}" class="btn btn-outline-secondary">
+                                    Cancelar
+                                </a>
+                            </div>
+                        </form>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-edit-mode">
-                                <i class='bx bx-save me-2'></i>
-                                Guardar Cambios
-                            </button>
-                            <a th:href="@{/perfil}" class="btn btn-outline-secondary">
-                                Cancelar
-                            </a>
-                        </div>
-                    </form>
-
-                    <!-- Botón para eliminar foto (solo si tiene foto) - CORREGIDO: fuera del formulario principal -->
-                    <form th:if="${esEdicion && alumno.fotoPerfil != null && !alumno.fotoPerfil.isEmpty()}"
-                          th:action="@{/perfil/eliminar-foto}"
-                          method="post"
-                          class="mt-3"
-                          style="display: inline;">
-                        <button type="submit"
-                                class="btn btn-outline-danger btn-sm"
-                                onclick="return confirm('¿Estás seguro que querés eliminar tu foto de perfil?')">
-                            <i class='bx bx-trash me-1'></i>
-                            Eliminar Foto
-                        </button>
-                    </form>
-
-                    <div th:if="${!esEdicion}">
-                        <div class="row mb-3">
-                            <div class="col-sm-3"><strong>Nombre completo:</strong></div>
-                            <div class="col-sm-9" th:text="${alumno.nombre + ' ' + alumno.apellido}">Nombre Apellido</div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-sm-3"><strong>Email:</strong></div>
-                            <div class="col-sm-9" th:text="${alumno.email}">email@ejemplo.com</div>
-                        </div>
-                        <div class="row mb-3" th:if="${alumno.descripcion != null && !alumno.descripcion.isEmpty()}">
-                            <div class="col-sm-3"><strong>Descripción:</strong></div>
-                            <div class="col-sm-9" th:text="${alumno.descripcion}">Descripción del alumno</div>
-                        </div>
-                        <div class="row mb-3" th:if="${alumno.modalidadPreferida != null}">
-                            <div class="col-sm-3"><strong>Modalidad preferida:</strong></div>
-                            <div class="col-sm-9">
-                                    <span class="modalidad-icon"
-                                          th:classappend="${alumno.modalidadPreferida.name().toLowerCase() == 'presencial'} ? 'modalidad-presencial' :
-                                                         (${alumno.modalidadPreferida.name().toLowerCase() == 'virtual'} ? 'modalidad-virtual' : 'modalidad-ambas')">
-                                        <i class='bx'
-                                           th:classappend="${alumno.modalidadPreferida.name().toLowerCase() == 'presencial'} ? 'bx-group' :
-                                                         (${alumno.modalidadPreferida.name().toLowerCase() == 'virtual'} ? 'bx-desktop' : 'bx-book')"></i>
-                                    </span>
-                                <span th:text="${alumno.modalidadPreferida.name() == 'PRESENCIAL'} ? 'Presencial' :
-                                                  (${alumno.modalidadPreferida.name() == 'VIRTUAL'} ? 'Virtual' : 'Ambas modalidades')">
+                        <!-- Vista de solo lectura -->
+                        <div th:if="${!esEdicion}">
+                            <div class="info-item">
+                                <span class="info-label">Nombre completo:</span>
+                                <span class="info-value" th:text="${alumno.nombre + ' ' + alumno.apellido}">Angel Antonio Leyes Delvalle</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Email:</span>
+                                <span class="info-value" th:text="${alumno.email}">angelleyesdkd@gmail.com</span>
+                            </div>
+                            <div class="info-item" th:if="${alumno.descripcion != null && !alumno.descripcion.isEmpty()}">
+                                <span class="info-label">Descripción:</span>
+                                <span class="info-value" th:text="${alumno.descripcion}">Descripción del alumno</span>
+                            </div>
+                            <div class="info-item" th:if="${alumno.modalidadPreferida != null}">
+                                <span class="info-label">Modalidad preferida:</span>
+                                <span class="info-value">
+                                    <span th:text="${alumno.modalidadPreferida.name() == 'PRESENCIAL'} ? 'Presencial' :
+                                                      (${alumno.modalidadPreferida.name() == 'VIRTUAL'} ? 'Virtual' : 'Ambas modalidades')">
                                         Modalidad
                                     </span>
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="card profile-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class='bx bx-bookmark me-2'></i>
-                        Temas de Interés
-                    </h5>
-                    <button type="button"
-                            class="btn btn-outline-primary btn-sm"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#agregarTema"
-                            th:if="${!esEdicion}">
-                        <i class='bx bx-plus me-1'></i>
-                        Agregar Tema
-                    </button>
-                </div>
-                <div class="card-body">
+                <!-- Temas de Interés -->
+                <div class="profile-section">
+                    <div class="profile-section-header">
+                        <h3 class="profile-section-title">
+                            <i class='bx bx-bookmark'></i>
+                            Temas de Interés
+                        </h3>
+                        <button type="button"
+                                class="btn-add-topic"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#agregarTema"
+                                th:if="${!esEdicion}">
+                            <i class='bx bx-plus'></i>
+                            Agregar Tema
+                        </button>
+                    </div>
+                    <div class="profile-section-body">
+                        <div class="collapse mb-3" id="agregarTema">
+                            <div class="card card-body bg-light">
+                                <form th:action="@{/perfil/agregar-tema}" method="post">
+                                    <div class="row align-items-end">
+                                        <div class="col-md-8">
+                                            <label for="temaId" class="form-label">Selecciona un tema</label>
+                                            <select class="form-select" id="temaId" name="temaId" required>
+                                                <option value="">Elige un tema...</option>
+                                                <option th:each="tema : ${todosLosTemas}"
+                                                        th:value="${tema.id}"
+                                                        th:text="${tema.nombre}"
+                                                        th:if="${!alumno.temas.contains(tema)}">
+                                                    Tema
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class='bx bx-plus me-1'></i>
+                                                Agregar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
 
-                    <div class="collapse mb-3" id="agregarTema">
-                        <div class="card card-body bg-light">
-                            <form th:action="@{/perfil/agregar-tema}" method="post">
-                                <div class="row align-items-end">
-                                    <div class="col-md-8">
-                                        <label for="temaId" class="form-label">Selecciona un tema</label>
-                                        <select class="form-select" id="temaId" name="temaId" required>
-                                            <option value="">Elige un tema...</option>
-                                            <option th:each="tema : ${todosLosTemas}"
-                                                    th:value="${tema.id}"
-                                                    th:text="${tema.nombre}"
-                                                    th:if="${!alumno.temas.contains(tema)}">
-                                                Tema
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class='bx bx-plus me-1'></i>
-                                            Agregar
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                        <div th:if="${alumno.temas != null && !alumno.temas.isEmpty()}">
+                            <div th:each="tema : ${alumno.temas}" class="topic-badge">
+                                <span th:text="${tema.nombre}">Tema</span>
+                                <form th:action="@{/perfil/eliminar-tema}"
+                                      method="post"
+                                      style="display: inline;">
+                                    <input type="hidden" name="temaId" th:value="${tema.id}">
+                                    <button type="submit"
+                                            class="topic-remove-btn"
+                                            onclick="return confirm('¿Estás seguro que queres eliminar este tema?')">
+                                        <i class='bx bx-x'></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div th:if="${alumno.temas == null || alumno.temas.isEmpty()}"
+                             class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class='bx bx-bookmark'></i>
+                            </div>
+                            <p>Todavía no agregaste ningun tema de interes</p>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div th:if="${alumno.temas != null && !alumno.temas.isEmpty()}">
-                        <div th:each="tema : ${alumno.temas}" class="tema-badge">
-                            <span th:text="${tema.nombre}">Tema</span>
-                            <form th:action="@{/perfil/eliminar-tema}"
-                                  method="post"
-                                  style="display: inline;">
-                                <input type="hidden" name="temaId" th:value="${tema.id}">
-                                <button type="submit"
-                                        class="remove-btn"
-                                        onclick="return confirm('¿Estás seguro que queres eliminar este tema?')">
-                                    <i class='bx bx-x'></i>
-                                </button>
-                            </form>
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Mi Progreso -->
+                <div class="profile-section">
+                    <div class="profile-section-header">
+                        <h3 class="profile-section-title">
+                            <i class='bx bx-bar-chart'></i>
+                            Mi Progreso
+                        </h3>
+                    </div>
+                    <div class="profile-section-body">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Cursos completados</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Cursos en progreso</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">0h</span>
+                                <span class="stat-label">Tiempo de estudio</span>
+                            </div>
                         </div>
                     </div>
-                    <div th:if="${alumno.temas == null || alumno.temas.isEmpty()}"
-                         class="text-muted text-center py-4">
-                        <i class='bx bx-bookmark bx-lg'></i>
-                        <p class="mt-2">Todavía no agregaste ningun tema de interes</p>
-                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-lg-4">
-            <div class="card profile-card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class='bx bx-bar-chart me-2'></i>
-                        Mi Progreso
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="stats-card">
-                        <div class="stats-number">12</div>
-                        <div class="stats-label">Cursos completados</div>
+                <!-- Acciones Rápidas -->
+                <div class="profile-section">
+                    <div class="profile-section-header">
+                        <h3 class="profile-section-title">
+                            <i class='bx bx-lightning'></i>
+                            Acciones Rápidas
+                        </h3>
                     </div>
-                    <div class="stats-card">
-                        <div class="stats-number">3</div>
-                        <div class="stats-label">Cursos en progreso</div>
+                    <div class="profile-section-body">
+                        <div class="quick-actions-grid">
+                            <a th:href="@{/verTutores}" class="quick-action-btn">
+                                <i class='bx bx-search'></i>
+                                Buscar Tutores
+                            </a>
+                            <a th:href="@{/home}" class="quick-action-btn">
+                                <i class='bx bx-calendar'></i>
+                                Mis Clases
+                            </a>
+                            <a th:href="@{/chat}" class="quick-action-btn">
+                                <i class='bx bx-message'></i>
+                                Mensajes
+                            </a>
+                        </div>
                     </div>
-                    <div class="stats-card">
-                        <div class="stats-number">45h</div>
-                        <div class="stats-label">Tiempo de estudio</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card profile-card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class='bx bx-lightning me-2'></i>
-                        Acciones Rápidas
-                    </h5>
-                </div>
-                <div class="card-body d-grid gap-2">
-                    <a th:href="@{/verTutores}" class="btn btn-outline-primary">
-                        <i class='bx bx-search me-2'></i>
-                        Buscar Tutores
-                    </a>
-                    <a th:href="@{/home}" class="btn btn-outline-secondary">
-                        <i class='bx bx-calendar me-2'></i>
-                        Mis Clases
-                    </a>
-                    <a href="#" class="btn btn-outline-info">
-                        <i class='bx bx-message me-2'></i>
-                        Mensajes
-                    </a>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 
+<!-- Footer -->
+<footer class="footer-redesign">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Clases-Ya</span>
+            </div>
+            <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Taller Web</p>
+            <div class="footer-team">
+                <p class="team-label">Desarrollado por:</p>
+                <div class="team-members">
+                    <span class="team-member">Angel Leyes</span>
+                    <span class="team-member">Ezequiel Mendoza</span>
+                    <span class="team-member">Fede Hodara</span>
+                    <span class="team-member">Lucas Rios</span>
+                    <span class="team-member">Luka Cambriglia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
 <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 <script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar-nav').classList.toggle('open');
+    }
+
     function previewPhoto(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
@@ -367,7 +452,6 @@
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     let { width, height } = img;
-
 
                     const maxSize = 200;
 
@@ -389,12 +473,10 @@
 
                     const base64 = canvas.toDataURL('image/jpeg', 0.6);
 
-
                     const sizeInBytes = Math.round((base64.length * 3) / 4);
                     const sizeInKB = Math.round(sizeInBytes / 1024);
 
                     console.log(`Tamaño de imagen comprimida: ${sizeInKB}KB`);
-
 
                     if (sizeInKB > 500) {
                         alert('La imagen sigue siendo muy grande después de la compresión. Por favor, elige una imagen más pequeña.');

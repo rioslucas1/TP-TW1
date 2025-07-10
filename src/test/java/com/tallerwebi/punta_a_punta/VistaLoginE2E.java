@@ -48,7 +48,7 @@ public class VistaLoginE2E {
     @Test
     void deberiaDecirCLASEYAEnElNavbar() {
         String texto = vistaLogin.obtenerTextoDeLaBarraDeNavegacion();
-        assertThat("ClasesYa", equalToIgnoringCase(texto));
+        assertThat("Clases-Ya", equalToIgnoringCase(texto));
     }
 
     @Test
