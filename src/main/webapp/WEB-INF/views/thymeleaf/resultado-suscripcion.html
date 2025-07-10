@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado Suscripción</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+</head>
+<body>
+    <div class="container mt-5 text-center">
+        <div th:if="${estado == 'approved'}">
+            <h2 class="text-success">¡Suscripción activada!</h2>
+            <p>Tu pago fue aprobado y ya tienes acceso premium.</p>
+        </div>
+        <div th:if="${estado == null or estado == 'pending'}">
+            <h2 class="text-warning">Pago pendiente</h2>
+            <p>Tu pago está siendo procesado. Te avisaremos cuando se acredite.</p>
+        </div>
+        <div th:if="${estado == 'rejected' or estado == 'failure'}">
+            <h2 class="text-danger">Pago rechazado</h2>
+            <p>Hubo un problema con tu pago. Intenta nuevamente.</p>
+        </div>
+        <a th:href="@{/home}" class="btn btn-primary mt-4">Volver al inicio</a>
+    </div>
+</body>
+</html>

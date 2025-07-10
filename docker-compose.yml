@@ -20,6 +20,7 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./uploads:/app/uploads
     networks:
       - tallerwebi-network
     restart: unless-stopped
@@ -33,10 +34,14 @@ services:
       - "8080:8080"
     depends_on:
       - mysql
+    volumes:
+
+      - ./uploads:/app/uploads
     networks:
       - tallerwebi-network
     restart: unless-stopped
     environment:
+      DOCKER_ENV: "true"
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
@@ -49,4 +54,4 @@ volumes:
 
 networks:
   tallerwebi-network:
-    driver: bridge 
+    driver: bridge

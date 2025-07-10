@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagar Suscripción</title>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+</head>
+<body>
+    <h2>Suscripción Premium</h2>
+    <p>Precio: $1000 ARS</p>
+    <button id="pagar-btn">Pagar con MercadoPago</button>
+    <div id="wallet_container"></div>
+
+    <script th:inline="javascript">
+        const publicKey = "APP_USR-d354f37e-b280-4c0f-a73d-27fc69ad6419";
+        const mp = new MercadoPago(publicKey, {locale: 'es-AR'});
+
+        document.getElementById('pagar-btn').onclick = function() {
+            fetch('/spring/suscripcion/crear-preferencia', {method: 'POST'})
+                .then(res => res.json())
+                .then(data => {
+                    if (data.preferenceId) {
+                        mp.checkout({
+                            preference: { id: data.preferenceId },
+                            autoOpen: true,
+                            render: { container: '#wallet_container', label: 'Pagar ahora' }
+                        });
+                    } else {
+                        alert('Error al generar preferencia de pago');
+                    }
+                });
+        };
+    </script>
+</body>
+</html>
