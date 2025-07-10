@@ -29,10 +29,11 @@
             <i class="fas fa-graduation-cap nav-logo-icon"></i>
             <span class="nav-logo-text">Clases-Ya</span>
         </div>
-        <div class="nav-menu">
+        <div class="nav-menu" th:if="${nombreUsuario} != null">
             <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
             <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
             <a th:href="@{/perfil}" class="nav-link-redesign">Mi Perfil</a>
+            <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
             <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
         </div>
         <div class="nav-user-info">
@@ -60,7 +61,7 @@
             </li>
             <li class="sidebar-menu-item">
                 <a href="#" class="sidebar-menu-link">
-                    <i class="fas fa-history sidebar-menu-icon"></i>
+                    <i class="fas fa-calendar sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Historial de clases</span>
                 </a>
             </li>
