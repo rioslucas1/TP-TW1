@@ -39,7 +39,9 @@ public class ControladorArchivoTest {
     private MultipartFile fileMock;
 
     private Alumno alumno1;
+    private Alumno alumno2;
     private Profesor profesor1;
+    private Profesor profesor2;
     private Tema programacion;
     private Tema diseño;
     private Archivo archivo1;
@@ -57,7 +59,6 @@ public class ControladorArchivoTest {
 
         controladorArchivo = new ControladorArchivo(servicioArchivoMock, servicioLoginMock, repositorioUsuarioMock);
 
-
         programacion = new Tema();
         programacion.setId(1L);
         programacion.setNombre("Programación");
@@ -72,13 +73,30 @@ public class ControladorArchivoTest {
         alumno1.setApellido("Apellido");
         alumno1.setEmail("alumno1@unlam.com");
         alumno1.setPassword("123456");
+
+        alumno2 = new Alumno();
+        alumno2.setId(2L);
+        alumno2.setNombre("nombrealumno2");
+        alumno2.setApellido("Apellido");
+        alumno2.setEmail("alumno2@unlam.com");
+        alumno2.setPassword("123456");
+
         profesor1 = new Profesor();
-        profesor1.setId(2L);
+        profesor1.setId(3L);
         profesor1.setNombre("nombreprofesor1");
         profesor1.setApellido("Apellido");
         profesor1.setEmail("profesor1@unlam.com");
         profesor1.setPassword("123456");
         profesor1.setTema(programacion);
+
+        profesor2 = new Profesor();
+        profesor2.setId(4L);
+        profesor2.setNombre("nombreprofesor2");
+        profesor2.setApellido("Apellido");
+        profesor2.setEmail("profesor2@unlam.com");
+        profesor2.setPassword("123456");
+        profesor2.setTema(diseño);
+
         archivo1 = new Archivo();
         archivo1.setId(1L);
         archivo1.setNombre("archivo1.pdf");
@@ -96,6 +114,7 @@ public class ControladorArchivoTest {
         archivo2.setProfesor(profesor1);
         archivo2.setAlumno(alumno1);
         archivo2.setFechaSubida(LocalDateTime.now());
+
         alumno1.agregarProfesor(profesor1);
         profesor1.agregarAlumno(alumno1);
 
@@ -108,13 +127,16 @@ public class ControladorArchivoTest {
         List<Archivo> archivosCompartidos = Arrays.asList(archivo1, archivo2);
         when(servicioArchivoMock.obtenerArchivosCompartidosConAlumnoPorSusProfesores(alumno1.getId()))
                 .thenReturn(archivosCompartidos);
+        when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumno1.getId()))
+                .thenReturn(Arrays.asList(profesor1));
 
-        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock);
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, null, null);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
         assertThat(modelAndView.getModel().get("nombreUsuario").toString(), equalToIgnoringCase("nombrealumno1"));
         assertThat(modelAndView.getModel().get("rol").toString(), equalToIgnoringCase("alumno"));
         assertEquals(modelAndView.getModel().get("archivos"), archivosCompartidos);
+        assertThat(modelAndView.getModel().get("listaProfesores"), notNullValue());
         verify(servicioArchivoMock, times(1)).obtenerArchivosCompartidosConAlumnoPorSusProfesores(alumno1.getId());
     }
 
@@ -124,14 +146,17 @@ public class ControladorArchivoTest {
         List<Archivo> archivosDelProfesor = Arrays.asList(archivo1, archivo2);
         when(servicioArchivoMock.obtenerArchivosPorProfesor(profesor1.getId()))
                 .thenReturn(archivosDelProfesor);
+        when(repositorioUsuarioMock.obtenerAlumnosDeProfesor(profesor1.getId()))
+                .thenReturn(Arrays.asList(alumno1));
 
-        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock);
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, null, null);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
         assertThat(modelAndView.getModel().get("nombreUsuario").toString(), equalToIgnoringCase("nombreprofesor1"));
         assertThat(modelAndView.getModel().get("rol").toString(), equalToIgnoringCase("profesor"));
         assertEquals(modelAndView.getModel().get("archivos"), archivosDelProfesor);
         assertThat(modelAndView.getModel().get("alumnosDelProfesor"), notNullValue());
+        assertThat(modelAndView.getModel().get("listaAlumnos"), notNullValue());
         verify(servicioArchivoMock, times(1)).obtenerArchivosPorProfesor(profesor1.getId());
     }
 
@@ -139,7 +164,7 @@ public class ControladorArchivoTest {
     public void mostrarArchivosSinUsuarioLogueadoDeberiaRedirigirALogin() {
         when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
 
-        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock);
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, null, null);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
     }
@@ -150,10 +175,121 @@ public class ControladorArchivoTest {
         when(usuarioGenerico.getNombre()).thenReturn("Usuario Generico");
         when(sessionMock.getAttribute("USUARIO")).thenReturn(usuarioGenerico);
 
-        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock);
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, null, null);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
         assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Rol de usuario no reconocido."));
+    }
+
+    @Test
+    public void mostrarArchivosConBusquedaParaAlumnoDeberiaBuscarArchivos() {
+        String busqueda = "programacion";
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumno1);
+        List<Archivo> archivosEncontrados = Arrays.asList(archivo1);
+        when(servicioArchivoMock.buscarArchivosAlumno(alumno1.getId(), busqueda))
+                .thenReturn(archivosEncontrados);
+        when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumno1.getId()))
+                .thenReturn(Arrays.asList(profesor1));
+
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, busqueda, null);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
+        assertEquals(modelAndView.getModel().get("archivos"), archivosEncontrados);
+        assertEquals(modelAndView.getModel().get("busquedaActual"), busqueda);
+        verify(servicioArchivoMock, times(1)).buscarArchivosAlumno(alumno1.getId(), busqueda);
+    }
+
+    @Test
+    public void mostrarArchivosConBusquedaParaProfesorDeberiaBuscarArchivos() {
+        String busqueda = "java";
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesor1);
+        List<Archivo> archivosEncontrados = Arrays.asList(archivo2);
+        when(servicioArchivoMock.buscarArchivosProfesor(profesor1.getId(), busqueda))
+                .thenReturn(archivosEncontrados);
+        when(repositorioUsuarioMock.obtenerAlumnosDeProfesor(profesor1.getId()))
+                .thenReturn(Arrays.asList(alumno1));
+
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, busqueda, null);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
+        assertEquals(modelAndView.getModel().get("archivos"), archivosEncontrados);
+        assertEquals(modelAndView.getModel().get("busquedaActual"), busqueda);
+        verify(servicioArchivoMock, times(1)).buscarArchivosProfesor(profesor1.getId(), busqueda);
+    }
+
+    @Test
+    public void mostrarArchivosConBusquedaVaciaParaAlumnoDeberiaIgnorarBusqueda() {
+        String busquedaVacia = "   ";
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumno1);
+        List<Archivo> archivosCompartidos = Arrays.asList(archivo1, archivo2);
+        when(servicioArchivoMock.obtenerArchivosCompartidosConAlumnoPorSusProfesores(alumno1.getId()))
+                .thenReturn(archivosCompartidos);
+        when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumno1.getId()))
+                .thenReturn(Arrays.asList(profesor1));
+
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, busquedaVacia, null);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
+        assertEquals(modelAndView.getModel().get("archivos"), archivosCompartidos);
+        verify(servicioArchivoMock, times(1)).obtenerArchivosCompartidosConAlumnoPorSusProfesores(alumno1.getId());
+        verify(servicioArchivoMock, never()).buscarArchivosAlumno(anyLong(), anyString());
+    }
+
+    @Test
+    public void mostrarArchivosConFiltroPersonaParaAlumnoDeberiaFiltrarPorProfesor() {
+        Long profesorId = profesor1.getId();
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumno1);
+        List<Archivo> archivosCompartidos = Arrays.asList(archivo1);
+        when(servicioArchivoMock.obtenerArchivosCompartidosEntreProfesorYAlumno(profesorId, alumno1.getId()))
+                .thenReturn(archivosCompartidos);
+        when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumno1.getId()))
+                .thenReturn(Arrays.asList(profesor1));
+
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, null, "3");
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
+        assertEquals(modelAndView.getModel().get("archivos"), archivosCompartidos);
+        assertEquals(modelAndView.getModel().get("filtroPersonaActual"), profesorId);
+        verify(servicioArchivoMock, times(1)).obtenerArchivosCompartidosEntreProfesorYAlumno(profesorId, alumno1.getId());
+    }
+
+    @Test
+    public void mostrarArchivosConFiltroPersonaParaProfesorDeberiaFiltrarPorAlumno() {
+        Long alumnoId = alumno1.getId();
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesor1);
+        List<Archivo> archivosCompartidos = Arrays.asList(archivo1);
+        when(servicioArchivoMock.obtenerArchivosCompartidosEntreProfesorYAlumno(profesor1.getId(), alumnoId))
+                .thenReturn(archivosCompartidos);
+        when(repositorioUsuarioMock.obtenerAlumnosDeProfesor(profesor1.getId()))
+                .thenReturn(Arrays.asList(alumno1));
+
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, null, "1");
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
+        assertEquals(modelAndView.getModel().get("archivos"), archivosCompartidos);
+        assertEquals(modelAndView.getModel().get("filtroPersonaActual"), alumnoId);
+        verify(servicioArchivoMock, times(1)).obtenerArchivosCompartidosEntreProfesorYAlumno(profesor1.getId(), alumnoId);
+    }
+
+    @Test
+    public void mostrarArchivosConBusquedaYFiltroDeberiaIgnorarFiltroYUsarBusqueda() {
+        String busqueda = "programacion";
+        Long profesorId = profesor1.getId();
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumno1);
+        List<Archivo> archivosEncontrados = Arrays.asList(archivo1);
+        when(servicioArchivoMock.buscarArchivosAlumno(alumno1.getId(), busqueda))
+                .thenReturn(archivosEncontrados);
+        when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumno1.getId()))
+                .thenReturn(Arrays.asList(profesor1));
+
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, busqueda, "3");
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
+        assertEquals(modelAndView.getModel().get("archivos"), archivosEncontrados);
+        assertEquals(modelAndView.getModel().get("busquedaActual"), busqueda);
+        assertEquals(modelAndView.getModel().get("filtroPersonaActual"), profesorId);
+        verify(servicioArchivoMock, times(1)).buscarArchivosAlumno(alumno1.getId(), busqueda);
+        verify(servicioArchivoMock, never()).obtenerArchivosCompartidosEntreProfesorYAlumno(anyLong(), anyLong());
     }
 
     @Test
@@ -228,11 +364,7 @@ public class ControladorArchivoTest {
 
     @Test
     public void subirArchivoConProfesorIncorrectoDeberiaRedirigirAArchivos() {
-        Profesor otroProfesor = new Profesor();
-        otroProfesor.setId(3L);
-        otroProfesor.setNombre("nombreprofesor2");
-
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(otroProfesor);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(profesor2);
 
         ModelAndView modelAndView = controladorArchivo.subirArchivo(
                 fileMock, profesor1.getId(), alumno1.getId(), requestMock, redirectAttributesMock);
@@ -319,7 +451,6 @@ public class ControladorArchivoTest {
         ResponseEntity<Resource> response = controladorArchivo.verArchivo(archivo1.getId(), requestMock);
 
         assertNotNull(response);
-
     }
 
     @Test
@@ -334,11 +465,7 @@ public class ControladorArchivoTest {
 
     @Test
     public void verArchivoConUsuarioSinPermisosDeberiaRetornarForbidden() {
-        Alumno otroAlumno = new Alumno();
-        otroAlumno.setId(2L);
-        otroAlumno.setNombre("nombrealumno2");
-
-        when(sessionMock.getAttribute("USUARIO")).thenReturn(otroAlumno);
+        when(sessionMock.getAttribute("USUARIO")).thenReturn(alumno2);
         when(servicioArchivoMock.buscarArchivoPorId(archivo1.getId())).thenReturn(archivo1);
 
         ResponseEntity<Resource> response = controladorArchivo.verArchivo(archivo1.getId(), requestMock);
@@ -366,10 +493,12 @@ public class ControladorArchivoTest {
         assertNotNull(response);
     }
 
+
+
     @Test
     public void descargarArchivoConUsuarioSinPermisosDeberiaRetornarForbidden() {
         Profesor otroProfesor = new Profesor();
-        otroProfesor.setId(3L);
+        otroProfesor.setId(5L); // ID diferente para evitar conflictos
         otroProfesor.setNombre("nombreprofesor2");
 
         when(sessionMock.getAttribute("USUARIO")).thenReturn(otroProfesor);
@@ -415,7 +544,7 @@ public class ControladorArchivoTest {
     @Test
     public void eliminarArchivoConProfesorSinPermisosDeberiaRedirigirConError() {
         Profesor otroProfesor = new Profesor();
-        otroProfesor.setId(3L);
+        otroProfesor.setId(5L); // ID diferente para evitar conflictos
         otroProfesor.setNombre("nombreprofesor2");
 
         when(sessionMock.getAttribute("USUARIO")).thenReturn(otroProfesor);
@@ -443,8 +572,9 @@ public class ControladorArchivoTest {
     public void mostrarArchivosConProfesorSinArchivosDeberiaRetornarListaVacia() {
         when(sessionMock.getAttribute("USUARIO")).thenReturn(profesor1);
         when(servicioArchivoMock.obtenerArchivosPorProfesor(profesor1.getId())).thenReturn(Arrays.asList());
+        when(repositorioUsuarioMock.obtenerAlumnosDeProfesor(profesor1.getId())).thenReturn(Arrays.asList());
 
-        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock);
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, null, null);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
         List<Archivo> archivos = (List<Archivo>) modelAndView.getModel().get("archivos");
@@ -456,8 +586,9 @@ public class ControladorArchivoTest {
         when(sessionMock.getAttribute("USUARIO")).thenReturn(alumno1);
         when(servicioArchivoMock.obtenerArchivosCompartidosConAlumnoPorSusProfesores(alumno1.getId()))
                 .thenReturn(Arrays.asList());
+        when(repositorioUsuarioMock.obtenerProfesoresDeAlumno(alumno1.getId())).thenReturn(Arrays.asList());
 
-        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock);
+        ModelAndView modelAndView = controladorArchivo.mostrarArchivos(requestMock, null, null);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("pantallaarchivos"));
         List<Archivo> archivos = (List<Archivo>) modelAndView.getModel().get("archivos");

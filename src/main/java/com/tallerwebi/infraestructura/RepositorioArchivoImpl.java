@@ -79,5 +79,40 @@ public class RepositorioArchivoImpl implements RepositorioArchivo {
         query.setParameter("alumnoId", alumnoId);
         return query.getResultList();
     }
+
+    @Override
+    public List<Archivo> buscarArchivosAlumno(Long alumnoId, String busqueda) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "SELECT a FROM Archivo a " +
+                "JOIN a.profesor p " +
+                "JOIN a.alumno al " +
+                "JOIN al.profesores ap " +
+                "WHERE al.id = :alumnoId AND ap.id = p.id " +
+                "AND (LOWER(a.nombre) LIKE LOWER(:busqueda) " +
+                "OR LOWER(p.nombre) LIKE LOWER(:busqueda) " +
+                "OR LOWER(p.apellido) LIKE LOWER(:busqueda) " +
+                "OR LOWER(CONCAT(p.nombre, ' ', p.apellido)) LIKE LOWER(:busqueda)) " +
+                "ORDER BY a.fechaSubida DESC";
+        Query query = session.createQuery(hql, Archivo.class);
+        query.setParameter("alumnoId", alumnoId);
+        query.setParameter("busqueda", "%" + busqueda + "%");
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Archivo> buscarArchivosProfesor(Long profesorId, String busqueda) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM Archivo a " +
+                "WHERE a.profesor.id = :profesorId " +
+                "AND (LOWER(a.nombre) LIKE LOWER(:busqueda) " +
+                "OR LOWER(a.alumno.nombre) LIKE LOWER(:busqueda) " +
+                "OR LOWER(a.alumno.apellido) LIKE LOWER(:busqueda) " +
+                "OR LOWER(CONCAT(a.alumno.nombre, ' ', a.alumno.apellido)) LIKE LOWER(:busqueda)) " +
+                "ORDER BY a.fechaSubida DESC";
+        Query query = session.createQuery(hql, Archivo.class);
+        query.setParameter("profesorId", profesorId);
+        query.setParameter("busqueda", "%" + busqueda + "%");
+        return query.getResultList();
+    }
 }
 

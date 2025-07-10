@@ -13,4 +13,7 @@ public interface RepositorioArchivo {
     List<Archivo> obtenerArchivosPorProfesor(Long profesorId);
     List<Archivo> obtenerArchivosCompartidosEntreProfesorYAlumno(Long profesorId, Long alumnoId);
     List<Archivo> obtenerArchivosCompartidosConAlumnoPorSusProfesores(Long alumnoId);
+    List<Archivo> buscarArchivosAlumno(Long alumnoId, String busqueda);
+    List<Archivo> buscarArchivosProfesor(Long profesorId, String busqueda);
+
 }

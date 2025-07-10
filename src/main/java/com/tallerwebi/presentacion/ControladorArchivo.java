@@ -45,7 +45,9 @@ public class ControladorArchivo {
     }
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    public ModelAndView mostrarArchivos(HttpServletRequest request) {
+    public ModelAndView mostrarArchivos(HttpServletRequest request,
+                                        @RequestParam(value = "busqueda", required = false) String busqueda,
+                                        @RequestParam(value = "filtroPersona", required = false) String filtroPersonaStr) {
         ModelMap modelo = new ModelMap();
         Usuario usuario = (Usuario) request.getSession().getAttribute("USUARIO");
 
@@ -53,24 +55,56 @@ public class ControladorArchivo {
             return new ModelAndView("redirect:/login");
         }
 
+        Long filtroPersonaId = null;
+        if (filtroPersonaStr != null && !filtroPersonaStr.trim().isEmpty()) {
+            try {
+                filtroPersonaId = Long.parseLong(filtroPersonaStr);
+            } catch (NumberFormatException e) {
+                filtroPersonaId = null;
+            }
+        }
+
         modelo.put("nombreUsuario", usuario.getNombre());
         modelo.put("usuario", usuario);
+        List<Archivo> archivos;
 
         if (usuario instanceof Alumno) {
             Alumno alumno = (Alumno) usuario;
-            List<Archivo> archivosDelAlumno = servicioArchivo.obtenerArchivosCompartidosConAlumnoPorSusProfesores(alumno.getId());
-            modelo.put("archivos", archivosDelAlumno);
+            if (busqueda != null && !busqueda.trim().isEmpty()) {
+                archivos = servicioArchivo.buscarArchivosAlumno(alumno.getId(), busqueda);
+            } else if (filtroPersonaId != null) {
+                archivos = servicioArchivo.obtenerArchivosCompartidosEntreProfesorYAlumno(filtroPersonaId, alumno.getId());
+            } else {
+                archivos = servicioArchivo.obtenerArchivosCompartidosConAlumnoPorSusProfesores(alumno.getId());
+            }
+
+            modelo.put("archivos", archivos);
             modelo.put("rol", "alumno");
+            modelo.put("listaProfesores", repositorioUsuario.obtenerProfesoresDeAlumno(alumno.getId()));
+
         } else if (usuario instanceof Profesor) {
             Profesor profesor = (Profesor) usuario;
-            List<Archivo> archivosDelProfesor = servicioArchivo.obtenerArchivosPorProfesor(profesor.getId());
-            modelo.put("archivos", archivosDelProfesor);
+
+            if (busqueda != null && !busqueda.trim().isEmpty()) {
+                archivos = servicioArchivo.buscarArchivosProfesor(profesor.getId(), busqueda);
+            } else if (filtroPersonaId != null) {
+                archivos = servicioArchivo.obtenerArchivosCompartidosEntreProfesorYAlumno(profesor.getId(), filtroPersonaId);
+            } else {
+                archivos = servicioArchivo.obtenerArchivosPorProfesor(profesor.getId());
+            }
+
+            modelo.put("archivos", archivos);
             modelo.put("rol", "profesor");
-            modelo.put("alumnosDelProfesor", profesor.getAlumnos());
+            modelo.put("alumnosDelProfesor", repositorioUsuario.obtenerAlumnosDeProfesor(profesor.getId()));
+            modelo.put("listaAlumnos", repositorioUsuario.obtenerAlumnosDeProfesor(profesor.getId()));
+
         } else {
             modelo.put("error", "Rol de usuario no reconocido.");
             return new ModelAndView("login", modelo);
         }
+
+        modelo.put("busquedaActual", busqueda);
+        modelo.put("filtroPersonaActual", filtroPersonaId);
 
         return new ModelAndView("pantallaarchivos", modelo);
     }

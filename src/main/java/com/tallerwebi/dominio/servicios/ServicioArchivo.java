@@ -13,4 +13,6 @@ public interface ServicioArchivo {
     void eliminarArchivo(Long archivoId);
     List<Archivo> obtenerArchivosCompartidosConAlumnoPorSusProfesores(Long alumnoId);
     List<Archivo> obtenerArchivosCompartidosEntreProfesorYAlumno(Long profesorId, Long alumnoId);
+    List<Archivo> buscarArchivosAlumno(Long alumnoId, String busqueda);
+    List<Archivo> buscarArchivosProfesor(Long profesorId, String busqueda);
 }

@@ -221,4 +221,15 @@ public class ServicioArchivoImpl implements ServicioArchivo {
     public List<Archivo> obtenerArchivosCompartidosConAlumnoPorSusProfesores(Long alumnoId) {
         return repositorioArchivo.obtenerArchivosCompartidosConAlumnoPorSusProfesores(alumnoId);
     }
+
+    @Override
+    public List<Archivo> buscarArchivosAlumno(Long alumnoId, String busqueda) {
+        return repositorioArchivo.buscarArchivosAlumno(alumnoId, busqueda);
+    }
+
+    @Override
+    public List<Archivo> buscarArchivosProfesor(Long profesorId, String busqueda) {
+        return repositorioArchivo.buscarArchivosProfesor(profesorId, busqueda);
+    }
+
 }
