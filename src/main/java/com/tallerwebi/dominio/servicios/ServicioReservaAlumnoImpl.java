@@ -5,6 +5,7 @@ import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Clase;
 import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.entidades.EstadoAsistencia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -114,6 +115,16 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
         }
     }
 
+    @Override
+    public void actualizarEstadoAsistenciaClase(Long claseId, EstadoAsistencia estadoAsistencia) {
+        Clase clase = repositorioReservaAlumno.buscarPorId(claseId);
+        if (clase != null) {
+            clase.setEstadoAsistencia(estadoAsistencia);
+            repositorioReservaAlumno.guardar(clase);
+        } else {
+            throw new RuntimeException("Clase no encontrada con ID: " + claseId);
+        }
+    }
 
 }
 
