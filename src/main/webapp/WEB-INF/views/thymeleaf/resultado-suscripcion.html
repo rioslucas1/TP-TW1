@@ -21,14 +21,10 @@
         </div>
 
         <div class="nav-menu">
-            <a href="/inicio" class="nav-link">Inicio</a>
-            <a href="/tutores" class="nav-link">Ver Tutores</a>
-            <a href="/mi-perfil" class="nav-link">Mi Perfil</a>
-            <a href="/mi-perfil" class="nav-link">Mi Perfil</a>
-            <span class="nav-user">Hola, Usuario</span>
-            <a href="/logout" class="nav-logout">Cerrar Sesión</a>
-            <a href="/login" class="nav-login">Iniciar Sesión</a>
-            <a href="/register" class="nav-register">Registrarse</a>
+        <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+        <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+        <a th:href="@{/profesor/perfil}" class="nav-link-redesign">Mi Perfil</a>
+        <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
         </div>
     </div>
 </nav>
