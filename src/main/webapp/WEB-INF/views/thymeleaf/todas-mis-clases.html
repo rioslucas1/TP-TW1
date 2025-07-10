@@ -16,6 +16,7 @@
     <link rel="stylesheet" th:href="@{/css/profile.css}"/>
     <link rel="stylesheet" th:href="@{/css/dashboard-styles.css}"/>
 
+
     <!-- External Icons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -51,13 +52,19 @@
 </button>
 
 <!-- Sidebar -->
-<aside class="sidebar-nav" th:if="${nombreUsuario} != null">
+<aside class="sidebar-nav" th:if="${nombreUsuario != null}">
     <nav class="sidebar-menu">
         <ul class="sidebar-menu-list">
-            <li class="sidebar-menu-item active">
+            <li class="sidebar-menu-item">
                 <a th:href="@{/home}" class="sidebar-menu-link">
                     <i class="fas fa-th-large sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item active">
+                <a th:href="@{/mis-clases}" class="sidebar-menu-link">
+                    <i class="fas fa-calendar-check sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mis Clases</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
@@ -78,6 +85,18 @@
                     <span class="sidebar-menu-text">Archivos Compartidos</span>
                 </a>
             </li>
+            <li class="sidebar-menu-item" th:if="${rol == 'alumno'}">
+                <a th:href="@{/perfil}" class="sidebar-menu-link">
+                    <i class="fas fa-user sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mi Perfil</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item" th:if="${rol == 'profesor'}">
+                <a th:href="@{/profesor/perfil}" class="sidebar-menu-link">
+                    <i class="fas fa-user sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mi Perfil</span>
+                </a>
+            </li>
         </ul>
     </nav>
 </aside>
@@ -88,7 +107,7 @@
     <div class="page-header">
         <div class="container">
             <div class="page-header-content">
-                <h1 style="color: #ffffff;" class="page-title">
+                <h1 class="page-title">
                     <i class="fas fa-calendar-check me-3"></i>
                     Todas mis clases
                 </h1>
@@ -134,11 +153,11 @@
                             <i class="fas fa-book detail-icon"></i>
                             <div class="detail-content">
                                 <span class="detail-label">Materia:</span>
-                                <span class="detail-value" th:text="${temaProfesor != null ? temaProfesor.nombre : (clase.profesor != null and clase.profesor.tema != null ? clase.profesor.tema.nombre : 'Sin tema')}">Materia</span>
+                                <span class="detail-value" th:text="${clase.profesor?.tema?.nombre ?: 'Sin tema'}">Materia</span>
                             </div>
                         </div>
 
-                       <!--  <div class="detail-item">
+                        <div class="detail-item">
                             <i class="fas fa-calendar detail-icon"></i>
                             <div class="detail-content">
                                 <span class="detail-label">Día:</span>
@@ -161,77 +180,34 @@
                                 <span class="detail-value" th:text="${clase.fechaEspecifica}">Fecha</span>
                             </div>
                         </div>
-                    </div>
-                </div>-->
-            <div th:if="${todasLasClases != null and !todasLasClases.isEmpty()}" class="table-responsive">
-                <table class="table table-hover table-striped shadow-sm rounded-3 overflow-hidden">
-                    <thead class="bg-primary text-white">
-                    <tr>
-                        <th scope="col">Tema</th>
-                        <th scope="col">Profesor</th>
-                        <th scope="col">Alumno</th>
-                        <th scope="col">Fecha</th>
-                        <th scope="col">Hora</th>
-                        <th scope="col">Modalidad</th>
-                        <th scope="col">Estado Clase</th>
-                        <th scope="col" th:if="${rol == 'profesor'}">Asistencia</th> <th scope="col">Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="clase : ${todasLasClases}">
-                        <td th:text="${clase.profesor?.tema?.nombre ?: 'N/A'}">Matemáticas</td>
-                        <td th:text="${clase.profesor?.nombre + ' ' + clase.profesor?.apellido ?: 'N/A'}">Profesor Ejemplo</td>
-                        <td th:text="${clase.alumno?.nombre + ' ' + clase.alumno?.apellido ?: 'N/A'}">Alumno Ejemplo</td>
-                        <td th:text="${clase.fechaFormateada}">06/07/2025</td>
-                        <td th:text="${clase.hora ?: 'N/A'}">10:00</td>
-                        <td th:text="${clase.profesor?.modalidad != null ? clase.profesor.modalidad.name() : 'N/A'}"></td>
-                        <td th:text="${clase.estado ?: 'N/A'}">Pendiente</td>
 
-                        <td th:if="${rol == 'profesor'}">
-                            <form th:action="@{/profesor/actualizar-asistencia}" method="post">
-                                <input type="hidden" name="claseId" th:value="${clase.id}" />
-                                <select name="estadoAsistencia" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option th:each="estadoOpt : ${estadosAsistencia}"
-                                            th:value="${estadoOpt.name()}"
-                                            th:selected="${clase.estadoAsistencia == estadoOpt}"
-                                            th:text="${#strings.capitalize(#strings.toLowerCase(estadoOpt.name()))}">
-                                    </option>
-                                </select>
-                            </form>
-                        </td>
-
-                        <td>
-                            <div class="d-flex gap-1">
-                                <a th:if="${clase.profesor != null and clase.alumno != null}"
-                                   th:href="@{'/clases-intercambio'(emailProfesor=${clase.profesor.email}, emailAlumno=${clase.alumno.email})}"
-                                   class="btn btn-primary btn-sm mb-1">
-                                    Ver Detalles
-                                </a>
-                                <span th:if="${clase.profesor == null or clase.alumno == null}" class="text-muted">No disponible</span>
-
-                                <form th:if="${rol == 'profesor' and clase.enlace_meet == null and clase.profesor != null and clase.alumno != null}"
-                                      th:action="@{'/clase/' + ${clase.id} + '/crear-reunion-meet'}"
-                                      method="post"
-                                      class="mt-2">
-                                    <input type="hidden" name="emailProfesor" th:value="${clase.profesor.email}" />
-                                    <input type="hidden" name="emailAlumno" th:value="${clase.alumno.email}" />
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        Iniciar reunión Meet
-                                    </button>
-                                </form>
-
-                                <a th:if="${clase.enlace_meet != null}"
-                                   th:href="${clase.enlace_meet}"
-                                   target="_blank"
-                                   class="btn btn-outline-success btn-sm mt-1">
-                                    Unirse a Meet
-                                </a>
+                        <div class="detail-item" th:if="${clase.profesor?.modalidad != null}">
+                            <i class="fas fa-map-marker-alt detail-icon"></i>
+                            <div class="detail-content">
+                                <span class="detail-label">Modalidad:</span>
+                                <span class="detail-value" th:text="${clase.profesor.modalidad.name()}">Modalidad</span>
                             </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                        </div>
+
+                        <!-- Selector de asistencia para profesores -->
+                        <div class="detail-item" th:if="${rol == 'profesor'}">
+                            <i class="fas fa-check-circle detail-icon"></i>
+                            <div class="detail-content">
+                                <span class="detail-label">Asistencia:</span>
+                                <form th:action="@{/profesor/actualizar-asistencia}" method="post" class="asistencia-form">
+                                    <input type="hidden" name="claseId" th:value="${clase.id}" />
+                                    <select name="estadoAsistencia" class="form-select form-select-sm" onchange="this.form.submit()">
+                                        <option th:each="estadoOpt : ${estadosAsistencia}"
+                                                th:value="${estadoOpt.name()}"
+                                                th:selected="${clase.estadoAsistencia == estadoOpt}"
+                                                th:text="${#strings.capitalize(#strings.toLowerCase(estadoOpt.name()))}">
+                                        </option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="class-card-footer">
                     <div class="class-actions">
