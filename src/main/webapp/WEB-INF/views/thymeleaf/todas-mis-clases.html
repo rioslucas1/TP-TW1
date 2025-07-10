@@ -20,7 +20,7 @@
         </a>
         <nav class="nav flex-column gap-2">
             <a th:href="@{/home}" class="nav-link-custom"><i class='bx bx-grid-alt'></i> Dashboard</a>
-            <a href="#" class="nav-link-custom"><i class='bx bx-user'></i> Historial</a>
+            <a th:href="@{/profesor/todas-mis-clases}" class="nav-link-custom active"><i class='bx bx-user'></i> Historial</a>
             <a href="#" class="nav-link-custom"><i class='bx bx-message-square-detail'></i> Mensajes</a>
             <a href="#" class="nav-link-custom"><i class='bx bx-bookmark'></i> Guardados</a>
             <a href="#" class="nav-link-custom"><i class='bx bx-folder'></i> Archivos Compartidos</a>
@@ -76,64 +76,74 @@
         <main role="main" class="container my-5">
             <h2 class="text-center mb-4">Todas mis clases</h2>
 
-            <div th:if="${todasLasClases != null and !todasLasClases.isEmpty()}" class="row g-4">
-                <div class="col-md-6 col-lg-4" th:each="clase : ${todasLasClases}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                 <span th:if="${rol == 'profesor'}"
-                                     th:text="${clase.alumno != null ? clase.alumno.nombre + ' ' + clase.alumno.apellido : 'Alumno no asignado'}"></span>
-                                <span th:if="${rol == 'alumno'}"
-                                      th:text="${clase.profesor != null ? clase.profesor.nombre + ' ' + clase.profesor.apellido : 'Profesor no asignado'}"></span>
-                            </h5>
-                            <p class="card-text mb-1">
-                                <strong>Materia:</strong>
-                                <span th:text="${temaProfesor != null ? temaProfesor.nombre : (clase.profesor != null and clase.profesor.tema != null ? clase.profesor.tema.nombre : 'Sin tema')}"></span>
-                            </p>
-                            <p class="card-text mb-1">
-                                <strong>Día:</strong> <span th:text="${clase.diaSemana}"></span>
-                            </p>
-                            <p class="card-text mb-1">
-                                <strong>Hora:</strong> <span th:text="${clase.hora}"></span>
-                            </p>
-                            <p class="card-text mb-1" th:if="${clase.fechaEspecifica != null}">
-                                <strong>Fecha Específica:</strong> <span th:text="${clase.fechaEspecifica}"></span>
-                            </p>
-                            <p class="card-text mb-1">
-                                <strong>Estado:</strong>
-                                <span th:text="${clase.estado != null ? clase.estado.name() : 'No definido'}"></span>
-                            </p>
+            <div th:if="${todasLasClases != null and !todasLasClases.isEmpty()}" class="table-responsive">
+                <table class="table table-hover table-striped shadow-sm rounded-3 overflow-hidden">
+                    <thead class="bg-primary text-white">
+                    <tr>
+                        <th scope="col">Tema</th>
+                        <th scope="col">Profesor</th>
+                        <th scope="col">Alumno</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Hora</th>
+                        <th scope="col">Modalidad</th>
+                        <th scope="col">Estado Clase</th>
+                        <th scope="col" th:if="${rol == 'profesor'}">Asistencia</th> <th scope="col">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="clase : ${todasLasClases}">
+                        <td th:text="${clase.profesor?.tema?.nombre ?: 'N/A'}">Matemáticas</td>
+                        <td th:text="${clase.profesor?.nombre + ' ' + clase.profesor?.apellido ?: 'N/A'}">Profesor Ejemplo</td>
+                        <td th:text="${clase.alumno?.nombre + ' ' + clase.alumno?.apellido ?: 'N/A'}">Alumno Ejemplo</td>
+                        <td th:text="${clase.fechaFormateada}">06/07/2025</td>
+                        <td th:text="${clase.hora ?: 'N/A'}">10:00</td>
+                        <td th:text="${clase.profesor?.modalidad != null ? clase.profesor.modalidad.name() : 'N/A'}"></td>
+                        <td th:text="${clase.estado ?: 'N/A'}">Pendiente</td>
 
-                            <!-- Botón Ver Detalles -->
-                            <a th:if="${clase.profesor != null and clase.alumno != null}"
-                               th:href="@{'/clases-intercambio'(emailProfesor=${clase.profesor.email}, emailAlumno=${clase.alumno.email})}"
-                               class="btn btn-primary btn-sm mb-1">
-                                Ver Detalles
-                            </a>
-                            <span th:if="${clase.profesor == null or clase.alumno == null}" class="text-muted">No disponible</span>
-
-                            <!-- Botón Iniciar reunión Meet (solo profesor, si no existe enlace) -->
-                            <form th:if="${rol == 'profesor' and clase.enlace_meet == null and clase.profesor != null and clase.alumno != null}"
-                                  th:action="@{'/clase/' + ${clase.id} + '/crear-reunion-meet'}"
-                                  method="post"
-                                  class="mt-2">
-                                <input type="hidden" name="emailProfesor" th:value="${clase.profesor.email}" />
-                                <input type="hidden" name="emailAlumno" th:value="${clase.alumno.email}" />
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    Iniciar reunión Meet
-                                </button>
+                        <td th:if="${rol == 'profesor'}">
+                            <form th:action="@{/profesor/actualizar-asistencia}" method="post">
+                                <input type="hidden" name="claseId" th:value="${clase.id}" />
+                                <select name="estadoAsistencia" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option th:each="estadoOpt : ${estadosAsistencia}"
+                                            th:value="${estadoOpt.name()}"
+                                            th:selected="${clase.estadoAsistencia == estadoOpt}"
+                                            th:text="${#strings.capitalize(#strings.toLowerCase(estadoOpt.name()))}">
+                                    </option>
+                                </select>
                             </form>
+                        </td>
 
-                            <!-- Link para unirse a Meet si ya existe -->
-                            <a th:if="${clase.enlace_meet != null}"
-                               th:href="${clase.enlace_meet}"
-                               target="_blank"
-                               class="btn btn-outline-success btn-sm mt-1">
-                                Unirse a Meet
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a th:if="${clase.profesor != null and clase.alumno != null}"
+                                   th:href="@{'/clases-intercambio'(emailProfesor=${clase.profesor.email}, emailAlumno=${clase.alumno.email})}"
+                                   class="btn btn-primary btn-sm mb-1">
+                                    Ver Detalles
+                                </a>
+                                <span th:if="${clase.profesor == null or clase.alumno == null}" class="text-muted">No disponible</span>
+
+                                <form th:if="${rol == 'profesor' and clase.enlace_meet == null and clase.profesor != null and clase.alumno != null}"
+                                      th:action="@{'/clase/' + ${clase.id} + '/crear-reunion-meet'}"
+                                      method="post"
+                                      class="mt-2">
+                                    <input type="hidden" name="emailProfesor" th:value="${clase.profesor.email}" />
+                                    <input type="hidden" name="emailAlumno" th:value="${clase.alumno.email}" />
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Iniciar reunión Meet
+                                    </button>
+                                </form>
+
+                                <a th:if="${clase.enlace_meet != null}"
+                                   th:href="${clase.enlace_meet}"
+                                   target="_blank"
+                                   class="btn btn-outline-success btn-sm mt-1">
+                                    Unirse a Meet
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
 
             <div th:if="${todasLasClases == null or todasLasClases.isEmpty()}"
