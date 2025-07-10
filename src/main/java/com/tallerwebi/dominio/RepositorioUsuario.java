@@ -22,9 +22,12 @@ public interface RepositorioUsuario {
     Usuario buscarPorId(Long id);
     Profesor buscarProfesorConExperiencias(Long id);
     List<Profesor> obtenerProfesoresDeAlumno(Long alumnoId);
+    List<Alumno> obtenerAlumnosDeProfesor(Long alumnoId);
     Usuario buscarPorNombre(String nombre);
     Alumno buscarAlumnoPorNombre(String emisorNombre);
     Profesor buscarProfesorPorNombre(String emisorNombre);
-        List<Usuario> buscarConNotificacionesPendientes();
+    Profesor buscarProfesorConAlumnos(Long id);
+    public boolean alumnoPertenece(Long alumnoId, Long profesorId);
+    List<Usuario> buscarConNotificacionesPendientes();
 }
 

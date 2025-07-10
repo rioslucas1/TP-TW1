@@ -95,6 +95,20 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     }
 
     @Override
+    public List<Alumno> obtenerAlumnosDeProfesor(Long profesorId) {
+        final Session session = sessionFactory.getCurrentSession();
+
+        String hql = "SELECT a FROM Alumno a " +
+                "INNER JOIN a.profesores p " +
+                "WHERE p.id = :profesorId";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("profesorId", profesorId);
+
+        return query.getResultList();
+    }
+
+    @Override
     public List<Clase> obtenerClasesProfesor(Long profesorId) {
         final Session session = sessionFactory.getCurrentSession();
         LocalDate hoy = LocalDate.now();
@@ -177,10 +191,35 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     @Override
         public List<Usuario> buscarConNotificacionesPendientes() {
         final Session session = sessionFactory.getCurrentSession();
-        String hql = "FROM Usuario  id>0  ";        /* WHERE DATEDIFF(CURDATE(),ultima_conexion) >7Agregar un timestamp en la base de datos cuando hace cada login para saber hace cuanto no ingresa */
+        String hql = "FROM Usuario id>0  ";        /* WHERE DATEDIFF(CURDATE(),ultima_conexion) >7Agregar un timestamp en la base de datos cuando hace cada login para saber hace cuanto no ingresa */
         Query query = session.createQuery(hql, Usuario.class);
         return query.getResultList();
 }
+
+    @Override
+    public Profesor buscarProfesorConAlumnos(Long id) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "SELECT p FROM Profesor p LEFT JOIN FETCH p.alumnos WHERE p.id = :profesorId";
+        Query query = session.createQuery(hql, Profesor.class);
+        query.setParameter("profesorId", id);
+        return (Profesor) query.getSingleResult();
+    }
+
+    @Override
+    public boolean alumnoPertenece(Long alumnoId, Long profesorId) {
+        final Session session = sessionFactory.getCurrentSession();
+
+        String hql = "SELECT COUNT(ap) FROM Alumno a " +
+                "JOIN a.profesores ap " +
+                "WHERE a.id = :alumnoId AND ap.id = :profesorId";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("alumnoId", alumnoId);
+        query.setParameter("profesorId", profesorId);
+
+        Long count = (Long) query.getSingleResult();
+        return count > 0;
+    }
 
 
 }

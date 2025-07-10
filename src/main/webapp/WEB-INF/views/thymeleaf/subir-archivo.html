@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Subir Archivo</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/archivo.css}"/> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<div class="sidebar-nav">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <a href="#" class="sidebar-logo">
+                <i class="fas fa-graduation-cap sidebar-logo-icon"></i>
+                <span class="sidebar-logo-text">ClasesYa</span>
+            </a>
+        </div>
+    </div>
+
+    <nav class="sidebar-menu">
+        <ul class="sidebar-menu-list">
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-th-large sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-history sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Historial</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-comments sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mensajes</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-bookmark sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Guardados</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item active">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-folder-open sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Archivos Compartidos</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <i class="fas fa-chart-bar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Estadísticas</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="#" class="sidebar-logout-link">
+            <i class="fas fa-sign-out-alt sidebar-logout-icon"></i>
+            <span class="sidebar-logout-text">Cerrar sesión</span>
+        </a>
+    </div>
+</div>
+
+<div class="main-content">
+    <nav class="navbar-redesign">
+        <div class="nav-container">
+            <div class="nav-brand d-md-none">
+                <i class="fas fa-graduation-cap nav-logo-icon"></i>
+                <span class="nav-logo-text">Clases-Ya</span>
+            </div>
+
+            <div class="nav-user-info ms-auto">
+                <span class="user-greeting">Hola, Luka</span>
+            </div>
+        </div>
+    </nav>
+
+        <section class="seccion-principal-archivos">
+            <div class="contenedor-archivos">
+                <div class="encabezado-archivos text-center">
+                    <h1 class="titulo-archivos mb-3">Subir Material</h1>
+                    <p class="subtitulo-archivos">Comparte material educativo con tus alumnos de forma individual</p>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
+                </div>
+
+                <div class="contenedor-formulario-archivos col-md-8 mx-auto">
+                    <form th:action="@{/archivos/subir}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="profesorId" th:value="${profesorId}" />
+                        <div class="mb-3">
+                            <label for="alumnoId" class="form-label">Seleccionar Alumno:</label>
+                            <select id="alumnoId" name="alumnoId" class="form-select" required>
+                                <option value="">-- Selecciona un alumno --</option>
+                                <option th:each="alumno : ${alumnosDelProfesor}"
+                                        th:value="${alumno.id}"
+                                        th:text="${alumno.nombre + ' ' + alumno.apellido}">Alumno Ejemplo</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Seleccionar Archivo:</label>
+                            <input type="file" id="file" name="file" class="form-control" required />
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Subir Archivo</button>
+                            <a th:href="@{/archivos}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer-redesign">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Clases-Ya</span>
+                </div>
+                <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2025 Taller Web</p>
+                <div class="footer-team">
+                    <p class="team-label">Desarrollado por:</p>
+                    <div class="team-members">
+                        <span class="team-member">Angel Leyes</span>
+                        <span class="team-member">Ezequiel Mendoza</span>
+                        <span class="team-member">Fede Hodara</span>
+                        <span class="team-member">Lucas Rios</span>
+                        <span class="team-member">Luka Cambriglia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+</html>
