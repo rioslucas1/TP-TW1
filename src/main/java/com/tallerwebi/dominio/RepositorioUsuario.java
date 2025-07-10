@@ -29,5 +29,7 @@ public interface RepositorioUsuario {
     Profesor buscarProfesorConAlumnos(Long id);
     public boolean alumnoPertenece(Long alumnoId, Long profesorId);
     List<Usuario> buscarConNotificacionesPendientes();
+    void guardarUltimaConexion(Usuario usuario);
+
 }
 

@@ -1,4 +1,5 @@
 package com.tallerwebi.dominio.servicios;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.tallerwebi.dominio.RepositorioUsuario;
@@ -6,6 +7,8 @@ import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Clase;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +39,7 @@ public class ServicioLoginImpl implements ServicioLogin {
         repositorioUsuario.guardar(usuario);
     }
 
+
     @Override
     public List<Usuario> obtenerProfesores() {
         return repositorioUsuario.buscarPorTipo(Profesor.class);
@@ -56,6 +60,9 @@ public class ServicioLoginImpl implements ServicioLogin {
         return repositorioUsuario.obtenerClasesAlumno(alumnoId);
     }
 
-
+    @Override
+    public void guardarUltimaConexion(Usuario usuario) {
+      repositorioUsuario.guardarUltimaConexion(usuario);
+    }
 }
 

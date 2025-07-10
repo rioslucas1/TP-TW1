@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,7 +88,7 @@ public class ControladorLogin {
             } else {
                 rol = "usuario";
             }
-
+            servicioLogin.guardarUltimaConexion(usuarioBuscado);
             request.getSession().setAttribute("ROL", rol);
             request.getSession().setAttribute("USUARIO", usuarioBuscado);
             return new ModelAndView("redirect:/home");

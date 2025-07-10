@@ -15,4 +15,5 @@ public interface ServicioLogin {
     List<Profesor> obtenerProfesoresDeAlumno(Long idAlumno);
     List<Clase> obtenerClasesProfesor(Long id);
     List<Clase> obtenerClasesAlumno(Long id);
+     void guardarUltimaConexion( Usuario usuario);
 }

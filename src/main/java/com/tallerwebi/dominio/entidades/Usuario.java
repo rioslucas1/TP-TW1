@@ -1,10 +1,8 @@
 package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import java.time.LocalDateTime; 
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -48,6 +46,9 @@ public abstract class Usuario {
 
     @Column(name = "subscription_id")
     private String subscriptionId;
+
+    @Column(name = "ultima_conexion")
+    private LocalDateTime ultimaConexion;
 
     //getters y setters
     public Long getId() {
@@ -170,5 +171,13 @@ public abstract class Usuario {
     public void deshabilitarSuscripcion() {
         this.habilitado = false;
     }
+    public LocalDateTime getUltimaConexion() {
+    return ultimaConexion;
+    }
+
+    public void setUltimaConexion(LocalDateTime ultimaConexion) {
+        this.ultimaConexion = ultimaConexion;
+    }
+
 }
 

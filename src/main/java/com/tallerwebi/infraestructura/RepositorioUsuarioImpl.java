@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -191,10 +194,19 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     @Override
         public List<Usuario> buscarConNotificacionesPendientes() {
         final Session session = sessionFactory.getCurrentSession();
-        String hql = "FROM Usuario id>0  ";        /* WHERE DATEDIFF(CURDATE(),ultima_conexion) >7Agregar un timestamp en la base de datos cuando hace cada login para saber hace cuanto no ingresa */
+        String hql = "FROM usuarios WHERE ultima_conexion < NOW() - INTERVAL 7 DAY;";
         Query query = session.createQuery(hql, Usuario.class);
         return query.getResultList();
-}
+    }
+    @Override
+    public void guardarUltimaConexion(Usuario usuario) {
+        final Session session = sessionFactory.getCurrentSession();
+        if (usuario != null) {
+            usuario.setUltimaConexion(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).toLocalDateTime());
+            session.update(usuario);
+        }
+    }
+
 
     @Override
     public Profesor buscarProfesorConAlumnos(Long id) {
