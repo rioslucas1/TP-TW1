@@ -29,6 +29,19 @@
             <i class="fas fa-graduation-cap nav-logo-icon"></i>
             <span class="nav-logo-text">Clases-Ya</span>
         </div>
+
+        <div class="nav-menu" th:if="${nombreUsuario} == null">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Nuestros Tutores</a>
+            <a th:href="@{/registrarprofesor}" class="nav-link-redesign">Convertirse en Tutor</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+
+        <div class="nav-buttons" th:if="${nombreUsuario} == null">
+            <a th:href="@{/login}" class="btn-login">Iniciar Sesión</a>
+            <a th:href="@{/nuevo-usuario}" class="btn-register">Registrarse</a>
+        </div>
+
         <div class="nav-menu" th:if="${nombreUsuario} != null">
             <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
             <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
