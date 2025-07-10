@@ -133,17 +133,34 @@
                         <tbody>
                         <tr th:each="clase : ${clases}">
                             <td th:text="${clase.profesor?.tema?.nombre ?: 'N/A'}">Matemáticas</td>
-                            <td th:text="${clase.profesor?.nombre + ' ' + clase.profesor?.apellido ?: 'N/A'}">Profesor
-                                Ejemplo
-                            </td>
-                            <td th:text="${clase.alumno?.nombre + ' ' + clase.alumno?.apellido ?: 'N/A'}">Alumno
-                                Ejemplo
-                            </td>
-<!--                            <td th:text="${clase.hora ?: 'N/A'}">HH:MM</td>-->
-<!--                            <td th:text="${clase.modalidad ?: 'N/A'}">Virtual</td>-->
-<!--                            <td th:text="${clase.estado ?: 'N/A'}">Completada</td>-->
+                            <td th:text="${clase.profesor?.nombre + ' ' + clase.profesor?.apellido ?: 'N/A'}">Profesor Ejemplo</td>
+                            <td th:text="${clase.alumno?.nombre + ' ' + clase.alumno?.apellido ?: 'N/A'}">Alumno Ejemplo</td>
+                            <td th:text="${clase.fechaFormateada}">06/07/2025</td>
+                            <td th:text="${clase.hora ?: 'N/A'}">10:00</td>
+                            <td th:text="'N/A'"></td>
+                            <td th:text="${clase.estado ?: 'N/A'}">Pendiente</td>
                             <td>
-                                <a href="#" class="btn btn-outline-info btn-sm">Ver Detalles</a>
+                                <div class="d-flex gap-1">
+                                    <!-- Botón "Unirse a Meet" (ALUMNO y PROFESOR) si ya existe enlace -->
+                                    <a th:if="${clase.enlace_meet != null}"
+                                       th:href="${clase.enlace_meet}"
+                                       target="_blank"
+                                       class="btn btn-success btn-sm">
+                                        Unirse a Meet
+                                    </a>
+
+                                    <!-- Botón "Iniciar reunión Meet" (SOLO PROFESOR, si no existe enlace) -->
+                                    <form th:if="${rol == 'profesor' and clase.enlace_meet == null}"
+                                          th:action="@{'/clase/' + ${clase.id} + '/crear-reunion-meet'}"
+                                          method="post"
+                                          style="display:inline;">
+                                        <input type="hidden" name="emailProfesor" th:value="${clase.profesor?.email}" />
+                                        <input type="hidden" name="emailAlumno" th:value="${clase.alumno?.email}" />
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            Iniciar reunión Meet
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         </tbody>

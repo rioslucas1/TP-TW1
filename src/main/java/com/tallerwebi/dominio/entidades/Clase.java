@@ -10,9 +10,9 @@ public class Clase {
     private Long id;
 
 
-    public String diaSemana;
-    public String hora;
-
+    private String diaSemana;
+    private String hora;
+    private String fechaFormateada;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,14 +30,18 @@ public class Clase {
     @Column(name = "enlace_meet")
     private String enlace_meet;
 
+    @Enumerated(EnumType.STRING)
+    private EstadoAsistencia estadoAsistencia = EstadoAsistencia.PENDIENTE;
 
     @Enumerated(EnumType.STRING)
     private EstadoDisponibilidad estado = EstadoDisponibilidad.DISPONIBLE;
+
     public Clase(Profesor profesor, String diaSemana, String hora) {
         this.profesor = profesor;
         this.diaSemana = diaSemana;
         this.hora = hora;
         this.estado = EstadoDisponibilidad.DISPONIBLE;
+        this.estadoAsistencia = EstadoAsistencia.PENDIENTE;
     }
 
     public Clase(Profesor profesor, String diaSemana, String hora, EstadoDisponibilidad estado) {
@@ -57,6 +61,14 @@ public class Clase {
 
     public Clase() {
 
+    }
+
+    public String getFechaFormateada() {
+        return fechaFormateada;
+    }
+
+    public void setFechaFormateada(String fechaFormateada) {
+        this.fechaFormateada = fechaFormateada;
     }
 
 
@@ -154,6 +166,14 @@ public class Clase {
 
     public String getMailAlumno() {
         return alumno != null ? alumno.getEmail() : null;
+    }
+
+    public EstadoAsistencia getEstadoAsistencia() {
+        return estadoAsistencia;
+    }
+
+    public void setEstadoAsistencia(EstadoAsistencia estadoAsistencia) {
+        this.estadoAsistencia = estadoAsistencia;
     }
 
 }
