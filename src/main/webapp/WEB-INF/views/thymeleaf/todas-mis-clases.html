@@ -63,13 +63,7 @@
             </li>
             <li class="sidebar-menu-item active">
                 <a th:href="@{/mis-clases}" class="sidebar-menu-link">
-                    <i class="fas fa-calendar-check sidebar-menu-icon"></i>
-                    <span class="sidebar-menu-text">Mis Clases</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a th:href="@{/todas-mis-clases}" class="sidebar-menu-link">
-                    <i class="fas fa-history sidebar-menu-icon"></i>
+                    <i class="fas fa-calendar sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Historial de clases</span>
                 </a>
             </li>
@@ -80,21 +74,15 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a th:href="@{/archivos}" class="sidebar-menu-link">
                     <i class="fas fa-folder sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Archivos Compartidos</span>
                 </a>
             </li>
-            <li class="sidebar-menu-item" th:if="${rol == 'alumno'}">
-                <a th:href="@{/perfil}" class="sidebar-menu-link">
-                    <i class="fas fa-user sidebar-menu-icon"></i>
-                    <span class="sidebar-menu-text">Mi Perfil</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item" th:if="${rol == 'profesor'}">
-                <a th:href="@{/profesor/perfil}" class="sidebar-menu-link">
-                    <i class="fas fa-user sidebar-menu-icon"></i>
-                    <span class="sidebar-menu-text">Mi Perfil</span>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/suscripcion/pagar}" class="sidebar-menu-link">
+                    <i class="fas fa-star sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Suscripciones</span>
                 </a>
             </li>
         </ul>
@@ -107,7 +95,7 @@
     <div class="page-header">
         <div class="container">
             <div class="page-header-content">
-                <h1 class="page-title">
+                <h1 style="color: #ffffff" class="page-title">
                     <i class="fas fa-calendar-check me-3"></i>
                     Todas mis clases
                 </h1>

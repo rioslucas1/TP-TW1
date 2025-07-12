@@ -64,16 +64,16 @@
             </div>
         </div>
 
-        <nav class="sidebar-menu">
+        <nav class="sidebar-menu" th:if="${nombreUsuario} != null" >
             <ul class="sidebar-menu-list">
                 <li class="sidebar-menu-item active">
-                    <a href="#" class="sidebar-menu-link">
+                    <a th:href="@{/home}" class="sidebar-menu-link">
                         <i class="fas fa-th-large sidebar-menu-icon"></i>
                         <span class="sidebar-menu-text">Dashboard</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a th:href="@{/todas-mis-clases}" class="sidebar-menu-link">
+                    <a th:href="@{/mis-clases}" class="sidebar-menu-link">
                         <i class="fas fa-calendar sidebar-menu-icon"></i>
                         <span class="sidebar-menu-text">Historial de clases</span>
                     </a>
@@ -91,9 +91,15 @@
                  </a>
              </li>-->
                 <li class="sidebar-menu-item">
-                    <a href="#" class="sidebar-menu-link">
+                    <a th:href="@{/archivos}" class="sidebar-menu-link">
                         <i class="fas fa-folder sidebar-menu-icon"></i>
                         <span class="sidebar-menu-text">Archivos Compartidos</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a th:href="@{/suscripcion/pagar}" class="sidebar-menu-link">
+                        <i class="fas fa-star sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Suscripciones</span>
                     </a>
                 </li>
                <!-- <li class="sidebar-menu-item">
@@ -198,7 +204,7 @@
                     <i class="fas fa-user-slash"></i>
                     <h3>No hay tutores disponibles</h3>
                     <p>No se encontraron tutores que coincidan con tus criterios de búsqueda.</p>
-                    <a href="#" class="btn-primary">Ver todos los tutores</a>
+
                 </div>
             </div>
 
@@ -264,10 +270,10 @@
                             <i class="fas fa-user"></i>
                             Ver perfil
                         </a>
-                        <button th:href="@{/chat}" class="btn-primary">
+                        <a th:href="@{/chat}" class="btn-primary">
                             <i class="fas fa-envelope"></i>
                             Contactar
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

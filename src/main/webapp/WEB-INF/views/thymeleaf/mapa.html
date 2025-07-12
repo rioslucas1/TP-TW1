@@ -64,7 +64,7 @@
 
 <!-- Sidebar -->
 <aside class="sidebar-nav">
-    <nav class="sidebar-menu">
+    <nav class="sidebar-menu" th:if="${nombreUsuario} != null">
         <ul class="sidebar-menu-list">
             <li class="sidebar-menu-item active">
                 <a th:href="@{/home}" class="sidebar-menu-link">
@@ -73,7 +73,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a th:href="@{/todas-mis-clases}" class="sidebar-menu-link">
+                <a th:href="@{/mis-clases}" class="sidebar-menu-link">
                     <i class="fas fa-calendar sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Historial de clases</span>
                 </a>
@@ -91,9 +91,15 @@
                 </a>
             </li>-->
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a th:href="@{/archivos}" class="sidebar-menu-link">
                     <i class="fas fa-folder sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Archivos Compartidos</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/suscripcion/pagar}" class="sidebar-menu-link">
+                    <i class="fas fa-star sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Suscripciones</span>
                 </a>
             </li>
           <!--  <li class="sidebar-menu-item">

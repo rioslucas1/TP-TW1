@@ -16,15 +16,20 @@
 <nav class="navbar-redesign">
     <div class="nav-container">
         <div class="nav-brand">
-            <i class="fas fa-graduation-cap nav-logo"></i>
-            <span class="brand-text">Clases-Ya</span>
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
         </div>
-
         <div class="nav-menu">
-        <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
-        <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
-        <a th:href="@{/profesor/perfil}" class="nav-link-redesign">Mi Perfil</a>
-        <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+            <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+        <div class="nav-user-info" th:if="${nombreUsuario != null}">
+            <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting">Hola, Usuario</span>
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
         </div>
     </div>
 </nav>
@@ -81,11 +86,11 @@
                 </div>
 
                 <div class="result-actions">
-                    <a th:href="@{/dashboard}" class="btn-primary-action">
+                    <a th:href="@{/home}" class="btn-primary-action">
                         <i class="fas fa-home"></i>
-                        Ir al Dashboard
+                        Volver al inicio
                     </a>
-                    <a th:href="@{/tutores}" class="btn-secondary-action">
+                    <a th:href="@{/verTutores}" class="btn-secondary-action">
                         <i class="fas fa-search"></i>
                         Explorar Tutores
                     </a>

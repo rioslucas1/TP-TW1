@@ -36,7 +36,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a th:href="@{/todas-mis-clases}" href="#" class="sidebar-menu-link">
+                <a th:href="@{/mis-clases}" class="sidebar-menu-link">
                     <i class="fas fa-calendar sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Historial de clases</span>
                 </a>
@@ -48,14 +48,14 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a th:href="@{/archivos}" class="sidebar-menu-link">
                     <i class="fas fa-folder sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Archivos Compartidos</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
                 <a th:href="@{/suscripcion/pagar}" class="sidebar-menu-link">
-                    <i class="fas fa-folder sidebar-menu-icon"></i>
+                    <i class="fas fa-star sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Suscripciones</span>
                 </a>
             </li>
@@ -430,7 +430,7 @@
                             <small class="d-block text-muted">DOCX - Hace 5 días</small>
                             <small class="d-block">Prof. Prueba 2</small>
                         </div>
-                        <a class="btn btn-outline-success w-100 mt-3" href="#"> Ver todos los materiales</a>
+                        <a class="btn btn-outline-success w-100 mt-3" th:href="@{/archivos}"> Ver todos los materiales</a>
                     </div>
                 </div>
 
