@@ -60,7 +60,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a th:href="@{/todas-mis-clases}" class="sidebar-menu-link">
+                <a th:href="@{/mis-clases}" class="sidebar-menu-link">
                     <i class="fas fa-calendar sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Historial de clases</span>
                 </a>
@@ -71,30 +71,18 @@
                     <span class="sidebar-menu-text">Mensajes</span>
                 </a>
             </li>
-            <!--  <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
-                    <i class="fas fa-bookmark sidebar-menu-icon"></i>
-                    <span class="sidebar-menu-text">Guardados</span>
-                </a>
-            </li>-->
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a th:href="@{/archivos}" class="sidebar-menu-link">
                     <i class="fas fa-folder sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Archivos Compartidos</span>
                 </a>
             </li>
-            <!-- <li class="sidebar-menu-item">
-                 <a th:href="@{/perfil}" class="sidebar-menu-link">
-                     <i class="fas fa-user sidebar-menu-icon"></i>
-                     <span class="sidebar-menu-text">Mi Perfil</span>
-                 </a>
-             </li>
-             <li class="sidebar-menu-item">
-                 <a href="#" class="sidebar-menu-link">
-                     <i class="fas fa-chart-bar sidebar-menu-icon"></i>
-                     <span class="sidebar-menu-text">Estadísticas</span>
-                 </a>
-             </li>-->
+            <li class="sidebar-menu-item">
+                <a th:href="@{/suscripcion/pagar}" class="sidebar-menu-link">
+                    <i class="fas fa-star sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Suscripciones</span>
+                </a>
+            </li>
         </ul>
     </nav>
 </aside>
@@ -519,7 +507,8 @@
                                 <span class="stat-label">Alumnos totales</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-number">0.0</span>
+                                <span class="stat-number" th:text="${promedioCalificacion}">0.0</span>
+
                                 <span class="stat-label">Calificación promedio</span>
                             </div>
                         </div>
