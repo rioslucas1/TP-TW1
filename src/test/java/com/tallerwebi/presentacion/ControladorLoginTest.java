@@ -432,6 +432,8 @@ public class ControladorLoginTest {
 	@Test
 	public void procesarRegistroProfesorConDatosValidosDeberiaRegistrarYRedirigirALogin() throws UsuarioExistente {
 		DatosRegistroProfesor datosProfesor = new DatosRegistroProfesor("Profesor", "apellido", "profesor@test.com", "12345", 1L);
+		datosProfesor.setLatitud(-34.6);
+		datosProfesor.setLongitud(-58.4);
 		Long temaId = 1L;
 
 		when(servicioTemaMock.obtenerPorId(temaId)).thenReturn(temaMock);
@@ -460,6 +462,8 @@ public class ControladorLoginTest {
 	public void procesarRegistroProfesorConEmailInvalidoDeberiaVolverAFormularioConError() {
 		DatosRegistroProfesor datosProfesor = new DatosRegistroProfesor("Profesor", "apellido", "profetest.com", "12345", 1L);
 		datosProfesor.setTemaId(1L);
+		datosProfesor.setLatitud(-34.6037);
+		datosProfesor.setLongitud(-58.3816);
 		List<Tema> temasMock = Arrays.asList(temaMock);
 		when(servicioTemaMock.obtenerTodos()).thenReturn(temasMock);
 
@@ -537,5 +541,53 @@ public class ControladorLoginTest {
 		assertEquals(5, clasesEnModelo.size());
 	}
 
+	@Test
+	public void loginConRequestNuloDeberiaLanzarExcepcionControlada() {
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, null);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Usuario o clave incorrecta"));
+	}
+
+
+	@Test
+	public void loginExitosoConUsuarioQueFallaEnGetRolDebeRedirigirConRolGenerico() {
+		Usuario usuarioMock = mock(Usuario.class);
+		when(usuarioMock.getNombre()).thenReturn("Usuario Genérico");
+		when(usuarioMock.getRol()).thenThrow(new RuntimeException("Error inesperado"));
+		when(requestMock.getSession()).thenReturn(sessionMock);
+		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(usuarioMock);
+
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
+		verify(sessionMock).setAttribute("ROL", "usuario");
+	}
+	@Test
+	public void irAHomeConSesionSinUsuarioNoDeberiaCargarNada() {
+		when(requestMock.getSession()).thenReturn(sessionMock);
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(null);
+
+		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
+
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("home"));
+		assertNull(modelAndView.getModel().get("nombreUsuario"));
+		verify(servicioLoginMock, never()).obtenerProfesores();
+	}
+
+
+	@Test
+	public void irAHomeConUsuarioConRolNullDeberiaAsignarRolGenerico() {
+		Usuario usuario = mock(Usuario.class);
+		when(usuario.getRol()).thenReturn(null);
+		when(usuario.getNombre()).thenReturn("Nombre");
+
+		when(requestMock.getSession()).thenReturn(sessionMock);
+		when(sessionMock.getAttribute("USUARIO")).thenReturn(usuario);
+
+		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
+
+		assertThat(modelAndView.getModel().get("rol").toString(), equalToIgnoringCase("usuario"));
+	}
 
 }

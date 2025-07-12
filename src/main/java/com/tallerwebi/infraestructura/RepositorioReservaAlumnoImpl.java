@@ -91,8 +91,43 @@ public class RepositorioReservaAlumnoImpl implements RepositorioReservaAlumno {
     }
 
     @Override
+    public List<Clase> obtenerTodasLasClasesPorProfesor(Long profesorId) {
+        final Session session = sessionFactory.getCurrentSession();
+        // Modificación: Usar HQL en lugar de Criteria y Restrictions
+        return session.createQuery("FROM Clase c JOIN FETCH c.profesor p WHERE p.id = :profesorId AND c.alumno IS NOT NULL" , Clase.class)
+                .setParameter("profesorId", profesorId)
+                .list();
+    }
+
+
+    @Override
     public void guardar(Clase disponibilidad) {
         sessionFactory.getCurrentSession().saveOrUpdate(disponibilidad);
+    }
+
+    @Override
+    public List<Clase> buscarClasesPorProfesorYAlumno(String emailProfesor, String emailAlumno) {
+        final Session session = sessionFactory.getCurrentSession();
+        try {
+            if (emailProfesor == null || emailAlumno == null) {
+                return new ArrayList<>();
+            }
+
+            String hql = "FROM Clase c " +
+                    "LEFT JOIN FETCH c.profesor p " +
+                    "LEFT JOIN FETCH c.alumno a " +
+                    "WHERE p.email = :emailProfesor AND a.email = :emailAlumno";
+
+            Query query = session.createQuery(hql);
+            query.setParameter("emailProfesor", emailProfesor);
+            query.setParameter("emailAlumno", emailAlumno);
+
+            return query.getResultList();
+
+        } catch (Exception e) {
+            System.err.println("Error al buscar clases por profesor y alumno: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     @Override

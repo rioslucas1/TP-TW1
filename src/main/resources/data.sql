@@ -2,6 +2,23 @@
 INSERT IGNORE INTO Tema(id, nombre) VALUES (1, 'Programación');
 INSERT IGNORE INTO Tema(id, nombre) VALUES (2, 'Diseño');
 INSERT IGNORE INTO Tema(id, nombre) VALUES (3, 'Inglés');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (4, 'Matemática');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (5, 'Historia');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (6, 'Física');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (7, 'Química');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (8, 'Biología');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (9, 'Geografía');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (10, 'Literatura');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (11, 'Economía');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (12, 'Educación Cívica');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (13, 'Filosofía');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (14, 'Arte');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (15, 'Música');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (16, 'Educación Física');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (17, 'Tecnología');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (18, 'Psicología');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (19, 'Sociología');
+INSERT IGNORE INTO Tema(id, nombre) VALUES (20, 'Comunicación');
 
        /*
 

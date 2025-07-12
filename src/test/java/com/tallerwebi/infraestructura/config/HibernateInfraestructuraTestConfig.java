@@ -28,7 +28,7 @@ public class HibernateInfraestructuraTestConfig {
     public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan("com.tallerwebi.dominio");
+        sessionFactory.setPackagesToScan("com.tallerwebi.dominio.entidades");
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }
@@ -44,6 +44,7 @@ public class HibernateInfraestructuraTestConfig {
         properties.setProperty("hibernate.show_sql", "true");
         properties.setProperty("hibernate.format_sql", "true");
         properties.setProperty("hibernate.hbm2ddl.auto", "create");
+        // properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
         return properties;
     }
 }

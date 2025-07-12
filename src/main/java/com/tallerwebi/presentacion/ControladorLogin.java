@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,7 +88,7 @@ public class ControladorLogin {
             } else {
                 rol = "usuario";
             }
-
+            servicioLogin.guardarUltimaConexion(usuarioBuscado);
             request.getSession().setAttribute("ROL", rol);
             request.getSession().setAttribute("USUARIO", usuarioBuscado);
             return new ModelAndView("redirect:/home");
@@ -204,6 +206,13 @@ public class ControladorLogin {
             return new ModelAndView("registrar-profesor", model);
         }
 
+        if (datosRegistroProfesor.getLatitud() == null || datosRegistroProfesor.getLongitud() == null) {
+            model.put("error", "Debe seleccionar una ubicación en el mapa");
+            model.put("temas", servicioTema.obtenerTodos());
+            return new ModelAndView("registrar-profesor", model);
+        }
+
+
         String errorEmail = validarEmail(datosRegistroProfesor.getEmail());
         if (errorEmail != null) {
             model.put("error", errorEmail);
@@ -220,6 +229,9 @@ public class ControladorLogin {
             nuevoProfesor.setPassword(datosRegistroProfesor.getPassword());
             nuevoProfesor.setActivo(true);
             nuevoProfesor.setTema(servicioTema.obtenerPorId(datosRegistroProfesor.getTemaId()));
+            nuevoProfesor.setLatitud(datosRegistroProfesor.getLatitud());
+            nuevoProfesor.setLongitud(datosRegistroProfesor.getLongitud());
+// lo registro con los datos
             servicioLogin.registrar(nuevoProfesor);
         } catch (UsuarioExistente e) {
             model.put("error", "El correo ya está registrado");
@@ -232,6 +244,34 @@ public class ControladorLogin {
         }
 
         return new ModelAndView("redirect:/login");
+    }
+
+    @RequestMapping(path = "/mis-clases", method = RequestMethod.GET)
+    public ModelAndView verTodasMisClases(HttpServletRequest request) {
+        ModelMap modelo = new ModelMap();
+        Usuario usuario = (Usuario) request.getSession().getAttribute("USUARIO");
+        String rol = definirRol(usuario);
+
+        if (usuario != null) {
+            modelo.put("nombreUsuario", usuario.getNombre());
+            modelo.put("rol", rol);
+
+            List<Clase> todasLasClases = null;
+            if (rol.equals("profesor")) {
+                Profesor profesor = (Profesor) usuario;
+                todasLasClases = servicioLogin.obtenerClasesProfesor(profesor.getId());
+                modelo.put("temaProfesor", profesor.getTema());
+            } else if (rol.equals("alumno")) {
+                Alumno alumno = (Alumno) usuario;
+                todasLasClases = servicioLogin.obtenerClasesAlumno(alumno.getId());
+            }
+            modelo.put("todasLasClases", todasLasClases);
+        } else {
+            // Si no hay usuario en sesión, redirigir al login
+            return new ModelAndView("redirect:/login");
+        }
+
+        return new ModelAndView("todas-mis-clases", modelo);
     }
 
     @RequestMapping(path = "/logout", method = RequestMethod.GET)

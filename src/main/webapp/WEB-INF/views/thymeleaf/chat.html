@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Chat - Clases-Ya</title>
+
+    <!-- Bootstrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}" />
+    <link rel="stylesheet" th:href="@{/css/chat.css}" />
+    <link rel="stylesheet" th:href="@{/css/layout-fixes.css}" />
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}" />
+
+
+    <!-- Icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+<div class="d-flex">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-nav" th:if="${nombreUsuario} != null">
+
+        <nav class="sidebar-menu">
+            <ul class="sidebar-menu-list">
+                <li class="sidebar-menu-item">
+                    <a th:href="@{/home}" class="sidebar-menu-link" th:if="${nombreUsuario} != null">
+                        <i class="fas fa-th-large sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a th:href="@{mis-clases}" class="sidebar-menu-link">
+                        <i class="fas fa-calendar sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Historial de clases</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item active">
+                    <a th:href="@{/chat}" class="sidebar-menu-link">
+                        <i class="fas fa-comments sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Mensajes</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a th:href="@{/archivos}" class="sidebar-menu-link">
+                        <i class="fas fa-folder sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Archivos Compartidos</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a th:href="@{/suscripcion/pagar}" class="sidebar-menu-link">
+                        <i class="fas fa-star sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Suscripciones</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}" class="sidebar-logout-link">
+                <i class="fas fa-sign-out-alt sidebar-logout-icon"></i>
+                <span class="sidebar-logout-text">Cerrar sesión</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Header Navigation - ESTRUCTURA IGUAL AL HOME -->
+        <nav class="navbar-redesign" th:if="${nombreUsuario} != null">
+            <div class="nav-container">
+                <!-- Logo principal - Visible en desktop -->
+                <a th:href="@{/home}" class="nav-brand">
+                    <i class="fas fa-graduation-cap nav-logo-icon"></i>
+                    <span class="nav-logo-text">Clases-Ya</span>
+                </a>
+
+                <!-- Menú de navegación central -->
+                <div class="nav-menu">
+                    <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+                    <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+                    <a th:href="@{/perfil}" class="nav-link-redesign">Mi Perfil</a>
+                    <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+                </div>
+
+                <!-- Usuario y botón de cerrar sesión -->
+                <div class="nav-user-info">
+                    <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting"></span>
+                    <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Chat Section -->
+        <section class="chat-main-section">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h1 class="chat-title">Mensajes</h1>
+                    <p class="chat-subtitle"
+                       th:text="${rol == 'ALUMNO'} ? 'Comunícate con tus profesores' : 'Comunícate con tus estudiantes'">
+                    </p>
+                </div>
+
+                <div class="chat-layout">
+                    <!-- Lista de Contactos según rol -->
+                    <div class="contacts-sidebar">
+                        <div class="contacts-header">
+                            <h5 class="contacts-title">Contactos</h5>
+                            <p class="contacts-subtitle"
+                               th:text="${rol == 'ALUMNO'} ? 'Mis Profesores' : 'Mis Estudiantes'"></p>
+                        </div>
+
+                        <div class="contacts-list">
+                            <!-- Si es Alumno, muestra Profesores -->
+                            <div th:if="${rol == 'ALUMNO'}" th:each="profesor : ${contactos}" class="contact-item"
+                                 th:classappend="${receptor == profesor.nombre} ? 'active' : ''">
+                                <a th:href="@{/chat(con=${profesor.nombre})}" class="contact-link">
+                                    <div class="contact-avatar">
+                                        <span th:text="${#strings.substring(profesor.nombre, 0, 1)}"></span>
+                                    </div>
+                                    <div class="contact-info">
+                                        <p class="contact-name" th:text="${profesor.nombre}">Profesor</p>
+                                        <p class="contact-subject">Profesor</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- Si es Profesor, muestra Alumnos -->
+                            <div th:if="${rol == 'PROFESOR'}" th:each="alumno : ${contactos}" class="contact-item"
+                                 th:classappend="${receptor == alumno.nombre} ? 'active' : ''">
+                                <a th:href="@{/chat(con=${alumno.nombre})}" class="contact-link">
+                                    <div class="contact-avatar">
+                                        <span th:text="${#strings.substring(alumno.nombre, 0, 1)}"></span>
+                                    </div>
+                                    <div class="contact-info">
+                                        <p class="contact-name" th:text="${alumno.nombre}">Alumno</p>
+                                        <p class="contact-subject">Estudiante</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ventana de Chat -->
+                    <div class="chat-area">
+                        <!-- Chat Header -->
+                        <div class="chat-area-header" th:if="${receptor != null}">
+                            <div class="chat-contact-info">
+                                <div class="chat-contact-avatar">
+                                    <span th:text="${#strings.substring(receptor, 0, 1)}"></span>
+                                </div>
+                                <div>
+                                    <h4 class="chat-contact-name" th:text="'Chat con ' + ${receptor}">Chat</h4>
+                                    <p class="chat-contact-status">En línea</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado sin contacto seleccionado -->
+                        <div th:if="${receptor == null}" class="chat-empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h3 class="empty-state-title">Seleccioná un contacto para comenzar a chatear.</h3>
+                        </div>
+
+                        <!-- Lista de mensajes -->
+                        <div th:if="${receptor != null}" class="messages-container">
+                            <div th:each="mensaje : ${mensajes}" class="message-wrapper"
+                                 th:classappend="${mensaje.nombreEmisor == nombreUsuario} ? 'own-message' : 'received-message'">
+                                <div class="message-bubble">
+                                    <div class="message-sender">
+                                        <strong th:text="${mensaje.nombreEmisor} + ':'"></strong>
+                                    </div>
+                                    <p class="message-content" th:text="${mensaje.contenido}"></p>
+                                    <hr class="message-divider" />
+                                    <small class="message-timestamp" th:text="${mensaje.fechaFormateada}"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulario de envío -->
+                        <div th:if="${receptor != null}" class="message-form-container">
+                            <form th:action="@{/chat/enviar}" method="post" class="message-form">
+                                <input type="hidden" name="receptor" th:value="${receptor}" />
+                                <div class="message-input-group">
+                                    <input type="text" name="contenido" class="message-input"
+                                           placeholder="Escribí tu mensaje..." required />
+                                    <button class="message-send-btn" type="submit">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Enviar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer-redesign">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Clases-Ya</span>
+                    </div>
+                    <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+                </div>
+
+                <div class="footer-bottom">
+                    <p class="footer-copyright">© 2025 Taller Web</p>
+                    <div class="footer-team">
+                        <p class="team-label">Desarrollado por:</p>
+                        <div class="team-members">
+                            <span class="team-member">Angel Leyes</span>
+                            <span class="team-member">Ezequiel Mendoza</span>
+                            <span class="team-member">Fede Hodara</span>
+                            <span class="team-member">Lucas Rios</span>
+                            <span class="team-member">Luka Cambriglia</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/chat.js}"></script>
+</body>
+
+</html>

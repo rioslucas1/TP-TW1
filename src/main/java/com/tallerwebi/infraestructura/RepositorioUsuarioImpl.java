@@ -2,16 +2,25 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.servicios.ServicioEnvioDeCorreos;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository("repositorioUsuario")
+@Transactional
 public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
     private SessionFactory sessionFactory;
@@ -34,7 +43,20 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
     @Override
     public void guardar(Usuario usuario) {
+                     ServicioEnvioDeCorreos servicio = new ServicioEnvioDeCorreos();
+                 Map<String, String> datos = new HashMap<>();
+
+        datos.put("nombre", usuario.getNombre());
+
+         servicio.enviarCorreo(
+            usuario.getEmail(),                            
+            "Bienvenido a Clases Ya!",                             
+            ServicioEnvioDeCorreos.TipoCorreo.BIENVENIDA,
+            datos                                                 
+        );
         sessionFactory.getCurrentSession().save(usuario);
+
+
     }
 
     @Override
@@ -71,6 +93,20 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
         Query query = session.createQuery(hql);
         query.setParameter("alumnoId", alumnoId);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Alumno> obtenerAlumnosDeProfesor(Long profesorId) {
+        final Session session = sessionFactory.getCurrentSession();
+
+        String hql = "SELECT a FROM Alumno a " +
+                "INNER JOIN a.profesores p " +
+                "WHERE p.id = :profesorId";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("profesorId", profesorId);
 
         return query.getResultList();
     }
@@ -128,5 +164,74 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
                 .setParameter("id", id)
                 .uniqueResult();
     }
+
+    @Override
+    public Usuario buscarPorNombre(String nombre) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM Usuario WHERE nombre = :nombre";
+        return session.createQuery(hql, Usuario.class)
+                .setParameter("nombre", nombre)
+                .uniqueResult();
+    }
+
+    @Override
+    public Alumno buscarAlumnoPorNombre(String nombre) {
+        String hql = "FROM Alumno a WHERE a.nombre = :nombre";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("nombre", nombre);
+        List<Alumno> resultados = query.getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
+
+    @Override
+    public Profesor buscarProfesorPorNombre(String nombre) {
+        String hql = "FROM Profesor p WHERE p.nombre = :nombre";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("nombre", nombre);
+        List<Profesor> resultados = query.getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
+    @Override
+        public List<Usuario> buscarConNotificacionesPendientes() {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM usuarios WHERE ultima_conexion < NOW() - INTERVAL 7 DAY;";
+        Query query = session.createQuery(hql, Usuario.class);
+        return query.getResultList();
+    }
+    @Override
+    public void guardarUltimaConexion(Usuario usuario) {
+        final Session session = sessionFactory.getCurrentSession();
+        if (usuario != null) {
+            usuario.setUltimaConexion(ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).toLocalDateTime());
+            session.update(usuario);
+        }
+    }
+
+
+    @Override
+    public Profesor buscarProfesorConAlumnos(Long id) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql = "SELECT p FROM Profesor p LEFT JOIN FETCH p.alumnos WHERE p.id = :profesorId";
+        Query query = session.createQuery(hql, Profesor.class);
+        query.setParameter("profesorId", id);
+        return (Profesor) query.getSingleResult();
+    }
+
+    @Override
+    public boolean alumnoPertenece(Long alumnoId, Long profesorId) {
+        final Session session = sessionFactory.getCurrentSession();
+
+        String hql = "SELECT COUNT(ap) FROM Alumno a " +
+                "JOIN a.profesores ap " +
+                "WHERE a.id = :alumnoId AND ap.id = :profesorId";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("alumnoId", alumnoId);
+        query.setParameter("profesorId", profesorId);
+
+        Long count = (Long) query.getSingleResult();
+        return count > 0;
+    }
+
 
 }

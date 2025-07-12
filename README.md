@@ -31,7 +31,7 @@ $ mvn clean jetty:run
 ```shell
 $ mvn test -Dtest="VistaLoginE2E"
 ```
-
+docker compose up --build
 ## 8. Como correr las pruebas unitarias de javascript
 ```shell
 $ cd src/main/webapp/resources/core/js
@@ -114,4 +114,5 @@ docker run --name mysql-container -d -p 3306:3306 mysql # sudo apt install mysql
 * Playwright 1.36.0
 * Node 18.16.1 o superior <- Instalación manual desde la [página de node](https://nodejs.org/en) 
 
-*_Proyecto modificado en base a: [Spring MVC hello world example (Maven and Thymeleaf)](https://mkyong.com/spring-mvc/spring-mvc-hello-world-example/) _*
+*_Proyecto modificado en base a: [Spring MVC hello world example (Maven and Thymeleaf)](https://mkyong.com/spring-mvc/spring-mvc-hello-world-example/) _* 
+aaaa

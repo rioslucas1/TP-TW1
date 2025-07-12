@@ -29,5 +29,10 @@ public class ServicioTemaImpl implements ServicioTema {
         return repositorioTema.buscarPorId(id);
     }
 
+    @Override
+    public List<Tema> obtenerTodosLosTemas() {
+        return repositorioTema.obtenerTodos();
+    }
+
 }
 

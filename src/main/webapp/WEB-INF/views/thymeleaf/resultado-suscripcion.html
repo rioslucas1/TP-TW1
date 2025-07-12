@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado Suscripción - ClasesYa</title>
+
+    <link rel="stylesheet" th:href="@{/css/resultado.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar-redesign">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
+        </div>
+
+        <div class="nav-menu" th:if="${nombreUsuario} == null">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Nuestros Tutores</a>
+            <a th:href="@{/registrarprofesor}" class="nav-link-redesign">Convertirse en Tutor</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+
+        <div class="nav-buttons" th:if="${nombreUsuario} == null">
+            <a th:href="@{/login}" class="btn-login">Iniciar Sesión</a>
+            <a th:href="@{/nuevo-usuario}" class="btn-register">Registrarse</a>
+        </div>
+
+        <!-- Logged in navigation -->
+        <div class="nav-menu" th:if="${nombreUsuario} != null">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+            <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+            <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+
+        <div class="nav-user-info" th:if="${nombreUsuario} != null">
+            <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting"></span>
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="result-page">
+    <div class="result-container">
+        <!-- Success State -->
+        <div th:if="${estado == 'approved'}" class="result-card success-card animate-in">
+            <div class="result-icon success-icon">
+                <div class="icon-circle">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="success-animation">
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark-stem" fill="none" d="m14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="result-content">
+                <h1 class="result-title success-title">
+                    <i class="fas fa-crown"></i>
+                    ¡Suscripción Premium Activada!
+                </h1>
+                <p class="result-subtitle">
+                    Tu pago fue aprobado exitosamente y ya tienes acceso completo a todas las funcionalidades premium.
+                </p>
+
+                <div class="benefits-preview">
+                    <div class="benefits-title">
+                        <i class="fas fa-star"></i>
+                        Ya puedes disfrutar de:
+                    </div>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <i class="fas fa-infinity"></i>
+                            <span>Clases ilimitadas</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-crown"></i>
+                            <span>Acceso a todos los tutores</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-book"></i>
+                            <span>Material exclusivo</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-headset"></i>
+                            <span>Soporte 24/7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <a th:href="@{/home}" class="btn-primary-action">
+                        <i class="fas fa-home"></i>
+                        Volver al inicio
+                    </a>
+                    <a th:href="@{/verTutores}" class="btn-secondary-action">
+                        <i class="fas fa-search"></i>
+                        Explorar Tutores
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending State -->
+        <div th:if="${estado == null or estado == 'pending'}" class="result-card pending-card animate-in">
+            <div class="result-icon pending-icon">
+                <div class="icon-circle">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="pending-animation">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+
+            <div class="result-content">
+                <h1 class="result-title pending-title">
+                    <i class="fas fa-hourglass-half"></i>
+                    Pago Pendiente
+                </h1>
+                <p class="result-subtitle">
+                    Tu pago está siendo procesado. Te avisaremos cuando se acredite.
+                </p>
+
+                <div class="info-box pending-info">
+                    <div class="info-title">
+                        <i class="fas fa-info-circle"></i>
+                        ¿Qué sigue ahora?
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <div class="info-text">
+                            <strong>Tiempo estimado</strong>
+                            <span>El proceso puede tomar entre 5 a 15 minutos</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-bell"></i>
+                        <div class="info-text">
+                            <strong>Te notificaremos</strong>
+                            <span>Recibirás un email cuando el pago sea confirmado</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-sync"></i>
+                        <div class="info-text">
+                            <strong>Actualización automática</strong>
+                            <span>Esta página se actualizará automáticamente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <a th:href="@{/home}" class="btn-primary-action">
+                        <i class="fas fa-home"></i>
+                        Volver al Inicio
+                    </a>
+                    <a href="javascript:location.reload()" class="btn-secondary-action">
+                        <i class="fas fa-sync"></i>
+                        Actualizar Estado
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div th:if="${estado == 'rejected' or estado == 'failure'}" class="result-card error-card animate-in">
+            <div class="result-icon error-icon">
+                <div class="icon-circle">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="error-animation">
+                    <div class="error-x">
+                        <div class="error-line-1"></div>
+                        <div class="error-line-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-content">
+                <h1 class="result-title error-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Pago Rechazado
+                </h1>
+                <p class="result-subtitle">
+                    Hubo un problema con tu pago. No te preocupes, puedes intentarlo nuevamente.
+                </p>
+
+                <div class="info-box error-info">
+                    <div class="info-title">
+                        <i class="fas fa-lightbulb"></i>
+                        Posibles soluciones:
+                    </div>
+                    <div class="solutions-list">
+                        <div class="solution-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Verifica que tu tarjeta tenga fondos suficientes</span>
+                        </div>
+                        <div class="solution-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Confirma que no haya restricciones de seguridad</span>
+                        </div>
+                        <div class="solution-item">
+                            <i class="fas fa-edit"></i>
+                            <span>Revisa que los datos ingresados sean correctos</span>
+                        </div>
+                        <div class="solution-item">
+                            <i class="fas fa-phone"></i>
+                            <span>Contacta a tu banco si el problema persiste</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <a th:href="@{/suscripcion}" class="btn-primary-action">
+                        <i class="fas fa-redo"></i>
+                        Intentar Nuevamente
+                    </a>
+                    <a th:href="@{/home}" class="btn-secondary-action">
+                        <i class="fas fa-home"></i>
+                        Volver al Inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Info -->
+        <div class="support-info">
+            <p class="support-text">
+                <i class="fas fa-question-circle"></i>
+                ¿Necesitas ayuda?
+                <a href="/soporte" class="support-link">Contacta nuestro soporte</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Additional Info Cards -->
+    <div class="additional-info animate-in">
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="info-card-content">
+                    <h4>Pago Seguro</h4>
+                    <p>Procesado con encriptación de nivel bancario</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-undo"></i>
+                </div>
+                <div class="info-card-content">
+                    <h4>Garantía 30 días</h4>
+                    <p>Devolución completa si no estás satisfecho</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="info-card-content">
+                    <h4>Soporte 24/7</h4>
+                    <p>Estamos aquí para ayudarte cuando lo necesites</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer-redesign">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Clases-Ya</span>
+        </div>
+        <p class="footer-text">Conectando estudiantes con los mejores profesores</p>
+    </div>
+</footer>
+
+<script>
+    // Auto-refresh for pending payments
+    if (document.querySelector('.pending-card')) {
+        let refreshCount = 0;
+        const maxRefreshes = 10; // 5 minutes max
+
+        const autoRefresh = setInterval(() => {
+            refreshCount++;
+            if (refreshCount >= maxRefreshes) {
+                clearInterval(autoRefresh);
+                return;
+            }
+
+            // Check payment status
+            fetch(window.location.href + '?ajax=true')
+                .then(response => response.text())
+                .then(html => {
+                    if (!html.includes('pending')) {
+                        location.reload();
+                    }
+                })
+                .catch(() => {
+                    // Ignore errors, just continue
+                });
+        }, 30000); // Check every 30 seconds
+    }
+
+    // Animate elements on load
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            document.querySelectorAll('.result-card, .additional-info').forEach(el => {
+                el.classList.add('animate-in');
+            });
+        }, 100);
+    });
+</script>
+</body>
+</html>

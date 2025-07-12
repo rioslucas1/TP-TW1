@@ -1,10 +1,8 @@
 package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import java.time.LocalDateTime; 
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -40,9 +38,19 @@ public abstract class Usuario {
     @Column
     private String rol;
 
-    @Column
+    @Column(name = "descripcion")
     private String descripcion;
 
+    @Column(name = "habilitado")
+    private Boolean habilitado = false;
+
+    @Column(name = "subscription_id")
+    private String subscriptionId;
+
+    @Column(name = "ultima_conexion")
+    private LocalDateTime ultimaConexion;
+
+    //getters y setters
     public Long getId() {
         return id;
     }
@@ -111,7 +119,6 @@ public abstract class Usuario {
         this.activo = false;
     }
 
-
     public String getFotoPerfil() {
         return fotoPerfil;
     }
@@ -136,8 +143,41 @@ public abstract class Usuario {
         this.descripcion = descripcion;
     }
 
+    public Boolean getHabilitado() {
+        return habilitado;
+    }
 
+    public void setHabilitado(Boolean habilitado) {
+        this.habilitado = habilitado;
+    }
 
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
+
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
+
+    // Métodos de conveniencia para suscripción
+    public boolean tieneSuscripcionActiva() {
+        return habilitado != null && habilitado;
+    }
+
+    public void habilitarSuscripcion() {
+        this.habilitado = true;
+    }
+
+    public void deshabilitarSuscripcion() {
+        this.habilitado = false;
+    }
+    public LocalDateTime getUltimaConexion() {
+    return ultimaConexion;
+    }
+
+    public void setUltimaConexion(LocalDateTime ultimaConexion) {
+        this.ultimaConexion = ultimaConexion;
+    }
 
 }
 

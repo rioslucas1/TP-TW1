@@ -8,4 +8,5 @@ public interface ServicioTema {
 
     List<Tema> obtenerTodos();
     Tema obtenerPorId(Long id);
+    List<Tema> obtenerTodosLosTemas();
 }

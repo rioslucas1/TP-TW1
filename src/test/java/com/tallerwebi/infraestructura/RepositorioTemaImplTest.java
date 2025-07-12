@@ -165,5 +165,73 @@ import static org.mockito.Mockito.*;
             Tema temaDesdeRepositorio = repositorioTema.buscarPorId(temaVerificado.getId());
             assertEquals(temaVerificado, temaDesdeRepositorio);
         }
-        }
+
+
+     @Test
+     @Rollback
+     public void deberiaPermitirNombresDuplicadosSiNoHayRestriccionUnica() {
+         Tema tema1 = new Tema();
+         tema1.setNombre("Programación");
+         sessionFactory.getCurrentSession().save(tema1);
+
+         Tema tema2 = new Tema();
+         tema2.setNombre("Programación");
+         sessionFactory.getCurrentSession().save(tema2);
+
+         sessionFactory.getCurrentSession().flush();
+
+         List<Tema> temas = repositorioTema.obtenerTodos();
+         long cantidad = temas.stream().filter(t -> t.getNombre().equals("Programación")).count();
+
+         assertEquals(2, cantidad);
+     }
+     @Test
+     @Rollback
+     public void buscarPorIdNuloDeberiaRetornarNulo() {
+         Tema tema = repositorioTema.buscarPorId(null);
+         assertNull(tema);
+     }
+     @Test
+     @Rollback
+     public void eliminarTemaYVerificarLista() {
+         Tema tema = new Tema();
+         tema.setNombre("Educación Cívica");
+         sessionFactory.getCurrentSession().save(tema);
+         sessionFactory.getCurrentSession().flush();
+
+         sessionFactory.getCurrentSession().delete(tema);
+         sessionFactory.getCurrentSession().flush();
+
+         List<Tema> temas = repositorioTema.obtenerTodos();
+         assertTrue(temas.isEmpty());
+     }
+     @Test
+     @Rollback
+     public void buscarTemaPorNombreConHQL() {
+         Tema tema = new Tema();
+         tema.setNombre("Astronomía");
+         sessionFactory.getCurrentSession().save(tema);
+         sessionFactory.getCurrentSession().flush();
+
+         String hql = "FROM Tema WHERE nombre = :nombre";
+         Query query = sessionFactory.getCurrentSession().createQuery(hql);
+         query.setParameter("nombre", "Astronomía");
+
+         Tema encontrado = (Tema) query.getSingleResult();
+
+         assertNotNull(encontrado);
+         assertEquals("Astronomía", encontrado.getNombre());
+     }
+     @Test
+     @Rollback
+     public void deberiaAsignarIdAlGuardarTema() {
+         Tema tema = new Tema();
+         tema.setNombre("Arte");
+         sessionFactory.getCurrentSession().save(tema);
+
+         assertNotNull(tema.getId());
+         assertTrue(tema.getId() > 0);
+     }
+
+ }
 

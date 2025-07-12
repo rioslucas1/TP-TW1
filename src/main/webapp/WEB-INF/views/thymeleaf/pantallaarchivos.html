@@ -1,0 +1,413 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Material Compartido - ClasesYa</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+    <!-- Custom CSS Files -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home-redesign.css}"/>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}"/>
+    <link rel="stylesheet" th:href="@{/css/layout-fixes.css}"/>
+    <link rel="stylesheet" th:href="@{/css/profile.css}"/>
+    <link rel="stylesheet" th:href="@{/css/archivos.css}"/>
+
+    <!-- External Icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar-redesign">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap nav-logo-icon"></i>
+            <span class="nav-logo-text">Clases-Ya</span>
+        </div>
+        <div class="nav-menu">
+            <a th:href="@{/home}" class="nav-link-redesign">Inicio</a>
+            <a th:href="@{/verTutores}" class="nav-link-redesign">Ver Tutores</a>
+            <a th:href="@{/profesor/perfil}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Mi Perfil</a>
+            <a th:href="@{/perfil}" class="nav-link-redesign" th:if="${rol == 'alumno'}">Mi Perfil</a>
+            <a th:href="@{/calendario-profesor}" class="nav-link-redesign" th:if="${rol == 'profesor'}">Calendario</a>
+            <a th:href="@{/mapa}" class="nav-link-redesign">Ver Mapa</a>
+        </div>
+        <div class="nav-user-info" th:if="${nombreUsuario != null}">
+            <span th:text="'Hola, ' + ${nombreUsuario}" class="user-greeting">Hola, Usuario</span>
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Botón toggle para móviles -->
+<button class="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<aside class="sidebar-nav">
+    <nav class="sidebar-menu">
+        <ul class="sidebar-menu-list">
+            <li class="sidebar-menu-item">
+                <a th:href="@{/home}" class="sidebar-menu-link">
+                    <i class="fas fa-th-large sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/mis-clases}" class="sidebar-menu-link">
+                    <i class="fas fa-calendar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Historial de clases</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chat}" class="sidebar-menu-link">
+                    <i class="fas fa-comments sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mensajes</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item active">
+                <a th:href="@{/archivos}" class="sidebar-menu-link">
+                    <i class="fas fa-folder sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Archivos Compartidos</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/suscripcion/pagar}" class="sidebar-menu-link">
+                    <i class="fas fa-star sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Suscripciones</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Page Header -->
+    <div class="files-header">
+        <div class="container">
+            <div class="files-header-content">
+                <h1 style="color: #ffffff;" class="files-title">
+                    <i class="fas fa-folder-open me-3"></i>
+                    Material Compartido
+                </h1>
+                <p class="files-subtitle">
+                    <span th:if="${rol == 'alumno'}">Accede a todo el material que tus profesores han compartido contigo</span>
+                    <span th:if="${rol == 'profesor'}">Gestiona el material que has compartido con tus alumnos</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container my-5">
+        <!-- Alert Messages -->
+        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${mensaje}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="files-action-bar">
+            <div class="action-bar-left">
+                <h3 class="action-bar-title">
+                    <i class="fas fa-list me-2"></i>
+                    Mis Archivos
+                </h3>
+            </div>
+            <div class="action-bar-right" th:if="${rol == 'profesor'}">
+                <a th:href="@{/archivos/subir}" class="btn-upload-new">
+                    <i class="fas fa-plus me-2"></i>
+                    Subir Nuevo Archivo
+                </a>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-container">
+            <form id="formularioFiltros" method="GET" th:action="@{/archivos}" class="filters-form">
+                <div class="filters-row">
+                    <div class="filter-group search-group">
+                        <label for="inputBusqueda" class="filter-label">
+                            <i class="fas fa-search me-2"></i>
+                            Buscar
+                        </label>
+                        <input type="text"
+                               id="inputBusqueda"
+                               name="busqueda"
+                               class="filter-input"
+                               th:placeholder="${rol == 'alumno' ? 'Buscar por nombre del archivo o profesor...' : 'Buscar por nombre del archivo o alumno...'}"
+                               th:value="${busquedaActual}">
+                    </div>
+
+                    <div class="filter-group select-group">
+                        <label for="selectFiltroPersona" class="filter-label">
+                            <i class="fas fa-user me-2"></i>
+                            Filtrar por
+                        </label>
+                        <select id="selectFiltroPersona"
+                                name="filtroPersona"
+                                class="filter-select">
+                            <option value="">
+                                <span th:if="${rol == 'alumno'}">Todos los profesores</span>
+                                <span th:if="${rol == 'profesor'}">Todos los alumnos</span>
+                            </option>
+
+                            <option th:if="${rol == 'alumno'}"
+                                    th:each="prof : ${listaProfesores}"
+                                    th:value="${prof.id}"
+                                    th:text="${prof.nombre + ' ' + prof.apellido}"
+                                    th:selected="${filtroPersonaActual != null && filtroPersonaActual == prof.id}">
+                            </option>
+
+                            <option th:if="${rol == 'profesor'}"
+                                    th:each="alumno : ${listaAlumnos}"
+                                    th:value="${alumno.id}"
+                                    th:text="${alumno.nombre + ' ' + alumno.apellido}"
+                                    th:selected="${filtroPersonaActual != null && filtroPersonaActual == alumno.id}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group action-group">
+                        <button type="button" id="btnLimpiarFiltros" class="btn-clear-filters">
+                            <i class="fas fa-times me-2"></i>
+                            Limpiar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Info -->
+        <div th:if="${!archivos.isEmpty()}" class="results-info">
+            <div class="results-count">
+                <i class="fas fa-file-alt me-2"></i>
+                <span th:text="${archivos.size()}">0</span> archivo(s) encontrado(s)
+                <span th:if="${busquedaActual != null && !busquedaActual.isEmpty()}" class="search-term">
+                    para "<strong th:text="${busquedaActual}"></strong>"
+                </span>
+                <span th:if="${filtroPersonaActual != null}" class="filter-term">
+                    filtrado por
+                    <span th:if="${rol == 'alumno'}">
+                        <span th:each="prof : ${listaProfesores}">
+                            <strong th:if="${prof.id == filtroPersonaActual}"
+                                    th:text="${'Prof. ' + prof.nombre + ' ' + prof.apellido}"></strong>
+                        </span>
+                    </span>
+                    <span th:if="${rol == 'profesor'}">
+                        <span th:each="alumno : ${listaAlumnos}">
+                            <strong th:if="${alumno.id == filtroPersonaActual}"
+                                    th:text="${alumno.nombre + ' ' + alumno.apellido}"></strong>
+                        </span>
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Files Grid -->
+        <div th:if="${!archivos.isEmpty()}" class="files-grid">
+            <div th:each="archivo : ${archivos}" class="file-card">
+                <div class="file-card-header">
+                    <div class="file-professor-info">
+                        <div class="professor-avatar"
+                             th:text="${archivo.profesor.nombre.substring(0,1).toUpperCase() + archivo.profesor.apellido.substring(0,1).toUpperCase()}">
+                            PR
+                        </div>
+                        <div class="professor-details">
+                            <h5 class="professor-name"
+                                th:text="${'Prof. ' + archivo.profesor.nombre + ' ' + archivo.profesor.apellido}">
+                                Prof. Nombre Apellido
+                            </h5>
+                            <span class="professor-subject"
+                                  th:text="${archivo.profesor.tema != null ? archivo.profesor.tema.nombre : 'Sin tema'}">
+                                Materia
+                            </span>
+                        </div>
+                    </div>
+                    <div class="file-type-badge" th:text="${archivo.tipoContenido}">PDF</div>
+                </div>
+
+                <div class="file-card-body">
+                    <div class="file-info">
+                        <h4 class="file-name" th:text="${archivo.nombre}">Nombre del archivo</h4>
+                        <div class="file-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-alt meta-icon"></i>
+                                <span th:if="${archivo.fechaSubida != null}"
+                                      th:text="${archivo.fechaSubida.format(T(java.time.format.DateTimeFormatter).ofPattern('dd/MM/yyyy'))}">
+                                    Fecha
+                                </span>
+                                <span th:unless="${archivo.fechaSubida != null}">Fecha no disponible</span>
+                            </div>
+                            <div class="meta-item" th:if="${rol == 'profesor'}">
+                                <i class="fas fa-user-graduate meta-icon"></i>
+                                <span>Compartido con: </span>
+                                <span th:text="${archivo.alumno.nombre + ' ' + archivo.alumno.apellido}">Alumno</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="file-card-footer">
+                    <div class="file-actions">
+                        <a th:href="@{/archivos/ver/__${archivo.id}__}"
+                           target="_blank"
+                           class="btn-file-action btn-view">
+                            <i class="fas fa-eye"></i>
+                            <span class="btn-text">Ver</span>
+                        </a>
+                        <a th:href="@{/archivos/descargar/__${archivo.id}__}"
+                           class="btn-file-action btn-download">
+                            <i class="fas fa-download"></i>
+                            <span class="btn-text">Descargar</span>
+                        </a>
+                        <form th:if="${rol == 'profesor' and archivo.profesor.id == usuario.id}"
+                              th:action="@{/archivos/eliminar/__${archivo.id}__}"
+                              method="post"
+                              class="delete-form"
+                              onsubmit="return confirm('¿Estás seguro de que quieres eliminar este archivo?');">
+                            <button type="submit" class="btn-file-action btn-delete">
+                                <i class="fas fa-trash"></i>
+                                <span class="btn-text">Eliminar</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${archivos.isEmpty()}" class="empty-files-state">
+            <div class="empty-state-content">
+                <div class="empty-state-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3 class="empty-state-title">No se encontraron materiales</h3>
+                <p class="empty-state-text">
+                    <span th:if="${busquedaActual != null && !busquedaActual.isEmpty() || filtroPersonaActual != null}">
+                        No hay archivos que coincidan con los criterios de búsqueda.
+                    </span>
+                    <span th:unless="${busquedaActual != null && !busquedaActual.isEmpty() || filtroPersonaActual != null}">
+                        <span th:if="${rol == 'alumno'}">Aún no tienes material compartido por tus profesores.</span>
+                        <span th:if="${rol == 'profesor'}">Aún no has compartido material con tus alumnos.</span>
+                    </span>
+                </p>
+                <div class="empty-state-actions" th:if="${rol == 'profesor'}">
+                    <a th:href="@{/archivos/subir}" class="btn-empty-action">
+                        <i class="fas fa-plus"></i>
+                        Subir Primer Archivo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="footer-redesign">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Clases-Ya</span>
+            </div>
+            <p class="footer-description">Conectando estudiantes con los mejores profesores</p>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Taller Web</p>
+            <div class="footer-team">
+                <p class="team-label">Desarrollado por:</p>
+                <div class="team-members">
+                    <span class="team-member">Angel Leyes</span>
+                    <span class="team-member">Ezequiel Mendoza</span>
+                    <span class="team-member">Fede Hodara</span>
+                    <span class="team-member">Lucas Rios</span>
+                    <span class="team-member">Luka Cambriglia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar-nav').classList.toggle('open');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const formularioFiltros = document.getElementById('formularioFiltros');
+        const inputBusqueda = document.getElementById('inputBusqueda');
+        const selectFiltroPersona = document.getElementById('selectFiltroPersona');
+        const btnLimpiarFiltros = document.getElementById('btnLimpiarFiltros');
+        let timeoutId;
+
+        // Auto-submit on search input with debounce
+        inputBusqueda.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                formularioFiltros.submit();
+            }, 500);
+        });
+
+        // Auto-submit on filter change
+        selectFiltroPersona.addEventListener('change', function() {
+            formularioFiltros.submit();
+        });
+
+        // Clear filters
+        btnLimpiarFiltros.addEventListener('click', function() {
+            inputBusqueda.value = '';
+            selectFiltroPersona.value = '';
+            formularioFiltros.submit();
+        });
+
+        // Highlight search terms
+        const busquedaActual = inputBusqueda.value;
+        if (busquedaActual && busquedaActual.trim() !== '') {
+            highlightSearchTerms(busquedaActual);
+        }
+
+        // Animate file cards on load
+        const fileCards = document.querySelectorAll('.file-card');
+        fileCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('fade-in-up');
+        });
+    });
+
+    function highlightSearchTerms(searchTerm) {
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        const archivos = document.querySelectorAll('.file-card');
+
+        archivos.forEach(archivo => {
+            const nombreArchivo = archivo.querySelector('.file-name');
+            const nombreProfesor = archivo.querySelector('.professor-name');
+
+            if (nombreArchivo) {
+                nombreArchivo.innerHTML = nombreArchivo.textContent.replace(regex, '<mark>$1</mark>');
+            }
+            if (nombreProfesor) {
+                nombreProfesor.innerHTML = nombreProfesor.textContent.replace(regex, '<mark>$1</mark>');
+            }
+        });
+    }
+</script>
+</body>
+</html>

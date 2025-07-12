@@ -1,0 +1,653 @@
+/* ===================================
+   PROFILE PAGE STYLES - TEMA CLASES-YA
+   =================================== */
+
+/* Layout Structure */
+body .main-content {
+    flex: 1;
+    margin-left: 280px !important;
+    padding-top: 80px !important;
+    min-height: calc(100vh - 80px) !important;
+    background-color: var(--bg-light) !important;
+}
+
+/* Profile Header - Colores del tema */
+.main-content .profile-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #374151 100%) !important;
+    color: var(--text-white) !important;
+    padding: 60px 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+.profile-header .container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 30px !important;
+}
+
+.profile-header .row {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+}
+
+.profile-header .col-md-3 {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.profile-header .col-md-6 {
+    text-align: left !important;
+    padding-left: 30px !important;
+}
+
+.profile-header .col-md-3:last-child {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+}
+
+/* Profile Avatar - Más pequeño */
+.profile-header .profile-avatar {
+    width: 140px !important;
+    height: 140px !important;
+    background: var(--bg-white) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 4rem !important;
+    color: var(--text-light) !important;
+    position: relative !important;
+    border: 5px solid var(--bg-white) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.profile-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+}
+
+.profile-avatar i {
+    font-size: 4rem !important;
+    color: var(--text-light) !important;
+}
+
+.photo-upload-container {
+    position: relative !important;
+    display: inline-block !important;
+}
+
+.photo-upload-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+.photo-upload-container:hover .photo-upload-overlay {
+    opacity: 1 !important;
+}
+
+.photo-upload-overlay i {
+    font-size: 1.3rem !important;
+    color: var(--text-white) !important;
+}
+
+#photoInput {
+    display: none !important;
+}
+
+/* Buttons in Header */
+.profile-header .btn-edit-profile {
+    background: var(--bg-white) !important;
+    color: var(--primary-color) !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.3s ease !important;
+    font-size: 1rem !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.profile-header .btn-edit-profile:hover {
+    background: #f8fafc !important;
+    color: var(--primary-color) !important;
+    text-decoration: none !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Modalidad Icons */
+.profile-header .modalidad-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 20px !important; /* Reducido */
+    height: 20px !important;
+    border-radius: 50% !important;
+    margin-right: 6px !important;
+}
+
+.modalidad-presencial {
+    background: #dbeafe !important;
+    color: #3b82f6 !important;
+}
+
+.modalidad-virtual {
+    background: #dcfce7 !important;
+    color: #16a34a !important;
+}
+
+.modalidad-ambas {
+    background: #fef3c7 !important;
+    color: #d97706 !important;
+}
+
+/* Extensiones específicas para profesores */
+.profile-header .modalidad-icon-header {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    margin-right: 8px !important;
+    font-size: 0.9rem !important;
+}
+
+.modalidad-icon-header.modalidad-presencial {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #3b82f6 !important;
+}
+
+.modalidad-icon-header.modalidad-virtual {
+    background: rgba(34, 197, 94, 0.2) !important;
+    color: #22c55e !important;
+}
+
+.modalidad-icon-header.modalidad-ambas {
+    background: rgba(245, 158, 11, 0.2) !important;
+    color: #f59e0b !important;
+}
+
+/* Estrellas de rating en header */
+.profile-header .stars-rating {
+    display: flex !important;
+    gap: 2px !important;
+}
+
+.profile-header .stars-rating i {
+    font-size: 1rem !important;
+}
+
+/* Content Area - Más compacto */
+.main-content .container.my-5 {
+    max-width: 1200px !important;
+    margin: 3rem auto !important;
+    padding: 0 30px !important;
+}
+
+/* Main Content Grid */
+.profile-content-grid {
+    display: grid !important;
+    grid-template-columns: 2fr 1fr !important;
+    gap: 2rem !important;
+    margin-top: 2rem !important;
+}
+
+/* Profile Cards - Más compactas */
+.profile-section {
+    background: var(--bg-white) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+    margin-bottom: 2rem !important;
+    overflow: hidden !important;
+    border: 1px solid #f1f5f9 !important;
+}
+
+.profile-section-header {
+    padding: 20px 24px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: var(--bg-white) !important;
+}
+
+.profile-section-title {
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    color: var(--text-dark) !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.profile-section-body {
+    padding: 24px !important;
+}
+
+/* Info Rows - Más compactas */
+.info-item {
+    display: flex !important;
+    margin-bottom: 16px !important;
+    align-items: flex-start !important;
+}
+
+.info-item:last-child {
+    margin-bottom: 0 !important;
+}
+
+.info-label {
+    font-weight: 600 !important;
+    color: var(--text-dark) !important;
+    min-width: 140px !important;
+    flex-shrink: 0 !important;
+    font-size: 0.95rem !important;
+}
+
+.info-value {
+    color: var(--text-light) !important;
+    flex: 1 !important;
+    font-size: 0.95rem !important;
+}
+
+/* Empty State */
+.profile-section .empty-state {
+    text-align: center !important;
+    padding: 60px 20px !important;
+    color: var(--text-light) !important;
+}
+
+.profile-section .empty-state-icon {
+    width: 80px !important;
+    height: 80px !important;
+    background: #f8fafc !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto 16px !important;
+    border: 2px solid #e2e8f0 !important;
+}
+
+.profile-section .empty-state-icon i {
+    font-size: 2rem !important;
+    color: #cbd5e1 !important;
+}
+
+.profile-section .empty-state p {
+    margin: 0 !important;
+    font-size: 1rem !important;
+    color: var(--text-light) !important;
+}
+
+/* Add Topic Button */
+.profile-section .btn-add-topic {
+    background: transparent !important;
+    color: var(--secondary-color) !important;
+    border: 1px solid var(--secondary-color) !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    font-size: 0.9rem !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-weight: 500 !important;
+}
+
+.profile-section .btn-add-topic:hover {
+    background: var(--secondary-color) !important;
+    color: var(--text-white) !important;
+}
+
+.profile-section .btn-add-topic i {
+    font-size: 1.1rem !important;
+    width: 20px !important;
+    text-align: center !important;
+}
+
+/* Stats Section */
+.stats-grid {
+    display: grid !important;
+    gap: 1.5rem !important;
+}
+
+.stat-item {
+    text-align: center !important;
+    padding: 0 !important;
+}
+
+.stat-number {
+    font-size: 3rem !important;
+    font-weight: 700 !important;
+    color: var(--secondary-color) !important;
+    line-height: 1 !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+}
+
+.stat-label {
+    color: var(--text-light) !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    display: block !important;
+}
+
+/* Quick Actions */
+.quick-actions-grid {
+    display: grid !important;
+    gap: 12px !important;
+}
+
+.profile-section .quick-action-btn {
+    background: var(--bg-white) !important;
+    color: var(--text-dark) !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 16px 20px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    transition: all 0.2s ease !important;
+    font-weight: 500 !important;
+}
+
+.profile-section .quick-action-btn:hover {
+    background: var(--secondary-color) !important;
+    color: var(--text-white) !important;
+    text-decoration: none !important;
+    border-color: var(--secondary-color) !important;
+    transform: translateY(-1px) !important;
+}
+
+.profile-section .quick-action-btn i {
+    font-size: 1.1rem !important;
+    width: 20px !important;
+    text-align: center !important;
+}
+
+/* Form Styles */
+.profile-section .form-label {
+    font-weight: 600 !important;
+    color: var(--text-dark) !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+    font-size: 0.9rem !important;
+}
+
+.profile-section .form-control,
+.profile-section .form-select {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    font-size: 0.95rem !important;
+    transition: border-color 0.2s ease !important;
+    background: var(--bg-white) !important;
+}
+
+.profile-section .form-control:focus,
+.profile-section .form-select:focus {
+    outline: none !important;
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Bootstrap Button Overrides */
+.profile-section .btn-primary {
+    background: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    color: var(--text-white) !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+}
+
+.profile-section .btn-primary:hover {
+    background: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+}
+
+.profile-section .btn-outline-secondary {
+    color: var(--text-light) !important;
+    border-color: #d1d5db !important;
+    padding: 10px 20px !important;
+    font-weight: 500 !important;
+}
+
+.profile-section .btn-outline-secondary:hover {
+    background: #f8fafc !important;
+    color: var(--text-dark) !important;
+    border-color: #9ca3af !important;
+}
+
+.profile-section .btn-outline-danger {
+    color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+}
+
+.profile-section .btn-outline-danger:hover {
+    background: #ef4444 !important;
+    color: var(--text-white) !important;
+}
+
+/* Ajustes para badges en vista de lectura */
+.profile-section .badge {
+    background: var(--secondary-color) !important;
+    color: var(--text-white) !important;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+}
+
+/* Estilos para experiencias académicas */
+.profile-section .border-start {
+    border-left: 4px solid var(--secondary-color) !important;
+    padding-left: 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.profile-section .border-start h6 {
+    color: var(--text-dark) !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.profile-section .border-start p {
+    color: var(--text-light) !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.profile-section .border-start small {
+    color: var(--text-light) !important;
+    font-size: 0.85rem !important;
+}
+
+/* Estilos para reseñas */
+.profile-section .border.rounded {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    background: var(--bg-white) !important;
+}
+
+.profile-section .rounded-circle.bg-primary {
+    background: var(--secondary-color) !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* Sidebar específico para profesores */
+.sidebar-nav .sidebar-menu-item.active .sidebar-menu-link {
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: var(--text-white) !important;
+    border-left-color: var(--secondary-color) !important;
+}
+
+/* Navegación específica para profesores */
+.nav-user-info .user-greeting {
+    font-weight: 600 !important;
+}
+
+/* Botones de acción específicos */
+.profile-section .btn-outline-danger.btn-sm {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.8rem !important;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+.profile-section .btn-outline-danger.btn-sm:hover {
+    background: #ef4444 !important;
+    color: var(--text-white) !important;
+}
+
+/* Formularios específicos para profesores */
+.profile-section .card.card-body.bg-light {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+}
+
+/* Estados específicos para profesores */
+.profile-section .fst-italic {
+    font-style: italic !important;
+    color: var(--text-light) !important;
+    opacity: 0.8 !important;
+}
+
+/* Mejoras visuales para estadísticas de profesor */
+.profile-section .stats-grid .stat-item:first-child .stat-number {
+    color: #3b82f6 !important;
+}
+
+.profile-section .stats-grid .stat-item:nth-child(2) .stat-number {
+    color: var(--secondary-color) !important;
+}
+
+.profile-section .stats-grid .stat-item:last-child .stat-number {
+    color: #f59e0b !important;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .profile-content-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0 !important;
+        padding-top: 80px !important;
+    }
+
+    .profile-header {
+        padding: 40px 0 !important;
+    }
+
+    .profile-header .container {
+        padding: 0 20px !important;
+    }
+
+    .profile-header .row {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+
+    .profile-header .col-md-6 {
+        padding-left: 0 !important;
+        margin: 20px 0 !important;
+    }
+
+    .profile-avatar {
+        width: 120px !important;
+        height: 120px !important;
+        font-size: 3rem !important;
+    }
+
+    .profile-header h1 {
+        font-size: 2rem !important;
+    }
+
+    .main-content .container.my-5 {
+        padding: 0 20px !important;
+        margin: 2rem auto !important;
+    }
+
+    .profile-section-body {
+        padding: 20px !important;
+    }
+
+    .info-item {
+        flex-direction: column !important;
+        gap: 4px !important;
+    }
+
+    .info-label {
+        min-width: auto !important;
+        font-weight: 700 !important;
+    }
+
+    .profile-header .modalidad-icon-header {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .profile-section .border-start {
+        padding-left: 0.75rem !important;
+        border-left-width: 3px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-header {
+        padding: 30px 0 !important;
+    }
+
+    .profile-header .container {
+        padding: 0 15px !important;
+    }
+
+    .main-content .container.my-5 {
+        padding: 0 15px !important;
+    }
+
+    .profile-section-header {
+        padding: 15px 20px !important;
+    }
+
+    .profile-section-body {
+        padding: 15px !important;
+    }
+}

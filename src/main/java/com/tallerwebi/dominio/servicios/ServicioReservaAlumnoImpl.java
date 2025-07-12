@@ -1,8 +1,11 @@
 package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.RepositorioReservaAlumno;
+import com.tallerwebi.dominio.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Clase;
+import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.entidades.EstadoAsistencia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -15,10 +18,12 @@ import java.util.List;
 public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
 
     private RepositorioReservaAlumno repositorioReservaAlumno;
+    private RepositorioUsuario repositorioUsuario;
 
     @Autowired
-    public ServicioReservaAlumnoImpl(RepositorioReservaAlumno repositorioReservaAlumno) {;
+    public ServicioReservaAlumnoImpl(RepositorioReservaAlumno repositorioReservaAlumno, RepositorioUsuario repositorioUsuario) {;
         this.repositorioReservaAlumno = repositorioReservaAlumno;
+        this.repositorioUsuario = repositorioUsuario;
     }
 
     @Override
@@ -78,6 +83,48 @@ public class ServicioReservaAlumnoImpl implements ServicioReservaAlumno {
         return repositorioReservaAlumno.buscarPorId(disponibilidadId);
     }
 
+    @Override
+    public boolean estaSuscritoAProfesor(Long alumnoId, String emailProfesor) {
+        Usuario usuario = repositorioUsuario.buscarPorId(alumnoId);
+        if (!(usuario instanceof Alumno)) {
+            return false;
+        }
+        Alumno alumno = (Alumno) usuario;
+
+        return alumno.getProfesores().stream()
+                .anyMatch(profesor -> profesor.getEmail().equals(emailProfesor));
+}
+
+    @Override
+    public List<Clase> obtenerClasesPorProfesorYAlumno(String emailProfesor, String emailAlumno) {
+        return repositorioReservaAlumno.buscarClasesPorProfesorYAlumno(emailProfesor, emailAlumno);
+    }
+
+
+    @Override
+    public List<Clase> obtenerTodasLasClasesPorProfesor(Long profesorId) { //
+        return repositorioReservaAlumno.obtenerTodasLasClasesPorProfesor(profesorId);
+    }
+
+    @Override
+    public void actualizarClase(Clase clase) {
+        if (clase != null && clase.getId() != null) {
+            repositorioReservaAlumno.guardar(clase);
+        } else {
+            throw new IllegalArgumentException("Clase inválida para actualizar");
+        }
+    }
+
+    @Override
+    public void actualizarEstadoAsistenciaClase(Long claseId, EstadoAsistencia estadoAsistencia) {
+        Clase clase = repositorioReservaAlumno.buscarPorId(claseId);
+        if (clase != null) {
+            clase.setEstadoAsistencia(estadoAsistencia);
+            repositorioReservaAlumno.guardar(clase);
+        } else {
+            throw new RuntimeException("Clase no encontrada con ID: " + claseId);
+        }
+    }
 
 }
 

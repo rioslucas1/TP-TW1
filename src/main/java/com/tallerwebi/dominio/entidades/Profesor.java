@@ -11,7 +11,6 @@ public class Profesor extends Usuario {
 
     private Double latitud;
     private Double longitud;
-    private Materia materia;
     private Double calificacionPromedio;
 
     private Integer totalClasesDadas;
@@ -68,14 +67,6 @@ public class Profesor extends Usuario {
 
     public void setLongitud(Double longitud) {
         this.longitud = longitud;
-    }
-
-    public Materia getMateria() {
-        return materia;
-    }
-
-    public void setMateria(Materia materia) {
-        this.materia = materia;
     }
 
     public Tema getTema() {
@@ -172,6 +163,18 @@ public class Profesor extends Usuario {
 
             alumno.eliminarProfesor(this);
         }
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "modalidad")
+    private ModalidadPreferida modalidad;
+
+    public ModalidadPreferida getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(ModalidadPreferida modalidad) {
+        this.modalidad = modalidad;
     }
 
 }

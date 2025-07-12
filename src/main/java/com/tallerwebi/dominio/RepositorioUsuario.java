@@ -1,11 +1,14 @@
 package com.tallerwebi.dominio;
 
+import com.tallerwebi.dominio.entidades.Alumno;
 import com.tallerwebi.dominio.entidades.Profesor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Clase;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+@Repository
 public interface RepositorioUsuario {
 
 
@@ -19,9 +22,14 @@ public interface RepositorioUsuario {
     Usuario buscarPorId(Long id);
     Profesor buscarProfesorConExperiencias(Long id);
     List<Profesor> obtenerProfesoresDeAlumno(Long alumnoId);
-
-
-
+    List<Alumno> obtenerAlumnosDeProfesor(Long alumnoId);
+    Usuario buscarPorNombre(String nombre);
+    Alumno buscarAlumnoPorNombre(String emisorNombre);
+    Profesor buscarProfesorPorNombre(String emisorNombre);
+    Profesor buscarProfesorConAlumnos(Long id);
+    public boolean alumnoPertenece(Long alumnoId, Long profesorId);
+    List<Usuario> buscarConNotificacionesPendientes();
+    void guardarUltimaConexion(Usuario usuario);
 
 }
 
