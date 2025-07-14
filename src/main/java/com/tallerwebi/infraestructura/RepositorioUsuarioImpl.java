@@ -194,8 +194,11 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     @Override
         public List<Usuario> buscarConNotificacionesPendientes() {
         final Session session = sessionFactory.getCurrentSession();
-        String hql = "FROM usuarios WHERE ultima_conexion < NOW() - INTERVAL 7 DAY;";
+        LocalDateTime hace7Dias = LocalDateTime.now().minusDays(7);
+        String hql = "FROM Usuario u WHERE u.ultimaConexion < :hace7Dias OR u.ultimaConexion IS NULL";
         Query query = session.createQuery(hql, Usuario.class);
+        query.setParameter("hace7Dias", hace7Dias);
+
         return query.getResultList();
     }
     @Override

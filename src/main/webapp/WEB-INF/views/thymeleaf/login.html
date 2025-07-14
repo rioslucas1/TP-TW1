@@ -10,10 +10,10 @@
 
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/home-redesign.css}" />
-      <link rel="stylesheet" th:href="@{/css/register.css}"/>
-            <link rel="stylesheet" th:href="@{/css/login.css}"/>
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/register.css}"/>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 </head>
 
@@ -65,40 +65,40 @@
             </div>
 
             <form class="register-form" th:action="@{/validar-login}" method="post" th:object="${datosLogin}">
-                   <div class="form-group">
+                <div class="form-group">
                     <label for="email" class="form-label">Correo Electrónico</label>
                     <div class="input-container">
                                     <span class="input-icon">
                                         <i class="fas fa-envelope"></i>
                                     </span>
                         <input th:field="*{email}"
-                            type="email"
-                            id="email"
-                            class="form-input form-control"
-                            placeholder="correo@ejemplo.com"
-                            required />
+                               type="email"
+                               id="email"
+                               class="form-input form-control"
+                               placeholder="correo@ejemplo.com"
+                               required />
                     </div>
-                    </div>
+                </div>
                 <div class="form-group">
-          <label for="password" class="form-label">Contraseña</label>
-          <div class="input-container">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="input-container">
                         <span class="input-icon">
                             <i class="fas fa-lock"></i>
                         </span>
-            <input th:field="*{password}"
-                   type="password"
-                   id="password"
-                   class="form-input form-control"
-                   placeholder="Mínimo 3 caracteres"
-                   required />
-          </div>
-          <div class="password-strength">
-            <div class="strength-bar">
-              <div id="strengthFill" class="strength-fill"></div>
-            </div>
-            <span id="strengthText"  class="strength-text">Fortaleza de la contraseña</span>
-          </div>
-        </div>
+                        <input th:field="*{password}"
+                               type="password"
+                               id="password"
+                               class="form-input form-control"
+                               placeholder="Mínimo 3 caracteres"
+                               required />
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div id="strengthFill" class="strength-fill"></div>
+                        </div>
+
+                    </div>
+                </div>
 
                 <div class="d-flex justify-content-between">
                     <div class="form-check mb-2">

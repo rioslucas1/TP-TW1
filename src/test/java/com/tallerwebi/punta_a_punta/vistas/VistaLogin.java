@@ -1,31 +1,41 @@
 package com.tallerwebi.punta_a_punta.vistas;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 public class VistaLogin extends VistaWeb {
 
     public VistaLogin(Page page) {
         super(page);
-        page.navigate("localhost:8080/spring/login");
+        page.navigate("http://localhost:8080/spring/login");
     }
 
-    public String obtenerTextoDeLaBarraDeNavegacion(){
-        return this.obtenerTextoDelElemento("nav a.navbar-brand");
+     public String obtenerTextoDeLaBarraDeNavegacion(){
+        return this.obtenerTextoDelElemento("navbar-brand");
     }
-
-    public String obtenerMensajeDeError(){
+    public String obtenerMensajeDeError() {
+        page.waitForSelector("p.alert.alert-danger"); // asegurar que exista
         return this.obtenerTextoDelElemento("p.alert.alert-danger");
     }
 
-    public void escribirEMAIL(String email){
+    public void escribirEMAIL(String email) {
+        page.waitForSelector("#email");
         this.escribirEnElElemento("#email", email);
     }
 
-    public void escribirClave(String clave){
+    public void escribirClave(String clave) {
+        page.waitForSelector("#password");
         this.escribirEnElElemento("#password", clave);
     }
 
-    public void darClickEnIniciarSesion(){
-        this.darClickEnElElemento("#btn-login");
+    public void darClickEnIniciarSesion() {
+        page.waitForSelector(".btn-form-submit");
+        this.darClickEnElElemento(".btn-form-submit");
+    }
+
+    public void iniciarSesion(String email, String clave) {
+        escribirEMAIL(email);
+        escribirClave(clave);
+        darClickEnIniciarSesion();
     }
 }

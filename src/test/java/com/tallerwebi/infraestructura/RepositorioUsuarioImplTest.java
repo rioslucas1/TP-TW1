@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -630,5 +631,319 @@ public class RepositorioUsuarioImplTest {
         assertEquals(1, clases.size());
         assertEquals(claseFutura.getFechaEspecifica(), clases.get(0).getFechaEspecifica());
     }
+
+    @Test
+    @Rollback
+    public void cuandoBuscoUsuarioPorNombreExistenteEntoncesRetornaElUsuario() {
+        Alumno usuario = new Alumno();
+        usuario.setEmail("usuario@test.com");
+        usuario.setPassword("123456");
+        usuario.setNombre("NombreUnico");
+        usuario.setApellido("ApellidoTest");
+        sessionFactory.getCurrentSession().save(usuario);
+
+        Usuario usuarioEncontrado = repositorioUsuario.buscarPorNombre("NombreUnico");
+
+        assertNotNull(usuarioEncontrado);
+        assertThat(usuarioEncontrado.getNombre(), equalTo("NombreUnico"));
+        assertThat(usuarioEncontrado.getEmail(), equalTo("usuario@test.com"));
+    }
+
+    @Test
+    @Rollback
+    public void cuandoBuscoUsuarioPorNombreInexistenteEntoncesRetornaNulo() {
+        Usuario usuarioEncontrado = repositorioUsuario.buscarPorNombre("NombreInexistente");
+
+        assertNull(usuarioEncontrado);
+    }
+
+    @Test
+    @Rollback
+    public void cuandoBuscoAlumnoPorNombreExistenteEntoncesRetornaElAlumno() {
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("AlumnoEspecifico");
+        alumno.setApellido("ApellidoTest");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        Alumno alumnoEncontrado = repositorioUsuario.buscarAlumnoPorNombre("AlumnoEspecifico");
+
+        assertNotNull(alumnoEncontrado);
+        assertThat(alumnoEncontrado.getNombre(), equalTo("AlumnoEspecifico"));
+        assertThat(alumnoEncontrado.getEmail(), equalTo("alumno@test.com"));
+    }
+
+    @Test
+    @Rollback
+    public void cuandoBuscoAlumnoPorNombreInexistenteEntoncesRetornaNulo() {
+        Alumno alumnoEncontrado = repositorioUsuario.buscarAlumnoPorNombre("AlumnoInexistente");
+
+        assertNull(alumnoEncontrado);
+    }
+
+    @Test
+    @Rollback
+    public void cuandoBuscoProfesorPorNombreExistenteEntoncesRetornaElProfesor() {
+        Tema tema = new Tema();
+        tema.setNombre("Literatura");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("ProfesorEspecifico");
+        profesor.setApellido("ApellidoTest");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Profesor profesorEncontrado = repositorioUsuario.buscarProfesorPorNombre("ProfesorEspecifico");
+
+        assertNotNull(profesorEncontrado);
+        assertThat(profesorEncontrado.getNombre(), equalTo("ProfesorEspecifico"));
+        assertThat(profesorEncontrado.getEmail(), equalTo("profesor@test.com"));
+    }
+
+    @Test
+    @Rollback
+    public void cuandoBuscoProfesorPorNombreInexistenteEntoncesRetornaNulo() {
+        Profesor profesorEncontrado = repositorioUsuario.buscarProfesorPorNombre("ProfesorInexistente");
+
+        assertNull(profesorEncontrado);
+    }
+
+    @Test
+    @Rollback
+    public void dadoQueExisteProfesorConAlumnosCuandoBuscoProfesorConAlumnosEntoncesRetornaProfesorConAlumnosCargados() {
+        Tema tema = new Tema();
+        tema.setNombre("Química");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("ProfesorTest");
+        profesor.setApellido("ApellidoTest");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Alumno alumno1 = new Alumno();
+        alumno1.setEmail("alumno1@test.com");
+        alumno1.setPassword("123456");
+        alumno1.setNombre("Alumno1");
+        alumno1.setApellido("Apellido1");
+        sessionFactory.getCurrentSession().save(alumno1);
+
+        Alumno alumno2 = new Alumno();
+        alumno2.setEmail("alumno2@test.com");
+        alumno2.setPassword("123456");
+        alumno2.setNombre("Alumno2");
+        alumno2.setApellido("Apellido2");
+        sessionFactory.getCurrentSession().save(alumno2);
+
+        profesor.agregarAlumno(alumno1);
+        profesor.agregarAlumno(alumno2);
+        sessionFactory.getCurrentSession().update(profesor);
+        sessionFactory.getCurrentSession().flush();
+
+        Profesor profesorConAlumnos = repositorioUsuario.buscarProfesorConAlumnos(profesor.getId());
+
+        assertNotNull(profesorConAlumnos);
+        assertThat(profesorConAlumnos.getId(), equalTo(profesor.getId()));
+        assertThat(profesorConAlumnos.getNombre(), equalTo("ProfesorTest"));
+        assertNotNull(profesorConAlumnos.getAlumnos());
+        assertThat(profesorConAlumnos.getAlumnos().size(), equalTo(2));
+    }
+
+    @Test
+    @Rollback
+    public void cuandoBuscoProfesorConAlumnosConIdInexistenteEntoncesLanzaExcepcion() {
+        assertThrows(Exception.class, () -> {
+            repositorioUsuario.buscarProfesorConAlumnos(999L);
+        });
+    }
+
+    @Test
+    @Rollback
+    public void dadoQueAlumnoPerteneceAProfesorCuandoVerificoPertenenciaEntoncesRetornaTrue() {
+        Tema tema = new Tema();
+        tema.setNombre("Biología");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("ProfesorTest");
+        profesor.setApellido("ApellidoTest");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("AlumnoTest");
+        alumno.setApellido("ApellidoTest");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        profesor.agregarAlumno(alumno);
+        sessionFactory.getCurrentSession().update(profesor);
+        sessionFactory.getCurrentSession().flush();
+
+        boolean pertenece = repositorioUsuario.alumnoPertenece(alumno.getId(), profesor.getId());
+
+        assertTrue(pertenece);
+    }
+
+    @Test
+    @Rollback
+    public void dadoQueAlumnoNoPerteneceAProfesorCuandoVerificoPertenenciaEntoncesRetornaFalse() {
+        Tema tema = new Tema();
+        tema.setNombre("Geografía");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("ProfesorTest");
+        profesor.setApellido("ApellidoTest");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("AlumnoTest");
+        alumno.setApellido("ApellidoTest");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        boolean pertenece = repositorioUsuario.alumnoPertenece(alumno.getId(), profesor.getId());
+
+        assertFalse(pertenece);
+    }
+
+    @Test
+    @Rollback
+    public void cuandoVerificoPertenenciaConAlumnoInexistenteEntoncesRetornaFalse() {
+        Tema tema = new Tema();
+        tema.setNombre("Arte");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("ProfesorTest");
+        profesor.setApellido("ApellidoTest");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        boolean pertenece = repositorioUsuario.alumnoPertenece(999L, profesor.getId());
+
+        assertFalse(pertenece);
+    }
+
+    @Test
+    @Rollback
+    public void cuandoVerificoPertenenciaConProfesorInexistenteEntoncesRetornaFalse() {
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("AlumnoTest");
+        alumno.setApellido("ApellidoTest");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        boolean pertenece = repositorioUsuario.alumnoPertenece(alumno.getId(), 999L);
+
+        assertFalse(pertenece);
+    }
+
+    @Test
+    @Rollback
+    public void dadoQueExistenAlumnosDeProfesorCuandoObtengoAlumnosEntoncesRetornaListaDeAlumnos() {
+        Tema tema = new Tema();
+        tema.setNombre("Música");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("ProfesorTest");
+        profesor.setApellido("ApellidoTest");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Alumno alumno1 = new Alumno();
+        alumno1.setEmail("alumno1@test.com");
+        alumno1.setPassword("123456");
+        alumno1.setNombre("Alumno1");
+        alumno1.setApellido("Apellido1");
+        sessionFactory.getCurrentSession().save(alumno1);
+
+        Alumno alumno2 = new Alumno();
+        alumno2.setEmail("alumno2@test.com");
+        alumno2.setPassword("123456");
+        alumno2.setNombre("Alumno2");
+        alumno2.setApellido("Apellido2");
+        sessionFactory.getCurrentSession().save(alumno2);
+
+        profesor.agregarAlumno(alumno1);
+        profesor.agregarAlumno(alumno2);
+        sessionFactory.getCurrentSession().update(profesor);
+        sessionFactory.getCurrentSession().flush();
+
+        List<Alumno> alumnos = repositorioUsuario.obtenerAlumnosDeProfesor(profesor.getId());
+
+        assertNotNull(alumnos);
+        assertThat(alumnos.size(), equalTo(2));
+        assertThat(alumnos, hasItems(alumno1, alumno2));
+    }
+
+    @Test
+    @Rollback
+    public void cuandoObtengoAlumnosDeProfesorSinAlumnosEntoncesRetornaListaVacia() {
+        Tema tema = new Tema();
+        tema.setNombre("Programación");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("ProfesorTest");
+        profesor.setApellido("ApellidoTest");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        List<Alumno> alumnos = repositorioUsuario.obtenerAlumnosDeProfesor(profesor.getId());
+
+        assertNotNull(alumnos);
+        assertTrue(alumnos.isEmpty());
+    }
+
+    @Test
+    @Rollback
+    public void cuandoGuardoUsuarioEntoncesActualizaUltimaConexion() {
+        Alumno usuario = new Alumno();
+        usuario.setEmail("test@ejemplo.com");
+        usuario.setPassword("123456");
+        usuario.setNombre("TestUser");
+        usuario.setApellido("TestApellido");
+        sessionFactory.getCurrentSession().save(usuario);
+
+        LocalDateTime fechaAntes = LocalDateTime.now().minusMinutes(1);
+        repositorioUsuario.guardarUltimaConexion(usuario);
+
+        Usuario usuarioActualizado = repositorioUsuario.buscarPorId(usuario.getId());
+
+        assertNotNull(usuarioActualizado.getUltimaConexion());
+        assertTrue(usuarioActualizado.getUltimaConexion().isAfter(fechaAntes));
+    }
+
+    @Test
+    @Rollback
+    public void cuandoGuardoUltimaConexionConUsuarioNuloEntoncesNoLanzaExcepcion() {
+        assertDoesNotThrow(() -> {
+            repositorioUsuario.guardarUltimaConexion(null);
+        });
+    }
+
 
 }
