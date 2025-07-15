@@ -417,23 +417,35 @@
                 </div>
 
                 <!-- Material -->
-                <div class="col-md-4">
+                <div class="col-md-4" th:if="${rol} == 'alumno'">
                     <div class="dashboard-card p-4 h-100">
-                        <h5 class="card-title text-success"><i class="fas fa-file-alt"></i> Material de Estudio</h5>
-                        <div class="dashboard-item">
-                            <div><strong>Ejercicios de Programación</strong></div>
-                            <small class="d-block text-muted">PDF - Hace 2 días</small>
-                            <small class="d-block">Prof. Prueba 1</small>
+                        <h5 class="card-title text-success"><i class="fas fa-file-alt"></i> Archivos Recientes</h5>
+
+                        <!-- Si hay archivos recientes -->
+                        <div th:if="${archivosRecientes != null and !archivosRecientes.isEmpty()}">
+                            <div class="dashboard-item" th:each="archivo : ${archivosRecientes}">
+                                <div><strong th:text="${archivo.nombre}">Nombre del archivo</strong></div>
+                                <small class="d-block">
+                                    <i class="fas fa-user"></i>
+                                    <span th:text="${archivo.profesor.nombre + ' ' + archivo.profesor.apellido}">Profesor</span>
+                                </small>
+                                <small class="d-block text-muted">
+                                    <i class="fas fa-clock"></i>
+                                    <span th:text="${archivo.fechaSubida != null ? archivo.fechaSubida.format(fechaFormatter) : 'Sin fecha'}">Fecha</span>
+                                </small>
+                                <small class="d-block">
+                                    <i class="fas fa-file"></i>
+                                    <span th:text="${archivo.tipoContenido}">Tipo</span>
+                                </small>
+                            </div>
                         </div>
-                        <div class="dashboard-item">
-                            <div><strong>Apuntes de Diseño</strong></div>
-                            <small class="d-block text-muted">DOCX - Hace 5 días</small>
-                            <small class="d-block">Prof. Prueba 2</small>
+                        <div th:if="${archivosRecientes == null or archivosRecientes.isEmpty()}">
+                            <p class="text-muted">No hay archivos recientes.</p>
                         </div>
-                        <a class="btn btn-outline-success w-100 mt-3" th:href="@{/archivos}"> Ver todos los materiales</a>
+
+                        <a class="btn btn-outline-success w-100 mt-3" th:href="@{/archivos}">Ver todos los archivos</a>
                     </div>
                 </div>
-
                 <!-- Mensajes -->
                 <div class="col-md-4">
                     <div class="dashboard-card p-4 h-100">
@@ -495,7 +507,7 @@
             <!-- Tarjetas principales -->
             <div class="row g-4">
                 <!-- Mis clases programadas -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="dashboard-card p-4 h-100">
                         <h5 class="card-title text-success"><i class="fas fa-calendar-check"></i> Mis clases Programadas</h5>
 
@@ -519,8 +531,37 @@
                     </div>
                 </div>
 
+                <!-- Archivos Recientes -->
+                <div class="col-md-4" th:if="${rol} == 'profesor'">
+                    <div class="dashboard-card p-4 h-100">
+                        <h5 class="card-title text-success"><i class="fas fa-file-alt"></i> Archivos Recientes</h5>
+                        <div th:if="${archivosRecientes != null and !archivosRecientes.isEmpty()}">
+                            <div class="dashboard-item" th:each="archivo : ${archivosRecientes}">
+                                <div><strong th:text="${archivo.nombre}">Nombre del archivo</strong></div>
+                                <small class="d-block">
+                                    <i class="fas fa-user"></i>
+                                    <span th:text="${archivo.alumno.nombre + ' ' + archivo.alumno.apellido}">Alumno</span>
+                                </small>
+                                <small class="d-block text-muted">
+                                    <i class="fas fa-clock"></i>
+                                    <span th:text="${archivo.fechaSubida != null ? archivo.fechaSubida.format(fechaFormatter) : 'Sin fecha'}">Fecha</span>
+                                </small>
+                                <small class="d-block">
+                                    <i class="fas fa-file"></i>
+                                    <span th:text="${archivo.tipoContenido}">Tipo</span>
+                                </small>
+                            </div>
+                        </div>
+                        <div th:if="${archivosRecientes == null or archivosRecientes.isEmpty()}">
+                            <p class="text-muted">No hay archivos recientes.</p>
+                        </div>
+
+                        <a class="btn btn-outline-success w-100 mt-3" th:href="@{/archivos}">Ver todos los archivos</a>
+                    </div>
+                </div>
+
                 <!-- Especialidad elegida -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="dashboard-card p-4 h-100">
                         <h5 class="card-title text-success"><i class="fas fa-book"></i> Especialidad Elegida</h5>
                         <div class="dashboard-item">

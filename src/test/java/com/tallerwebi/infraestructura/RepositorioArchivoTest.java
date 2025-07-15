@@ -171,7 +171,7 @@ public class RepositorioArchivoTest {
 
         assertNotNull(archivos);
         assertThat(archivos.size(), equalTo(2));
-        // Verificar que están ordenados por fecha descendente
+
         assertThat(archivos.get(0).getNombre(), equalTo("archivo2.pdf"));
         assertThat(archivos.get(1).getNombre(), equalTo("archivo1.pdf"));
     }
@@ -429,7 +429,7 @@ public class RepositorioArchivoTest {
     @Test
     @Rollback
     public void cuandoNoExistenArchivosCompartidosEntreProfesorYAlumnoEntoncesRetornaListaVacia() {
-        // Crear entidades necesarias
+
         Tema tema = new Tema();
         tema.setNombre("Diseño");
         sessionFactory.getCurrentSession().save(tema);
@@ -511,7 +511,6 @@ public class RepositorioArchivoTest {
 
         assertNotNull(archivos);
         assertThat(archivos.size(), equalTo(3));
-        // Verificar orden descendente por fecha
         assertThat(archivos.get(0).getNombre(), equalTo("reciente.pdf"));
         assertThat(archivos.get(1).getNombre(), equalTo("medio.pdf"));
         assertThat(archivos.get(2).getNombre(), equalTo("antiguo.pdf"));
@@ -560,4 +559,290 @@ public class RepositorioArchivoTest {
         assertThat(archivoModificado.getNombre(), equalTo("archivo_modificado.pdf"));
         assertThat(archivoModificado.getRutaAlmacenamiento(), equalTo("/uploads/archivo_modificado.pdf"));
     }
+
+
+    @Test
+    @Rollback
+    public void dadoQueExistenArchivosRecientesCuandoSoyAlumnoEntoncesObtengoLosArchivosLimitados() {
+
+        Tema tema = new Tema();
+        tema.setNombre("Matemáticas");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Juan");
+        profesor.setApellido("Pérez");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("María");
+        alumno.setApellido("García");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        profesor.agregarAlumno(alumno);
+        sessionFactory.getCurrentSession().update(profesor);
+        sessionFactory.getCurrentSession().update(alumno);
+
+        LocalDateTime fechaBase = LocalDateTime.now().minusDays(10);
+
+        for (int i = 0; i < 5; i++) {
+            Archivo archivo = new Archivo();
+            archivo.setNombre("archivo" + i + ".pdf");
+            archivo.setTipoContenido("application/pdf");
+            archivo.setRutaAlmacenamiento("/uploads/archivo" + i + ".pdf");
+            archivo.setProfesor(profesor);
+            archivo.setAlumno(alumno);
+            archivo.setFechaSubida(fechaBase.plusDays(i));
+            sessionFactory.getCurrentSession().save(archivo);
+        }
+        List<Archivo> archivosRecientes = repositorioArchivo.obtenerArchivosRecientes(alumno.getId(), "ALUMNO", 3);
+
+        assertNotNull(archivosRecientes);
+        assertThat(archivosRecientes.size(), equalTo(3));
+        assertThat(archivosRecientes.get(0).getNombre(), equalTo("archivo4.pdf"));
+        assertThat(archivosRecientes.get(1).getNombre(), equalTo("archivo3.pdf"));
+        assertThat(archivosRecientes.get(2).getNombre(), equalTo("archivo2.pdf"));
+    }
+
+    @Test
+    @Rollback
+    public void dadoQueExistenArchivosRecientesCuandoSoyProfesorEntoncesObtengoLosArchivosLimitados() {
+        Tema tema = new Tema();
+        tema.setNombre("Física");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Carlos");
+        profesor.setApellido("López");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("Ana");
+        alumno.setApellido("Martínez");
+        sessionFactory.getCurrentSession().save(alumno);
+        LocalDateTime fechaBase = LocalDateTime.now().minusDays(7);
+
+        for (int i = 0; i < 4; i++) {
+            Archivo archivo = new Archivo();
+            archivo.setNombre("tarea" + i + ".docx");
+            archivo.setTipoContenido("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            archivo.setRutaAlmacenamiento("/uploads/tarea" + i + ".docx");
+            archivo.setProfesor(profesor);
+            archivo.setAlumno(alumno);
+            archivo.setFechaSubida(fechaBase.plusDays(i));
+            sessionFactory.getCurrentSession().save(archivo);
+        }
+
+        List<Archivo> archivosRecientes = repositorioArchivo.obtenerArchivosRecientes(profesor.getId(), "PROFESOR", 2);
+
+        assertNotNull(archivosRecientes);
+        assertThat(archivosRecientes.size(), equalTo(2));
+        assertThat(archivosRecientes.get(0).getNombre(), equalTo("tarea3.docx"));
+        assertThat(archivosRecientes.get(1).getNombre(), equalTo("tarea2.docx"));
+    }
+
+    @Test
+    @Rollback
+    public void cuandoAlumnoNoTieneArchivosRecientesEntoncesRetornaListaVacia() {
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("Pedro");
+        alumno.setApellido("Rodríguez");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        List<Archivo> archivosRecientes = repositorioArchivo.obtenerArchivosRecientes(alumno.getId(), "ALUMNO", 5);
+
+        assertNotNull(archivosRecientes);
+        assertTrue(archivosRecientes.isEmpty());
+    }
+
+    @Test
+    @Rollback
+    public void cuandoProfesorNoTieneArchivosRecientesEntoncesRetornaListaVacia() {
+        Tema tema = new Tema();
+        tema.setNombre("Química");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Luis");
+        profesor.setApellido("González");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        List<Archivo> archivosRecientes = repositorioArchivo.obtenerArchivosRecientes(profesor.getId(), "PROFESOR", 3);
+
+        assertNotNull(archivosRecientes);
+        assertTrue(archivosRecientes.isEmpty());
+    }
+
+    @Test
+    @Rollback
+    public void cuandoSeEspecificaRolInvalidoEntoncesLanzaExcepcion() {
+        Tema tema = new Tema();
+        tema.setNombre("Historia");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Roberto");
+        profesor.setApellido("Fernández");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            repositorioArchivo.obtenerArchivosRecientes(profesor.getId(), "ADMINISTRADOR", 5);
+        });
+
+        assertThat(exception.getMessage(), containsString("Tipo de usuario no válido"));
+    }
+
+    @Test
+    @Rollback
+    public void dadoQueExistenMuchosArchivosCuandoSolicitoLimiteEspecificoEntoncesRetornaExactamenteLaCantidadSolicitada() {
+        Tema tema = new Tema();
+        tema.setNombre("Biología");
+        sessionFactory.getCurrentSession().save(tema);
+
+        Profesor profesor = new Profesor();
+        profesor.setEmail("profesor@test.com");
+        profesor.setPassword("123456");
+        profesor.setNombre("Elena");
+        profesor.setApellido("Vásquez");
+        profesor.setTema(tema);
+        sessionFactory.getCurrentSession().save(profesor);
+
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("Diego");
+        alumno.setApellido("Morales");
+        sessionFactory.getCurrentSession().save(alumno);
+
+        profesor.agregarAlumno(alumno);
+        sessionFactory.getCurrentSession().update(profesor);
+        sessionFactory.getCurrentSession().update(alumno);
+
+        LocalDateTime fechaBase = LocalDateTime.now().minusDays(15);
+
+        for (int i = 0; i < 10; i++) {
+            Archivo archivo = new Archivo();
+            archivo.setNombre("estudio" + i + ".pdf");
+            archivo.setTipoContenido("application/pdf");
+            archivo.setRutaAlmacenamiento("/uploads/estudio" + i + ".pdf");
+            archivo.setProfesor(profesor);
+            archivo.setAlumno(alumno);
+            archivo.setFechaSubida(fechaBase.plusDays(i));
+            sessionFactory.getCurrentSession().save(archivo);
+        }
+
+
+        List<Archivo> archivosRecientes = repositorioArchivo.obtenerArchivosRecientes(alumno.getId(), "ALUMNO", 1);
+
+        assertNotNull(archivosRecientes);
+        assertThat(archivosRecientes.size(), equalTo(1));
+        assertThat(archivosRecientes.get(0).getNombre(), equalTo("estudio9.pdf"));
+    }
+
+    @Test
+    @Rollback
+    public void dadoQueAlumnoTieneArchivosCompartidosPorVariosProfesoresCuandoObtengoArchivosRecientesEntoncesRetornaArchivosDeTodosLosProfesores() {
+
+        Tema tema1 = new Tema();
+        tema1.setNombre("Matemáticas");
+        sessionFactory.getCurrentSession().save(tema1);
+
+        Tema tema2 = new Tema();
+        tema2.setNombre("Física");
+        sessionFactory.getCurrentSession().save(tema2);
+
+        Profesor profesor1 = new Profesor();
+        profesor1.setEmail("profesor1@test.com");
+        profesor1.setPassword("123456");
+        profesor1.setNombre("María");
+        profesor1.setApellido("Rodríguez");
+        profesor1.setTema(tema1);
+        sessionFactory.getCurrentSession().save(profesor1);
+
+        Profesor profesor2 = new Profesor();
+        profesor2.setEmail("profesor2@test.com");
+        profesor2.setPassword("123456");
+        profesor2.setNombre("Carlos");
+        profesor2.setApellido("López");
+        profesor2.setTema(tema2);
+        sessionFactory.getCurrentSession().save(profesor2);
+
+        Alumno alumno = new Alumno();
+        alumno.setEmail("alumno@test.com");
+        alumno.setPassword("123456");
+        alumno.setNombre("José");
+        alumno.setApellido("Pérez");
+        sessionFactory.getCurrentSession().save(alumno);
+
+
+        profesor1.agregarAlumno(alumno);
+        profesor2.agregarAlumno(alumno);
+        sessionFactory.getCurrentSession().update(profesor1);
+        sessionFactory.getCurrentSession().update(profesor2);
+        sessionFactory.getCurrentSession().update(alumno);
+
+        LocalDateTime fechaBase = LocalDateTime.now().minusDays(5);
+
+        Archivo archivo1 = new Archivo();
+        archivo1.setNombre("matematicas.pdf");
+        archivo1.setTipoContenido("application/pdf");
+        archivo1.setRutaAlmacenamiento("/uploads/matematicas.pdf");
+        archivo1.setProfesor(profesor1);
+        archivo1.setAlumno(alumno);
+        archivo1.setFechaSubida(fechaBase.plusDays(1));
+        sessionFactory.getCurrentSession().save(archivo1);
+
+        Archivo archivo2 = new Archivo();
+        archivo2.setNombre("fisica.pdf");
+        archivo2.setTipoContenido("application/pdf");
+        archivo2.setRutaAlmacenamiento("/uploads/fisica.pdf");
+        archivo2.setProfesor(profesor2);
+        archivo2.setAlumno(alumno);
+        archivo2.setFechaSubida(fechaBase.plusDays(2));
+        sessionFactory.getCurrentSession().save(archivo2);
+
+        Archivo archivo3 = new Archivo();
+        archivo3.setNombre("algebra.pdf");
+        archivo3.setTipoContenido("application/pdf");
+        archivo3.setRutaAlmacenamiento("/uploads/algebra.pdf");
+        archivo3.setProfesor(profesor1);
+        archivo3.setAlumno(alumno);
+        archivo3.setFechaSubida(fechaBase.plusDays(3));
+        sessionFactory.getCurrentSession().save(archivo3);
+
+        List<Archivo> archivosRecientes = repositorioArchivo.obtenerArchivosRecientes(alumno.getId(), "ALUMNO", 5);
+
+        assertNotNull(archivosRecientes);
+        assertThat(archivosRecientes.size(), equalTo(3));
+
+        assertThat(archivosRecientes.get(0).getNombre(), equalTo("algebra.pdf"));
+        assertThat(archivosRecientes.get(1).getNombre(), equalTo("fisica.pdf"));
+        assertThat(archivosRecientes.get(2).getNombre(), equalTo("matematicas.pdf"));
+
+        boolean tieneArchivosProfesor1 = archivosRecientes.stream()
+                .anyMatch(a -> a.getProfesor().getId().equals(profesor1.getId()));
+        boolean tieneArchivosProfesor2 = archivosRecientes.stream()
+                .anyMatch(a -> a.getProfesor().getId().equals(profesor2.getId()));
+
+        assertTrue(tieneArchivosProfesor1);
+        assertTrue(tieneArchivosProfesor2);
+    }
+
 }

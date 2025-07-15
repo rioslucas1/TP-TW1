@@ -15,4 +15,5 @@ public interface ServicioArchivo {
     List<Archivo> obtenerArchivosCompartidosEntreProfesorYAlumno(Long profesorId, Long alumnoId);
     List<Archivo> buscarArchivosAlumno(Long alumnoId, String busqueda);
     List<Archivo> buscarArchivosProfesor(Long profesorId, String busqueda);
+    List<Archivo> obtenerArchivosRecientes(Long usuarioId, String rol, int limite);
 }

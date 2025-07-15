@@ -1,10 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.*;
-import com.tallerwebi.dominio.servicios.ServicioDisponibilidadProfesor;
-import com.tallerwebi.dominio.servicios.ServicioLogin;
-import com.tallerwebi.dominio.servicios.ServicioReservaAlumno;
-import com.tallerwebi.dominio.servicios.ServicioTema;
+import com.tallerwebi.dominio.servicios.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,6 +33,7 @@ public class ControladorReservaAlumnoTest {
 	private HttpServletRequest requestMock;
 	private HttpSession sessionMock;
 	private ServicioLogin servicioLoginMock;
+	private ServicioArchivo servicioArchivoMock;
 	private ServicioTema servicioTemaMock;
 	private EstadoDisponibilidad estadoDisponibilidad;
 	private static LocalDate diaLunes = LocalDate.of(2025, 6, 9);
@@ -74,7 +72,7 @@ public class ControladorReservaAlumnoTest {
 		servicioReservaAlumnoMock = mock(ServicioReservaAlumno.class);
 
 		when(servicioReservaAlumnoMock.estaSuscritoAProfesor(1L, emailProfesor)).thenReturn(true);
-		controladorLogin = new ControladorLogin(servicioLoginMock, servicioTemaMock);
+		controladorLogin = new ControladorLogin(servicioLoginMock, servicioTemaMock, servicioArchivoMock);
 
 		servicioDisponibilidadProfesorMock = mock(ServicioDisponibilidadProfesor.class);
 		controladorReservaAlumno = new ControladorReservaAlumno(servicioReservaAlumnoMock);

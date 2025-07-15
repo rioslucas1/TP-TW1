@@ -114,5 +114,33 @@ public class RepositorioArchivoImpl implements RepositorioArchivo {
         query.setParameter("busqueda", "%" + busqueda + "%");
         return query.getResultList();
     }
+
+    @Override
+    public List<Archivo> obtenerArchivosRecientes(Long usuarioId, String rol, int limite) {
+        final Session session = sessionFactory.getCurrentSession();
+        String hql;
+
+        if ("ALUMNO".equalsIgnoreCase(rol)) {
+            hql = "SELECT a FROM Archivo a " +
+                    "JOIN a.profesor p " +
+                    "JOIN a.alumno al " +
+                    "JOIN al.profesores ap " +
+                    "WHERE al.id = :usuarioId AND ap.id = p.id " +
+                    "ORDER BY a.fechaSubida DESC";
+        } else if ("PROFESOR".equalsIgnoreCase(rol)) {
+            hql = "FROM Archivo a " +
+                    "WHERE a.profesor.id = :usuarioId " +
+                    "ORDER BY a.fechaSubida DESC";
+        } else {
+            throw new IllegalArgumentException("Tipo de usuario no válido: " + rol);
+        }
+
+        Query query = session.createQuery(hql, Archivo.class);
+        query.setParameter("usuarioId", usuarioId);
+        query.setMaxResults(limite);
+
+        return query.getResultList();
+    }
+
 }
 

@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -230,6 +231,41 @@ public class ServicioArchivoImpl implements ServicioArchivo {
     @Override
     public List<Archivo> buscarArchivosProfesor(Long profesorId, String busqueda) {
         return repositorioArchivo.buscarArchivosProfesor(profesorId, busqueda);
+    }
+
+    @Override
+    public List<Archivo> obtenerArchivosRecientes(Long usuarioId, String rol, int limite) {
+
+        if (usuarioId == null || usuarioId <= 0) {
+            throw new IllegalArgumentException("ID de usuario inválido");
+        }
+
+        if (rol == null || rol.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tipo de usuario no puede estar vacío");
+        }
+
+        if (limite <= 0) {
+            limite = 10;
+        }
+        Usuario usuario = repositorioUsuario.buscarPorId(usuarioId);
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId);
+        }
+        String tipoUsuarioReal = usuario.getRol();
+        if (!rol.equalsIgnoreCase(tipoUsuarioReal)) {
+            throw new IllegalArgumentException("Tipo de usuario no coincide con el usuario real");
+        }
+
+        List<Archivo> archivos = repositorioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+        List<Archivo> archivosVerificados = new ArrayList<>();
+        for (Archivo archivo : archivos) {
+            Archivo archivoRecuperado = recuperarArchivo(archivo);
+            if (archivoRecuperado != null) {
+                archivosVerificados.add(archivoRecuperado);
+            }
+        }
+
+        return archivosVerificados;
     }
 
 }

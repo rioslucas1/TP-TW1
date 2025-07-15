@@ -271,7 +271,7 @@ public class ServicioArchivoTest {
     public void subirArchivoConArchivoMuyGrandeDeberiaLanzarIOException() {
         Long profesorId = 1L;
         Long alumnoId = 1L;
-        when(multipartFileMock.getSize()).thenReturn(52428801L); // 50MB + 1 byte
+        when(multipartFileMock.getSize()).thenReturn(52428801L);
 
         IOException exception = assertThrows(IOException.class, () -> {
             servicioArchivo.subirArchivo(multipartFileMock, profesorId, alumnoId);
@@ -560,4 +560,242 @@ public class ServicioArchivoTest {
         verify(repositorioUsuarioMock, times(1)).buscarPorId(alumnoId);
         verify(repositorioArchivoMock, times(1)).guardarArchivo(any(Archivo.class));
     }
+
+
+
+    @Test
+    public void obtenerArchivosRecientesConDatosValidosDeberiaRetornarListaDeArchivos() {
+        Long usuarioId = 1L;
+        String rol = "ALUMNO";
+        int limite = 5;
+
+
+        when(alumnoMock.getRol()).thenReturn("ALUMNO");
+
+
+        Archivo archivo1 = mock(Archivo.class);
+        Archivo archivo2 = mock(Archivo.class);
+        List<Archivo> archivosEsperados = Arrays.asList(archivo1, archivo2);
+
+        when(archivo1.getRutaAlmacenamiento()).thenReturn(tempFiles.get(0).toString());
+        when(archivo2.getRutaAlmacenamiento()).thenReturn(tempFiles.get(0).toString());
+
+        when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(alumnoMock);
+        when(repositorioArchivoMock.obtenerArchivosRecientes(usuarioId, rol, limite)).thenReturn(archivosEsperados);
+
+        List<Archivo> archivosObtenidos = servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+
+        assertNotNull(archivosObtenidos);
+        assertEquals(2, archivosObtenidos.size());
+        verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+        verify(repositorioArchivoMock, times(1)).obtenerArchivosRecientes(usuarioId, rol, limite);
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConProfesorValidoDeberiaRetornarListaDeArchivos() {
+        Long usuarioId = 1L;
+        String rol = "PROFESOR";
+        int limite = 3;
+
+
+        when(profesorMock.getRol()).thenReturn("PROFESOR");
+
+        Archivo archivo1 = mock(Archivo.class);
+        List<Archivo> archivosEsperados = Arrays.asList(archivo1);
+
+        when(archivo1.getRutaAlmacenamiento()).thenReturn(tempFiles.get(0).toString());
+
+        when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(profesorMock);
+        when(repositorioArchivoMock.obtenerArchivosRecientes(usuarioId, rol, limite)).thenReturn(archivosEsperados);
+
+        List<Archivo> archivosObtenidos = servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+
+        assertNotNull(archivosObtenidos);
+        assertEquals(1, archivosObtenidos.size());
+        verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+        verify(repositorioArchivoMock, times(1)).obtenerArchivosRecientes(usuarioId, rol, limite);
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConUsuarioIdNuloDeberiaLanzarIllegalArgumentException() {
+        Long usuarioId = null;
+        String rol = "ALUMNO";
+        int limite = 5;
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+        });
+
+        assertTrue(exception.getMessage().contains("ID de usuario inválido"));
+        verify(repositorioUsuarioMock, never()).buscarPorId(any());
+        verify(repositorioArchivoMock, never()).obtenerArchivosRecientes(any(), any(), anyInt());
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConUsuarioIdCeroDeberiaLanzarIllegalArgumentException() {
+        Long usuarioId = 0L;
+        String rol = "ALUMNO";
+        int limite = 5;
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+        });
+
+        assertTrue(exception.getMessage().contains("ID de usuario inválido"));
+        verify(repositorioUsuarioMock, never()).buscarPorId(any());
+        verify(repositorioArchivoMock, never()).obtenerArchivosRecientes(any(), any(), anyInt());
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConUsuarioIdNegativoDeberiaLanzarIllegalArgumentException() {
+        Long usuarioId = -1L;
+        String rol = "ALUMNO";
+        int limite = 5;
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+        });
+
+        assertTrue(exception.getMessage().contains("ID de usuario inválido"));
+        verify(repositorioUsuarioMock, never()).buscarPorId(any());
+        verify(repositorioArchivoMock, never()).obtenerArchivosRecientes(any(), any(), anyInt());
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConRolNuloDeberiaLanzarIllegalArgumentException() {
+        Long usuarioId = 1L;
+        String rol = null;
+        int limite = 5;
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+        });
+
+        assertTrue(exception.getMessage().contains("Tipo de usuario no puede estar vacío"));
+        verify(repositorioUsuarioMock, never()).buscarPorId(any());
+        verify(repositorioArchivoMock, never()).obtenerArchivosRecientes(any(), any(), anyInt());
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConRolVacioDeberiaLanzarIllegalArgumentException() {
+        Long usuarioId = 1L;
+        String rol = "   ";
+        int limite = 5;
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+        });
+
+        assertTrue(exception.getMessage().contains("Tipo de usuario no puede estar vacío"));
+        verify(repositorioUsuarioMock, never()).buscarPorId(any());
+        verify(repositorioArchivoMock, never()).obtenerArchivosRecientes(any(), any(), anyInt());
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConLimiteCeroDeberiaUsarLimitePorDefecto() {
+        Long usuarioId = 1L;
+        String rol = "ALUMNO";
+        int limite = 0;
+
+        when(alumnoMock.getRol()).thenReturn("ALUMNO");
+        when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(alumnoMock);
+        when(repositorioArchivoMock.obtenerArchivosRecientes(usuarioId, rol, 10)).thenReturn(Arrays.asList());
+
+        List<Archivo> archivosObtenidos = servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+
+        assertNotNull(archivosObtenidos);
+        verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+        verify(repositorioArchivoMock, times(1)).obtenerArchivosRecientes(usuarioId, rol, 10);
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConLimiteNegativoDeberiaUsarLimitePorDefecto() {
+        Long usuarioId = 1L;
+        String rol = "ALUMNO";
+        int limite = -5;
+
+        when(alumnoMock.getRol()).thenReturn("ALUMNO");
+        when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(alumnoMock);
+        when(repositorioArchivoMock.obtenerArchivosRecientes(usuarioId, rol, 10)).thenReturn(Arrays.asList());
+
+        List<Archivo> archivosObtenidos = servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+
+        assertNotNull(archivosObtenidos);
+        verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+        verify(repositorioArchivoMock, times(1)).obtenerArchivosRecientes(usuarioId, rol, 10);
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConUsuarioInexistenteDeberiaLanzarIllegalArgumentException() {
+        Long usuarioId = 999L;
+        String rol = "ALUMNO";
+        int limite = 5;
+
+        when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(null);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+        });
+
+        assertTrue(exception.getMessage().contains("Usuario no encontrado con ID: " + usuarioId));
+        verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+        verify(repositorioArchivoMock, never()).obtenerArchivosRecientes(any(), any(), anyInt());
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConRolNoCoincidenteDeberiaLanzarIllegalArgumentException() {
+        Long usuarioId = 1L;
+        String rol = "PROFESOR";
+        int limite = 5;
+
+        when(alumnoMock.getRol()).thenReturn("ALUMNO");
+        when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(alumnoMock);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+        });
+
+        assertTrue(exception.getMessage().contains("Tipo de usuario no coincide con el usuario real"));
+        verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+        verify(repositorioArchivoMock, never()).obtenerArchivosRecientes(any(), any(), anyInt());
+    }
+
+    @Test
+    public void obtenerArchivosRecientesConRolEnMayusculasDeberiaFuncionar() {
+        Long usuarioId = 1L;
+        String rol = "ALUMNO";
+        int limite = 5;
+
+        when(alumnoMock.getRol()).thenReturn("alumno");
+        when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(alumnoMock);
+        when(repositorioArchivoMock.obtenerArchivosRecientes(usuarioId, rol, limite)).thenReturn(Arrays.asList());
+
+        List<Archivo> archivosObtenidos = servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+
+        assertNotNull(archivosObtenidos);
+        verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+        verify(repositorioArchivoMock, times(1)).obtenerArchivosRecientes(usuarioId, rol, limite);
+    }
+
+    @Test
+    public void obtenerArchivosRecientesSinArchivosDeberiaRetornarListaVacia() {
+        Long usuarioId = 1L;
+        String rol = "ALUMNO";
+        int limite = 5;
+
+        when(alumnoMock.getRol()).thenReturn("ALUMNO");
+        when(repositorioUsuarioMock.buscarPorId(usuarioId)).thenReturn(alumnoMock);
+        when(repositorioArchivoMock.obtenerArchivosRecientes(usuarioId, rol, limite)).thenReturn(Arrays.asList());
+
+        List<Archivo> archivosObtenidos = servicioArchivo.obtenerArchivosRecientes(usuarioId, rol, limite);
+
+        assertNotNull(archivosObtenidos);
+        assertEquals(0, archivosObtenidos.size());
+        verify(repositorioUsuarioMock, times(1)).buscarPorId(usuarioId);
+        verify(repositorioArchivoMock, times(1)).obtenerArchivosRecientes(usuarioId, rol, limite);
+    }
+
+
+
+
 }

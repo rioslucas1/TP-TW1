@@ -1,11 +1,9 @@
 package com.tallerwebi.presentacion;
 
 
-import com.tallerwebi.dominio.entidades.Alumno;
-import com.tallerwebi.dominio.entidades.Clase;
-import com.tallerwebi.dominio.entidades.Profesor;
-import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.servicios.ServicioArchivo;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.dominio.servicios.ServicioTema;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,11 +27,13 @@ public class ControladorLogin {
 
     private ServicioLogin servicioLogin;
     private ServicioTema servicioTema;
+    private ServicioArchivo servicioArchivo;
 
     @Autowired
-    public ControladorLogin(ServicioLogin servicioLogin, ServicioTema servicioTema){
+    public ControladorLogin(ServicioLogin servicioLogin, ServicioTema servicioTema, ServicioArchivo servicioArchivo){
         this.servicioLogin = servicioLogin;
         this.servicioTema = servicioTema;
+        this.servicioArchivo = servicioArchivo;
     }
 
     @RequestMapping("/login")
@@ -160,8 +161,14 @@ public class ControladorLogin {
                         .limit(5)
                         .collect(Collectors.toList());
                 modelo.put("clasesProfesor", proximasClases);
-
                 modelo.put("clasesReservadas", proximasClases);
+
+
+                List<Archivo> archivosRecientes = servicioArchivo.obtenerArchivosRecientes(profesor.getId(), "profesor", 5);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                modelo.put("archivosRecientes", archivosRecientes);
+                modelo.put("fechaFormatter", formatter);
+
             } else if(rol.equals("alumno")){
                 Alumno alumno = (Alumno) usuario;
                 modelo.put("listaProfesores", servicioLogin.obtenerProfesoresDeAlumno(alumno.getId()));
@@ -169,10 +176,13 @@ public class ControladorLogin {
                 List<Clase> proximasClases = todasLasClases.stream()
                         .limit(5)
                         .collect(Collectors.toList());
-
                 modelo.put("clasesReservadas", proximasClases);
-            }
 
+                List<Archivo> archivosRecientes = servicioArchivo.obtenerArchivosRecientes(alumno.getId(), "alumno", 5);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                modelo.put("archivosRecientes", archivosRecientes);
+                modelo.put("fechaFormatter", formatter);
+            }
         }
 
         return new ModelAndView("home", modelo);

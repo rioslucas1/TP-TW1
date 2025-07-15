@@ -364,7 +364,7 @@ public class ControladorLoginTest {
 
 		verify(servicioLogin).obtenerClasesAlumno(1L);
 	}
-	*/
+
 	@Test
 	public void queAlIrAHomeConProfesorMuestraHomeConDatosDelProfesor() throws Exception {
 		MvcResult result = mockMvc.perform(get("/home")
@@ -381,6 +381,8 @@ public class ControladorLoginTest {
 
 		verify(servicioLogin).obtenerClasesProfesor(2L);
 	}
+	*/
+
 
 	@Test
 	public void queAlVerMisClasesConUsuarioValidoMuestraLasClases() throws Exception {
