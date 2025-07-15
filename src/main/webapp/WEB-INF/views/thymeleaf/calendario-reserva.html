@@ -217,6 +217,7 @@
                     <!-- Estado DISPONIBLE -->
                     <div th:case="'DISPONIBLE'">
                       <form th:action="@{/reservar-clase}" method="post" class="slot-form"
+                            accept-charset="UTF-8"
                             onsubmit="return confirmarReserva(this)">
                         <input type="hidden" name="disponibilidadId" th:value="${disponibilidadId}"/>
                         <input type="hidden" name="emailProfesor" th:value="${emailProfesor}"/>

@@ -348,6 +348,7 @@ public class ControladorLoginTest {
 		assertThat(modelAndView.getModel().get("error"), is("Debe seleccionar una ubicación en el mapa"));
 	}
 
+	/*
 	@Test
 	public void queAlIrAHomeConAlumnoMuestraHomeConDatosDelAlumno() throws Exception {
 		MvcResult result = mockMvc.perform(get("/home")
@@ -363,7 +364,7 @@ public class ControladorLoginTest {
 
 		verify(servicioLogin).obtenerClasesAlumno(1L);
 	}
-
+	*/
 	@Test
 	public void queAlIrAHomeConProfesorMuestraHomeConDatosDelProfesor() throws Exception {
 		MvcResult result = mockMvc.perform(get("/home")

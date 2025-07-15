@@ -5,6 +5,7 @@ import com.tallerwebi.dominio.servicios.*;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,9 @@ import static org.mockito.Mockito.*;
 
         @BeforeEach
         public void init() {
+
+
+
             repositorioUsuarioMock = mock(RepositorioUsuario.class);
             servicioFeedbackMock = mock(ServicioFeedback.class);
             servicioExperienciaMock = mock(ServicioExperiencia.class);
@@ -55,6 +59,7 @@ import static org.mockito.Mockito.*;
                     servicioTemaMock,
                     servicioSuscripcionMock
             );
+
 
             requestMock = mock(HttpServletRequest.class);
             sessionMock = mock(HttpSession.class);

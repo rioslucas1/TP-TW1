@@ -48,6 +48,8 @@ public class ControladorDisponibilidadTest {
 
 	@BeforeEach
 	public void init(){
+
+
 		datosLoginMock = new DatosLogin("test@unlam.com", "123");
 		usuarioProfesorMock = mock(Profesor.class);
 		when(usuarioProfesorMock.getEmail()).thenReturn("profesor@test.com");
@@ -60,6 +62,8 @@ public class ControladorDisponibilidadTest {
 		when(requestMock.getSession()).thenReturn(sessionMock);
 		servicioDisponibilidadProfesorMock = mock(ServicioDisponibilidadProfesor.class);
 		controladorDisponibilidad = new ControladorDisponibilidad(servicioDisponibilidadProfesorMock);
+
+
 	}
 
     @Test
