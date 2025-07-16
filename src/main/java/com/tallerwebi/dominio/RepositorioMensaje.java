@@ -7,4 +7,5 @@ import java.util.List;
 public interface RepositorioMensaje {
     void guardar(Mensaje mensaje);
     List<Mensaje> obtenerConversacion(String emisor, String receptor);
+    List<Mensaje> buscarTodosLosMensajesDeUsuario(Long usuarioId);
 }

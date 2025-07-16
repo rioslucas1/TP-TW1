@@ -30,4 +30,14 @@ public class RepositorioMensajeImpl implements RepositorioMensaje {
                 .setParameter("profesorNombre", profesorNombre)
                 .getResultList();
     }
+
+    @Override
+    public List<Mensaje> buscarTodosLosMensajesDeUsuario(Long usuarioId) {
+        return entityManager.createQuery(
+                        "FROM Mensaje m " +
+                                "WHERE m.alumno.id = :usuarioId OR m.profesor.id = :usuarioId " +
+                                "ORDER BY m.fecha DESC", Mensaje.class)
+                .setParameter("usuarioId", usuarioId)
+                .getResultList();
+    }
 }

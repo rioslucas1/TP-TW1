@@ -449,17 +449,22 @@
                 <!-- Mensajes -->
                 <div class="col-md-4">
                     <div class="dashboard-card p-4 h-100">
-                        <h5 class="card-title text-success"><i class="fas fa-comments"></i> Mensajes</h5>
-                        <div class="dashboard-item">
-                            <div><strong>Prof. Prueba 1</strong></div>
-                            <small class="d-block">Mensaje de prueba 1</small>
-                            <small class="d-block text-muted">Hace 3 horas</small>
+                        <h5 class="card-title text-success"><i class="fas fa-comments"></i> Mensajes Recientes</h5>
+
+                        <!-- Si hay mensajes recientes -->
+                        <div th:if="${mensajesRecientes != null and !mensajesRecientes.isEmpty()}">
+                            <div class="dashboard-item" th:each="mensaje : ${mensajesRecientes}">
+                                <div><strong th:text="${mensaje.profesor.nombre + ' ' + mensaje.profesor.apellido}">Profesor</strong></div>
+                                <small class="d-block" th:text="${#strings.abbreviate(mensaje.contenido, 35)}">Contenido del mensaje...</small>
+                                <small class="d-block text-muted" th:text="${mensaje.getFechaFormateada()}">Fecha del mensaje</small>
+                            </div>
                         </div>
-                        <div class="dashboard-item">
-                            <div><strong>Prof. Prueba 2</strong></div>
-                            <small class="d-block">Mensaje de prueba 2…</small>
-                            <small class="d-block text-muted">Ayer</small>
+
+                        <!-- Si NO hay mensajes recientes -->
+                        <div th:if="${mensajesRecientes == null or mensajesRecientes.isEmpty()}">
+                            <p class="text-muted">No tienes mensajes recientes.</p>
                         </div>
+
                         <a class="btn btn-outline-success w-100 mt-3" th:href="@{/chat}">Ver todos los mensajes</a>
                     </div>
                 </div>

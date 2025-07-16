@@ -6,6 +6,7 @@ import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.servicios.ServicioArchivo;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.dominio.servicios.ServicioTema;
+import com.tallerwebi.dominio.servicios.ServicioChat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -28,12 +29,14 @@ public class ControladorLogin {
     private ServicioLogin servicioLogin;
     private ServicioTema servicioTema;
     private ServicioArchivo servicioArchivo;
+    private ServicioChat servicioChat;
 
     @Autowired
-    public ControladorLogin(ServicioLogin servicioLogin, ServicioTema servicioTema, ServicioArchivo servicioArchivo){
+    public ControladorLogin(ServicioLogin servicioLogin, ServicioTema servicioTema, ServicioArchivo servicioArchivo, ServicioChat servicioChat){
         this.servicioLogin = servicioLogin;
         this.servicioTema = servicioTema;
         this.servicioArchivo = servicioArchivo;
+        this.servicioChat = servicioChat;
     }
 
     @RequestMapping("/login")
@@ -153,6 +156,7 @@ public class ControladorLogin {
             modelo.put("nombreUsuario", usuario.getNombre());
             modelo.put("rol", rol);
 
+
             if(rol.equals("profesor")){
                 Profesor profesor = (Profesor) usuario;
                 modelo.put("temaProfesor", profesor.getTema());
@@ -178,10 +182,15 @@ public class ControladorLogin {
                         .collect(Collectors.toList());
                 modelo.put("clasesReservadas", proximasClases);
 
+
+
                 List<Archivo> archivosRecientes = servicioArchivo.obtenerArchivosRecientes(alumno.getId(), "alumno", 5);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
                 modelo.put("archivosRecientes", archivosRecientes);
                 modelo.put("fechaFormatter", formatter);
+
+                List<Mensaje> mensajesRecientes = servicioChat.obtenerUltimasConversaciones(usuario, 3); // Limite de 3 mensajes
+                modelo.put("mensajesRecientes", mensajesRecientes);
             }
         }
 

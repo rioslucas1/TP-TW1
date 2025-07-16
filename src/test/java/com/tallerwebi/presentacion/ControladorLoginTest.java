@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.servicios.ServicioArchivo;
+import com.tallerwebi.dominio.servicios.ServicioChat;
 import com.tallerwebi.dominio.servicios.ServicioTema;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
@@ -35,6 +36,7 @@ public class ControladorLoginTest {
 	private ServicioLogin servicioLoginMock;
 	private ServicioTema servicioTemaMock;
 	private ServicioArchivo servicioArchivoMock;
+	private ServicioChat servicioChatMock;
 
 
 	@BeforeEach
@@ -70,7 +72,8 @@ public class ControladorLoginTest {
 		servicioLoginMock = mock(ServicioLogin.class);
 		servicioTemaMock = mock(ServicioTema.class);
 		servicioArchivoMock = mock(ServicioArchivo.class);
-		controladorLogin = new ControladorLogin(servicioLoginMock, servicioTemaMock, servicioArchivoMock);
+		servicioChatMock = mock(ServicioChat.class);
+		controladorLogin = new ControladorLogin(servicioLoginMock, servicioTemaMock, servicioArchivoMock, servicioChatMock);
 	}
 
 	@Test
@@ -242,6 +245,8 @@ public class ControladorLoginTest {
 				new Clase(profesorMock, "Miércoles", "14:00")
 		);
 		when(servicioLoginMock.obtenerClasesProfesor(profesorId)).thenReturn(clasesProfesor);
+
+
 		ModelAndView modelAndView = controladorLogin.irAHome(requestMock);
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("home"));
 		assertThat(modelAndView.getModel().get("rol").toString(), equalToIgnoringCase("profesor"));

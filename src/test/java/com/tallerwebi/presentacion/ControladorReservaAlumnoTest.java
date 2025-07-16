@@ -35,6 +35,7 @@ public class ControladorReservaAlumnoTest {
 	private ServicioLogin servicioLoginMock;
 	private ServicioArchivo servicioArchivoMock;
 	private ServicioTema servicioTemaMock;
+	private ServicioChat servicioChatMock;
 	private EstadoDisponibilidad estadoDisponibilidad;
 	private static LocalDate diaLunes = LocalDate.of(2025, 6, 9);
 	private static LocalDate diaMartes = LocalDate.of(2025, 6, 10);
@@ -70,9 +71,11 @@ public class ControladorReservaAlumnoTest {
 		servicioLoginMock = mock(ServicioLogin.class);
 		servicioTemaMock = mock(ServicioTema.class);
 		servicioReservaAlumnoMock = mock(ServicioReservaAlumno.class);
+		servicioArchivoMock = mock(ServicioArchivo.class); // AÑADIDO
+		servicioChatMock = mock(ServicioChat.class);
 
 		when(servicioReservaAlumnoMock.estaSuscritoAProfesor(1L, emailProfesor)).thenReturn(true);
-		controladorLogin = new ControladorLogin(servicioLoginMock, servicioTemaMock, servicioArchivoMock);
+		controladorLogin = new ControladorLogin(servicioLoginMock, servicioTemaMock, servicioArchivoMock, servicioChatMock);
 
 		servicioDisponibilidadProfesorMock = mock(ServicioDisponibilidadProfesor.class);
 		controladorReservaAlumno = new ControladorReservaAlumno(servicioReservaAlumnoMock);
