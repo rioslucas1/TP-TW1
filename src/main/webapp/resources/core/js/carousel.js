@@ -1,4 +1,3 @@
-// Carousel functionality
 class Carousel {
     constructor(trackId, prevBtnId, nextBtnId, dotsId) {
         this.track = document.getElementById(trackId);

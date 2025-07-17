@@ -35,25 +35,39 @@
                     <span class="sidebar-menu-text">Dashboard</span>
                 </a>
             </li>
-            <li class="sidebar-menu-item">
+
+            <!-- Historial de clases para alumno -->
+            <li class="sidebar-menu-item" th:if="${rol == 'alumno'}">
                 <a th:href="@{/mis-clases}" class="sidebar-menu-link">
                     <i class="fas fa-calendar sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Historial de clases</span>
                 </a>
             </li>
+
+            <!-- Historial de clases para profesor -->
+            <li class="sidebar-menu-item" th:if="${rol == 'profesor'}">
+                <a th:href="@{/profesor/todas-mis-clases}" class="sidebar-menu-link">
+                    <i class="fas fa-calendar sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Historial de clases</span>
+                </a>
+            </li>
+
             <li class="sidebar-menu-item">
                 <a th:href="@{/chat}" class="sidebar-menu-link">
                     <i class="fas fa-comments sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Mensajes</span>
                 </a>
             </li>
+
             <li class="sidebar-menu-item">
                 <a th:href="@{/archivos}" class="sidebar-menu-link">
                     <i class="fas fa-folder sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Archivos Compartidos</span>
                 </a>
             </li>
-            <li class="sidebar-menu-item">
+
+            <!-- Mostrar Suscripción solo si no es profesor -->
+            <li class="sidebar-menu-item" th:if="${rol != 'profesor'}">
                 <a th:href="@{/suscripcion/pagar}" class="sidebar-menu-link">
                     <i class="fas fa-star sidebar-menu-icon"></i>
                     <span class="sidebar-menu-text">Suscripciones</span>
@@ -207,8 +221,8 @@
                 <div class="carousel-wrapper">
                     <div class="carousel-track" id="tutorsTrack">
                         <div class="tutor-card active">
-                            <img src="/img/tutor-maria.jpg" alt="María González" class="tutor-image">
-                            <h3 class="tutor-name">María González</h3>
+                            <img th:src="@{/img/sr-gato.jpeg}" alt="Sr.Gato" class="tutor-image">
+                            <h3 class="tutor-name">Sr.Gato</h3>
                             <p class="tutor-subject">Matemáticas y Física</p>
                             <div class="tutor-rating">
                                 <div class="stars">
@@ -220,11 +234,11 @@
                                 </div>
                                 <span class="rating-text">4.9 (127 reseñas)</span>
                             </div>
-                            <p class="tutor-comment">"Excelente profesora, muy paciente y clara en sus explicaciones."</p>
+                            <p class="tutor-comment">"Excelente profesor, muy paciente y clara en sus explicaciones."</p>
                         </div>
 
                         <div class="tutor-card">
-                            <img src="/img/tutor-carlos.jpg" alt="Carlos Rodríguez" class="tutor-image">
+                            <img th:src="@{/img/tutor-carlos.jpeg}" alt="Carlos Rodríguez" class="tutor-image">
                             <h3 class="tutor-name">Carlos Rodríguez</h3>
                             <p class="tutor-subject">Programación Web</p>
                             <div class="tutor-rating">
@@ -241,9 +255,9 @@
                         </div>
 
                         <div class="tutor-card">
-                            <img src="/img/tutor-ana.jpg" alt="Ana Martínez" class="tutor-image">
+                            <img th:src="@{/img/tutor-ana.jpg}" alt="Ana Martínez" class="tutor-image">
                             <h3 class="tutor-name">Ana Martínez</h3>
-                            <p class="tutor-subject">Inglés Conversacional</p>
+                            <p class="tutor-subject">Matematicas</p>
                             <div class="tutor-rating">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -254,13 +268,13 @@
                                 </div>
                                 <span class="rating-text">5.0 (156 reseñas)</span>
                             </div>
-                            <p class="tutor-comment">"Gracias a Ana logré aprobar mi examen TOEFL con excelente puntaje."</p>
+                            <p class="tutor-comment">"Gracias a Ana logré aprobar mi examen de matematicas con excelente puntaje."</p>
                         </div>
 
                         <div class="tutor-card">
-                            <img src="/img/tutor-diego.jpg" alt="Diego López" class="tutor-image">
-                            <h3 class="tutor-name">Diego López</h3>
-                            <p class="tutor-subject">Guitarra y Piano</p>
+                            <img th:src="@{/img/tutor-ricardo.jpg}" alt="Ricardo Mollo" class="tutor-image">
+                            <h3 class="tutor-name">Ricardo Mollo</h3>
+                            <p class="tutor-subject">Guitarra y Canto</p>
                             <div class="tutor-rating">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -271,7 +285,7 @@
                                 </div>
                                 <span class="rating-text">4.7 (73 reseñas)</span>
                             </div>
-                            <p class="tutor-comment">"Un músico increíble que hace que aprender sea divertido."</p>
+                            <p class="tutor-comment">"Un músico increíble, 5 palabras crack."</p>
                         </div>
                     </div>
                 </div>
